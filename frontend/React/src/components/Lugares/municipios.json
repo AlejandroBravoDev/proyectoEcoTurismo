@@ -1,0 +1,74 @@
+{
+  "Municipios": [
+    {
+      "id": 1,
+      "nombre": "Pereira",
+      "descripcion": "Capital de Risaralda, ciudad moderna y centro económico, conocida como la 'querendona, trasnochadora y morena'."
+    },
+    {
+      "id": 2,
+      "nombre": "Dosquebradas",
+      "descripcion": "Municipio industrial y residencial, conocido como la 'Villa Industrial de Colombia'."
+    },
+    {
+      "id": 3,
+      "nombre": "Santa Rosa de Cabal",
+      "descripcion": "Famoso por sus termales y por el chorizo santarrosano, rodeado de montañas y naturaleza."
+    },
+    {
+      "id": 4,
+      "nombre": "Marsella",
+      "descripcion": "Municipio con arquitectura tradicional, gran riqueza cultural y paisajes cafeteros."
+    },
+    {
+      "id": 5,
+      "nombre": "La Virginia",
+      "descripcion": "Puerto sobre el río Cauca, conocido por su clima cálido y actividad comercial."
+    },
+    {
+      "id": 6,
+      "nombre": "Belén de Umbría",
+      "descripcion": "Tierra cafetera y agrícola, con paisajes verdes y tradición campesina."
+    },
+    {
+      "id": 7,
+      "nombre": "Apía",
+      "descripcion": "Reconocido por su cultura cafetera, turismo ecológico y tradiciones artísticas."
+    },
+    {
+      "id": 8,
+      "nombre": "Santuario",
+      "descripcion": "Ubicado cerca del Parque Nacional Natural Tatamá, con biodiversidad única."
+    },
+    {
+      "id": 9,
+      "nombre": "Mistrató",
+      "descripcion": "Municipio indígena y campesino, rico en cultura y con un entorno natural montañoso."
+    },
+    {
+      "id": 10,
+      "nombre": "Guática",
+      "descripcion": "Conocido por su producción cafetera y paisajes andinos tradicionales."
+    },
+    {
+      "id": 11,
+      "nombre": "Quinchía",
+      "descripcion": "Municipio minero y cafetero, llamado 'La Villa de los Cerros Sagrados'."
+    },
+    {
+      "id": 12,
+      "nombre": "Balboa",
+      "descripcion": "Pequeño municipio de clima templado, rodeado de montañas cafeteras."
+    },
+    {
+      "id": 13,
+      "nombre": "La Celia",
+      "descripcion": "Pintoresco municipio cafetero, con gran riqueza cultural y tradiciones campesinas."
+    },
+    {
+      "id": 14,
+      "nombre": "Apía",
+      "descripcion": "Lugar cultural con enfoque en arte, música y tradición cafetera."
+    }
+  ]
+}

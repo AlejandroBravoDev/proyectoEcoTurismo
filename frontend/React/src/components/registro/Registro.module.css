@@ -1,0 +1,115 @@
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+}
+.left {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
+.formBox {
+  width: 80%;
+  max-width: 380px;
+  text-align: center;
+}
+.formBox h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #222;
+}
+.formBox form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.formBox label {
+  text-align: left;
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.formBox input {
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.formBox input:focus {
+  border-color: #4b8236;
+}
+.formBox button {
+  background-color: #4b8236;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background 0.3s ease;
+}
+.formBox button:hover {
+  background-color: #4c8236cc;
+}
+
+.mensaje {
+  margin-top: 10px;
+  color: #e74c3c;
+  font-weight: 500;
+}
+.loginText {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #333;
+}
+.loginLink {
+  display: block;
+  margin-top: 5px;
+  color: #4b8236;
+  font-weight: bold;
+  text-decoration: none;
+}
+.loginLink:hover {
+  text-decoration: none;
+  color: #4c8236cc;
+}
+.right {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #eee;
+}
+
+.sliderTrack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.sliderItem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.sliderItem.active {
+  opacity: 1;
+}
+
+.sliderItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

@@ -1,0 +1,196 @@
+.titleSegundasection {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 800;
+  color: #000000;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.titleSegundasection span {
+  color: #4b8236;
+}
+
+.containerSegundasection {
+  display: flex;
+  width: 100%;
+  height: 600px;
+  margin-bottom: 50px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap; /* Mantiene los ítems en una sola línea */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  white-space: nowrap; /* Evita que los items salten a una nueva línea */
+}
+.containerSegundasection::-webkit-scrollbar {
+  display: none;
+}
+
+.sliderItem {
+  position: relative;
+  width: 0px;
+  flex-grow: 1;
+  overflow: hidden;
+  transition: 0.8s ease;
+  cursor: pointer;
+  min-width: 300px;
+  flex-basis: 20%;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+.sliderItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition: 0.8s ease;
+}
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: 0.5s ease;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.overlay h3 {
+  margin-top: 0;
+  font-size: 24px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.overlay p {
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.detailButton {
+  background-color: #4b8236;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.sliderItem:hover {
+  width: 300px;
+  flex-grow: 0;
+}
+.sliderItem:hover img {
+  opacity: 1;
+  filter: contrast(120%);
+}
+.sliderItem:hover .overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (pointer: fine) and (min-width: 992px) {
+  .sliderItem:hover {
+    flex-basis: 400px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  .sliderItem:hover img {
+    opacity: 0.8;
+  }
+  .sliderItem:hover .overlay {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .overlay p {
+    text-overflow: initial;
+    -webkit-line-clamp: initial;
+    white-space: normal;
+  }
+}
+/* Esto regla aplica a tablets, celulares y PCs pequeñas sin mouse */
+@media (max-width: 991px), (pointer: coarse) {
+  .overlay p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    /*Limita el texto a 3 líneas y añade puntos suspensivos */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+  .detailButton {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+  .overlay {
+    opacity: 1;
+    transform: translateY(0);
+    background-color: rgba(0, 0, 0, 0.65);
+  }
+
+  .sliderItem img {
+    opacity: 0.75;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px),
+  (min-width: 768px) and (pointer: coarse) {
+  .sliderItem {
+    flex-basis: 33.33%;
+    min-width: 250px;
+  }
+
+  .overlay {
+    opacity: 1;
+    transform: translateY(0);
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .sliderItem img {
+    opacity: 0.8;
+  }
+}
+
+@media (max-width: 767px), (max-width: 767px) and (pointer: coarse) {
+  .sliderItem {
+    flex-basis: 100%;
+    min-width: 100%;
+  }
+  .titleSegundasection {
+    font-size: 18px;
+    padding: 0 5px;
+  }
+  .overlay {
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px;
+    font-size: 0.9em;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .overlay p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+  .detailButton {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .sliderItem img {
+    opacity: 0.75;
+  }
+}

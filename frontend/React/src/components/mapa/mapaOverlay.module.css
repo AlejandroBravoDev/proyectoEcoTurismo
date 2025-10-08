@@ -1,0 +1,172 @@
+.mapWrapper {
+  height: auto;
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
+  overflow: hidden;
+}
+/*opacidad para cuando no se muestre el mapa*/
+.opaco {
+  opacity: 0.3;
+  pointer-events: none; /*Bloqueo las interacciones del mapa*/
+}
+
+/*mapa visible*/
+.visibleMap {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mapOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  transition: transform 0.6s ease-out, background-color 0.6s ease-out,
+    height 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.visible {
+  transform: translateY(0);
+  background-color: rgba(0, 0, 0, 0.884);
+  color: white;
+}
+.titleOverlay {
+  color: #4b8236;
+}
+.hiddenOverlay {
+  transform: translateY(10%);
+  background-color: #f3f3f300;
+  color: black;
+  height: 150px;
+  opacity: 1;
+  z-index: 999;
+  pointer-events: auto; /* Permito las interacciones en la barra */
+  justify-content: center;
+  padding: 0 20px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Oculto el mansaje de bienvenida */
+.overlayContent {
+  transition: opacity 0.3s;
+}
+
+.hiddenOverlay .overlayContent {
+  opacity: 0;
+}
+
+.searchBarContainer {
+  max-width: 1000px;
+  width: 90%;
+  height: 150px;
+  background-color: #f3f3f3b2;
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: 0 2px 4px #00000048;
+  text-align: center;
+  box-sizing: border-box;
+}
+.searchBarContainer span {
+  color: #4b8236;
+}
+.searchBarContainer p {
+  font-size: 15px;
+  padding: 0px 60px;
+  margin-bottom: 10px;
+}
+.searchBarContainer h2 {
+  margin-bottom: 10px;
+}
+.searchBarContainer input {
+  border: none;
+  width: 80%;
+  padding: 6px;
+  border-radius: 6px;
+}
+.searchBarContainer button {
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  margin-left: 10px;
+  background-color: #4b8236;
+  color: #f3f3f3;
+  cursor: pointer;
+}
+
+.popup h3 {
+  color: #4b8236;
+}
+.popup a:visited {
+  color: #4b8236;
+  text-decoration: none;
+}
+.popup a:link {
+  color: #4b8236;
+  text-decoration: none;
+}
+@media (max-width: 882px) {
+  .searchBarContainer {
+    max-width: 750px;
+    width: 85%;
+    padding: 15px;
+  }
+  .searchBarContainer p {
+    font-size: 12px;
+    padding: 0px 15px;
+  }
+  .searchBarContainer h2 {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+  .searchBarContainer input {
+    width: 70%;
+  }
+
+  .searchBarContainer button {
+    margin-left: 5px;
+  }
+}
+@media (max-width: 768px) {
+  .hiddenOverlay {
+    transform: translateY(60%);
+  }
+  .searchBarContainer {
+    max-width: 90%;
+    width: 95%;
+    height: auto;
+    padding: 15px 10px;
+  }
+  .searchBarContainer h2 {
+    font-size: 15px;
+  }
+
+  .searchBarContainer p {
+    display: none;
+  }
+
+  .searchBarContainer input {
+    width: 70%;
+    padding: 8px;
+  }
+
+  .searchBarContainer button {
+    padding: 8px;
+    margin-left: 5px;
+  }
+  .overlayContent h1 {
+    font-size: 25px;
+  }
+  .overlayContent p {
+    font-size: 16px;
+  }
+}

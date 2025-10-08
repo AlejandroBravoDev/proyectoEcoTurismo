@@ -1,0 +1,348 @@
+.hospedajesSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 50px;
+  gap: 100px;
+  background-color: white;
+}
+
+.textContainer {
+  max-width: 400px;
+}
+
+.textContainer h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.textContainer p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.sliderContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 550px;
+  max-width: 90%;
+  padding: 0 40px;
+}
+.cardContainer {
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.hospedajeCard {
+  width: 100%;
+  height: 380px;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.hospedajeCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hospedajeCard:hover .overlay {
+  opacity: 1;
+}
+
+.overlayContent {
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cardTitle {
+  color: white;
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.cardText {
+  color: white;
+  font-size: 13px;
+  margin-bottom: 25px;
+  padding: 0;
+  text-align: center;
+  max-width: 100%;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+.cardSite {
+  color: #ffffff;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+.detailButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4b8236;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.detailButton:hover {
+  background-color: #38612a;
+}
+
+.slideButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 24px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+  user-select: none;
+}
+
+.slideButton:hover {
+  background: rgba(30, 60, 20, 0.9);
+}
+
+.prev {
+  left: 0;
+}
+
+.next {
+  right: 0;
+}
+
+@media (max-width: 992px) {
+  .hospedajesSection {
+    flex-direction: column;
+    padding: 40px 20px;
+    gap: 30px;
+  }
+
+  .textContainer {
+    text-align: center;
+  }
+
+  .sliderContainer {
+    width: 90%;
+    max-width: 450px;
+    padding: 0 40px;
+  }
+  .cardContainer {
+    width: 100%;
+    max-width: none;
+  }
+
+  .hospedajeCard {
+    height: 250px;
+  }
+
+  .overlay {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .prev {
+    left: 0;
+  }
+
+  .next {
+    right: 0;
+  }
+
+  .overlayContent {
+    max-width: 95%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .cardTitle {
+    font-size: 20px;
+  }
+
+  .cardText {
+    font-size: 12px;
+  }
+
+  .cardSite {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 500px) {
+  .hospedajesSection {
+    padding: 30px 15px;
+  }
+
+  .textContainer h2 {
+    font-size: 24px;
+  }
+
+  .cardContainer {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .hospedajeCard {
+    height: 220px;
+  }
+
+  .sliderContainer {
+    padding: 0 30px;
+  }
+
+  .slideButton {
+    padding: 8px 12px;
+    font-size: 20px;
+  }
+
+  .cardTitle {
+    font-size: 18px;
+  }
+
+  .cardText {
+    font-size: 11px;
+    margin-bottom: 15px;
+  }
+
+  .detailButton {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 450px) {
+  .hospedajesSection {
+    padding: 30px 10px;
+  }
+
+  .textContainer h2 {
+    font-size: 24px;
+  }
+
+  .textContainer p {
+    font-size: 14px;
+  }
+
+  .sliderContainer {
+    padding: 0 10px;
+  }
+
+  .slideButton {
+    padding: 6px 10px;
+    font-size: 18px;
+  }
+
+  .hospedajeCard {
+    height: 200px;
+  }
+
+  .cardTitle {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+
+  .cardText {
+    font-size: 11px;
+    margin-bottom: 15px;
+  }
+
+  .detailButton {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hospedajesSection {
+    padding: 20px 5px;
+  }
+
+  .textContainer h2 {
+    font-size: 22px;
+  }
+
+  .sliderContainer {
+    padding: 0;
+    width: 100%;
+  }
+
+  .cardContainer {
+    padding: 5px;
+    border-radius: 15px;
+  }
+
+  .hospedajeCard {
+    height: 180px;
+  }
+
+  .slideButton {
+    padding: 5px 8px;
+    font-size: 16px;
+  }
+
+  .overlayContent {
+    max-width: 95%;
+  }
+
+  .cardTitle {
+    font-size: 16px;
+    margin-bottom: 3px;
+  }
+
+  .cardSite {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .cardText {
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+
+  .detailButton {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
