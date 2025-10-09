@@ -32,11 +32,17 @@ function Login() {
     try {
       const res = await axios.post("/api/login", formData);
       const token = res.data.access_token;
+      const usuario = res.data.usuario;
       localStorage.setItem("token", token);
+      localStorage.setItem("usuario", JSON.stringify(usuario));
       setMensaje(res.data.mensaje);
       setFormData({ email: "", password: "" });
       setTimeout(() => {
-        navigate("/");
+        if (usuario.rol === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }, 1500);
     } catch (err) {
       console.error("Error en login:", err);
