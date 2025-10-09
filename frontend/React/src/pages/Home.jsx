@@ -1,4 +1,6 @@
 import React, { Suspense, useState } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import MapaOverlay from "../components/mapa/mapaOverlay";
@@ -11,6 +13,15 @@ const LazyMapaRisaralda = React.lazy(() =>
 );
 
 function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (usuario && usuario.rol === "admin") {
+      navigate("/admin");
+    }
+  }, [navigate]);
+
   const [isOverlayVisible, setIsOverlayVisible] = useState(true);
   const handleOverlayClick = () => {
     setIsOverlayVisible(false);

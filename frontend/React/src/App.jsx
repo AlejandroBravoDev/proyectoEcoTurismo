@@ -11,15 +11,6 @@ import Login from "./components/login/login.jsx";
 import Admin from "./pages/Admin.jsx";
 
 function Rutas() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    if (usuario && usuario.rol === "admin") {
-      navigate("/admin");
-    }
-  }, [navigate]);
-
   return (
     <Routes>
       <Route path="/" element={<Home />} />
