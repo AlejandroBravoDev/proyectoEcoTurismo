@@ -14,6 +14,7 @@ class comentariosController extends Controller
         
         return response()->json($comentarios);
     }
+    
 
     
 }

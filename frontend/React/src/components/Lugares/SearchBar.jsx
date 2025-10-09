@@ -1,49 +1,62 @@
 import React, { useState } from "react";
 import SearchBarStyles from "./lugares.module.css";
-import data from "./municipios.json"; // Importamos el JSON
 
-function SelectorMunicipios() {
-  const [selected, setSelected] = useState(null);
+function SearchBar({
+  municipios,
+  onSearchSubmit,
+  onMunicipioChange,
+  currentMunicipioId,
+}) {
+  const [searchText, setSearchText] = useState("");
 
-  const handleChange = (e) => {
-    const id = parseInt(e.target.value);
-    const municipio = data.Municipios.find((m) => m.id === id);
-    setSelected(municipio);
+  const handleInputChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleSearchClick = () => {
+    onSearchSubmit(searchText);
+  };
+
+  const handleMunicipioSelect = (e) => {
+    const id = e.target.value === "" ? null : parseInt(e.target.value);
+    onMunicipioChange(id);
   };
 
   return (
-    <div className={SearchBarStyles.searchBarContainer}>
-      <h1>¿A donde deseas ir?</h1>
+    <div className={SearchBarStyles.searchContainer}>
+      <h2>¿A donde deseas ir?</h2>
       <p>Descubre los mejores lugares ecoturisticos de Risaralda</p>
 
-      <div className={SearchBarStyles.searchBar}>
+      <div className={SearchBarStyles.searchFilters}>
         <div className={SearchBarStyles.searchInput}>
-          <input type="text" placeholder="Buscar" />
-          <button>
-            <i className="fas fa-search"></i> {/* Icono de lupa */}
+          <input
+            type="text"
+            placeholder="Buscar por nombre o descripción"
+            value={searchText}
+            onChange={handleInputChange}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") handleSearchClick();
+            }}
+          />
+          <button onClick={handleSearchClick}>
+            <i className="fas fa-search"></i>
           </button>
         </div>
         <select
-          onChange={handleChange}
-          defaultValue=""
-          className={SearchBarStyles.filter}
+          className={SearchBarStyles.municipioSelect}
+          onChange={handleMunicipioSelect}
+          value={currentMunicipioId === null ? "" : currentMunicipioId}
         >
-          <option value="" disabled>
-            Municipios
-          </option>
-          {data.Municipios.map((muni) => (
-            <option key={muni.id} value={muni.id}>
-              {muni.nombre}
+          <option value="">Municipios</option>
+          {municipios.map((municipio) => (
+            <option key={municipio.id} value={municipio.id}>
+              {municipio.nombre}
             </option>
           ))}
-        </select>
-
-        <select name="" id="" className={SearchBarStyles.filter}>
-          <option value="">Categorias</option>
         </select>
       </div>
     </div>
   );
 }
 
-export default SelectorMunicipios;
+export default SearchBar;

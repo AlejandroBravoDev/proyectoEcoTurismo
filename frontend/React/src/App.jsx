@@ -25,11 +25,11 @@ function Rutas() {
       <Route path="/" element={<Home />} />
       <Route path="/perfil" element={<PerfilUser />} />
       <Route path="/lugares" element={<Lugares />} />
+      <Route path="/lugares/:id" element={<VerLugares />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
       <Route path="/hospedajes" element={<Hospedajes />} />
       <Route path="/verHospedajes" element={<VerHospedajes />} />
-      <Route path="/verLugares" element={<VerLugares />} />
       <Route path="/admin" element={<Admin />} />
     </Routes>
   );

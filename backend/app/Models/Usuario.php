@@ -37,7 +37,6 @@ class Usuario extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
     
-    // 3. Relaciones
     public function comentarios()
     {
         return $this->hasMany(Comentario::class, 'usuario_id');
