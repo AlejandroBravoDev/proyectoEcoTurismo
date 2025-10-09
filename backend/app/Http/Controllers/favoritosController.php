@@ -14,6 +14,7 @@ class favoritosController extends Controller
         
         return response()->json($favoritos);
     }
+    
 
     
 }

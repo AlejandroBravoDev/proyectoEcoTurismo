@@ -1,43 +1,33 @@
 import SearchBarStyles from "./lugares.module.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Link } from "react-router-dom";
-import img1 from "../../assets/img1.jpg";
-import img2 from "../../assets/img2.jpg";
-import img3 from "../../assets/img3.jpg";
-import img4 from "../../assets/img4.jpg";
-import img5 from "../../assets/img5.jpg";
+import defaultImage from "../../assets/img6.jpg";
+function Cards({ lugares }) {
+  const getImageUrl = (lugar) => {
+    if (lugar.imagenes) {
+      return lugar.imagenes;
+    }
+    return defaultImage;
+  };
 
-function Cards() {
   return (
     <section className={SearchBarStyles.cardsSection}>
       <div className={SearchBarStyles.cardsContainer}>
-        <div className={SearchBarStyles.card}>
-          <img src={img1} alt="" className={SearchBarStyles.img} />
-          <h3>Titulo</h3>
-          <p>Lorem ipsum dolor dicta. Porro fuga saepe corporis</p>
-          <Link to="/verLugares">
-            <button className={SearchBarStyles.button}>Ver más</button>
-          </Link>
-        </div>
-        <div className={SearchBarStyles.card}>
-          <img src={img1} alt="" className={SearchBarStyles.img} />
-          <h3>Titulo</h3>
-          <p>Lorem ipsum dolor dicta. Porro fuga saepe corporis</p>
-          <Link to="/verLugares">
-            <button className={SearchBarStyles.button}>Ver más</button>
-          </Link>
-        </div>
-        <div className={SearchBarStyles.card}>
-          <img src={img1} alt="" className={SearchBarStyles.img} />
-          <h3>Titulo</h3>
-          <p>Lorem ipsum dolor dicta. Porro fuga saepe corporis</p>
-          <Link to="/verLugares">
-            <button className={SearchBarStyles.button}>Ver más</button>
-          </Link>
-        </div>
+        {lugares.map((lugar) => (
+          <div key={lugar.id} className={SearchBarStyles.card}>
+            <img src={getImageUrl(lugar)} alt={lugar.nombre} />
+            <div className={SearchBarStyles.cardContent}>
+              <h3>{lugar.nombre}</h3>
+              <p>{lugar.descripcion}</p>
+              <Link to={`/lugares/${lugar.id}`}>
+                <button className={SearchBarStyles.detailsButton}>
+                  Ver detalles
+                </button>
+              </Link>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
 }
-
 export default Cards;
