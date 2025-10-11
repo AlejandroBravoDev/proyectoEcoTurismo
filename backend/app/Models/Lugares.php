@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Comentarios;
 use App\Models\Municipios; 
 
 class Lugares extends Model
@@ -14,19 +14,20 @@ class Lugares extends Model
         'ubicacion', 
         'municipio_id', 
         'hoteles_cercanos',
-        'comentarios', 
-        'imagenes',
         'recomendaciones'
     ];
 
     protected $casts = [
         'hoteles_cercanos' => 'array', 
-        'comentarios' => 'array',      
-        'imagenes' => 'array',        
     ];
-   
+    
     public function municipio()
     {
         return $this->belongsTo(Municipios::class, 'municipio_id');
+    }
+
+    public function opiniones() 
+    {
+        return $this->hasMany(Comentarios::class, 'lugar_id');
     }
 }

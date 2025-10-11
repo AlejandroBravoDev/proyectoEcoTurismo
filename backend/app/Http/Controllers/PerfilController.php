@@ -23,8 +23,6 @@ class PerfilController extends Controller
 
             $usuario->comentarios = []; 
             $usuario->favoritos = [];   
-
-            // Fuerza incluir accesores en JSON
             $usuario->append(['avatar_url', 'banner_url']);
 
             Log::info('Show perfil - avatar path: ' . $usuario->avatar . ', URL: ' . $usuario->avatar_url);

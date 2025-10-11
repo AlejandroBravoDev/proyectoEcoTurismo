@@ -7,9 +7,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash; 
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Comentario; 
+use App\Models\Comentarios; 
 use App\Models\Favorito; 
-use Illuminate\Support\Facades\Storage; // Para S3
+use Illuminate\Support\Facades\Storage; 
 
 class Usuario extends Authenticatable 
 {
@@ -39,26 +39,26 @@ class Usuario extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
     
-    // Accesores para URLs completas de S3 (convierte path a URL pública)
+    
     public function getAvatarUrlAttribute(): string
     {
         if (!$this->avatar) {
-            return asset('assets/usuarioDemo.png'); // Default local si no hay imagen
+            return asset('assets/usuarioDemo.png'); 
         }
-        return Storage::disk('s3')->url($this->avatar); // URL completa de S3
+        return Storage::disk('s3')->url($this->avatar); 
     }
     
     public function getBannerUrlAttribute(): string
     {
         if (!$this->banner) {
-            return asset('assets/img4.jpg'); // Default local
+            return asset('assets/img4.jpg'); 
         }
         return Storage::disk('s3')->url($this->banner);
     }
     
     public function comentarios()
     {
-        return $this->hasMany(Comentario::class, 'usuario_id');
+        return $this->hasMany(Comentarios::class, 'usuario_id');
     }
 
     public function favoritos()
