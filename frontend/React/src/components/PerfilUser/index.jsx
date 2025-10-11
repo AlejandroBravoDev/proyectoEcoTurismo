@@ -30,7 +30,7 @@ function PerfilUsuario() {
 
   const cargarPerfil = async () => {
     const token = localStorage.getItem("token");
-
+    console.log("Token usado en cargarPerfil:", token);
     if (!token) {
       navigate("/login");
       return;
@@ -51,7 +51,7 @@ function PerfilUsuario() {
       }
 
       const userData = res.data.usuario;
-      console.log("Usuario cargado, avatar_url:", userData.avatar_url); // Log para debug
+      console.log("Usuario cargado, avatar_url:", userData.avatar_url);
 
       setUsuario(userData);
 
@@ -71,6 +71,7 @@ function PerfilUsuario() {
 
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
         navigate("/login");
       }
     }
@@ -130,7 +131,7 @@ function PerfilUsuario() {
       console.log(
         "Usuario actualizado, avatar_url:",
         res.data.usuario.avatar_url
-      ); // Log para debug
+      );
 
       setUsuario(res.data.usuario);
       setPestanaActiva("opiniones");
@@ -177,6 +178,7 @@ function PerfilUsuario() {
     }
 
     localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
     navigate("/login");
   };
 
@@ -204,8 +206,7 @@ function PerfilUsuario() {
             <h3 className={styles.tituloSeccion}>
               Opiniones ({totalComentarios})
             </h3>
-            {/* Aquí va el mapeo de usuario.comentarios */}
-            <div className={styles.tarjetaOpinion}>{/* ... */}</div>
+            <div className={styles.tarjetaOpinion}></div>
           </div>
         );
       case "favoritos":
@@ -221,8 +222,7 @@ function PerfilUsuario() {
             <h3 className={styles.tituloSeccion}>
               Favoritos ({totalFavoritos})
             </h3>
-            {/* Aquí va el mapeo de usuario.favoritos */}
-            <div className={styles.tarjetaItemFavorito}>{/* ... */}</div>
+            <div className={styles.tarjetaItemFavorito}></div>
           </div>
         );
       case "editar":

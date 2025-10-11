@@ -14,9 +14,14 @@ function Rutas() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    if (usuario && usuario.rol === "admin") {
-      navigate("/admin");
+    try {
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      if (usuario && usuario.rol === "admin") {
+        navigate("/admin");
+      }
+    } catch (err) {
+      console.error("Error al parsear usuario en localStorage:", err);
+      localStorage.removeItem("usuario");
     }
   }, [navigate]);
 

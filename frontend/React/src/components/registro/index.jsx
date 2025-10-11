@@ -33,9 +33,10 @@ function Registro() {
     e.preventDefault();
     try {
       const res = await axios.post("/api/register", formData);
-      const token = res.data.access_token;
+      const token = res.data.token;
+      const usuario = res.data.usuario;
       localStorage.setItem("token", token);
-
+      localStorage.setItem("usuario", JSON.stringify(usuario));
       setMensaje("¡Registro exitoso! Iniciando sesión automáticamente.");
       setFormData({ nombre_completo: "", email: "", password: "" });
       setTimeout(() => {
@@ -54,6 +55,7 @@ function Registro() {
       setMensaje(errorMsg);
     }
   };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
