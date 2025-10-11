@@ -20,12 +20,14 @@ function PerfilUsuario() {
   const [hover, setHover] = useState(0);
   const [rating, setRating] = useState(0);
   const navigate = useNavigate();
-  const getImageUrl = (path, isBanner = false) => {
-    if (path && typeof path === "string") {
-      return `${LARAVEL_BASE_URL}/storage/${path}`;
+
+  const getImageUrl = (imageUrl, isBanner = false) => {
+    if (imageUrl && typeof imageUrl === "string") {
+      return imageUrl;
     }
     return isBanner ? bannerFondo : placeholderFotoUsuario;
   };
+
   const cargarPerfil = async () => {
     const token = localStorage.getItem("token");
 
@@ -34,13 +36,23 @@ function PerfilUsuario() {
       return;
     }
     try {
-      const res = await axios.get("/api/perfil", {
+      const res = await axios.get(`${LARAVEL_BASE_URL}/api/perfil`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
+      console.log("Response completa de /api/perfil:", res.data);
+
+      if (!res.data || !res.data.usuario) {
+        throw new Error(
+          "Respuesta inválida del servidor: No se encontró el usuario"
+        );
+      }
+
       const userData = res.data.usuario;
+      console.log("Usuario cargado, avatar_url:", userData.avatar_url); // Log para debug
+
       setUsuario(userData);
 
       setFormData({
@@ -50,11 +62,14 @@ function PerfilUsuario() {
       setCargando(false);
       setError(null);
     } catch (err) {
-      console.error("Error al cargar el perfil:", err.response || err);
+      console.error(
+        "Error al cargar el perfil:",
+        err.response?.data || err.message || err
+      );
       setError("No se pudo cargar el perfil. Por favor, inicie sesión.");
       setCargando(false);
 
-      if (err.response && err.response.status === 401) {
+      if (err.response?.status === 401) {
         localStorage.removeItem("token");
         navigate("/login");
       }
@@ -71,6 +86,7 @@ function PerfilUsuario() {
       [e.target.name]: e.target.value,
     });
   };
+
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
@@ -93,27 +109,48 @@ function PerfilUsuario() {
       if (formData.bannerFile) {
         data.append("bannerFile", formData.bannerFile);
       }
-      data.append("_method", "PUT");
 
-      const res = await axios.post("/api/perfil/update", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      console.log("FormData antes de enviar:");
+      for (let [key, value] of data.entries()) {
+        console.log(key, value);
+      }
+
+      const res = await axios.post(
+        `${LARAVEL_BASE_URL}/api/perfil/update`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Response de update:", res.data);
+      console.log(
+        "Usuario actualizado, avatar_url:",
+        res.data.usuario.avatar_url
+      ); // Log para debug
 
       setUsuario(res.data.usuario);
       setPestanaActiva("opiniones");
       alert("Perfil actualizado con éxito!");
     } catch (err) {
-      console.error("Error al actualizar perfil:", err.response || err);
+      console.error(
+        "Error al actualizar perfil:",
+        err.response?.data || err.message || err
+      );
       let errorMsg = "Error al actualizar. Revisa los datos.";
-      if (err.response && err.response.data && err.response.data.errors) {
+      if (err.response?.data?.message) {
+        errorMsg = err.response.data.message;
+      } else if (err.response?.data?.errors) {
         const firstErrorKey = Object.keys(err.response.data.errors)[0];
         errorMsg = err.response.data.errors[firstErrorKey][0];
       }
       alert(errorMsg);
     }
   };
+
   const alternarMenuOpciones = () => {
     setMenuOpcionesAbierto(!menuOpcionesAbierto);
   };
@@ -127,7 +164,7 @@ function PerfilUsuario() {
 
     if (token) {
       try {
-        await axios.post("/api/logout", null, {
+        await axios.post(`${LARAVEL_BASE_URL}/api/logout`, null, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -269,12 +306,14 @@ function PerfilUsuario() {
     <main className={styles.estructuraPaginaPerfil}>
       <div
         className={styles.bannerSuperior}
-        style={{ backgroundImage: `url(${getImageUrl(usuario.banner, true)})` }}
+        style={{
+          backgroundImage: `url(${getImageUrl(usuario.banner_url, true)})`,
+        }}
       ></div>
       <div className={styles.contenedorPrincipalPerfil}>
         <div className={styles.contenidoCabeceraPerfil}>
           <img
-            src={getImageUrl(usuario.avatar)}
+            src={getImageUrl(usuario.avatar_url)}
             alt="Perfil"
             className={styles.avatarPerfil}
           />

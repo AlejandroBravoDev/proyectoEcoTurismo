@@ -13,17 +13,13 @@ use App\Http\Controllers\PerfilController;
 
 /*Apis*/ 
 
-Route::get('/lugares', 'App\Http\Controllers\LugaresController@index');
-
-
-Route::get('/lugares/{id}', 'App\Http\Controllers\LugaresController@show');
-
-
-Route::get('/hospedajes', 'App\Http\Controllers\HospedajeController@index');
-Route::get('/municipios', 'App\Http\Controllers\MunicipioController@index');
-Route::get('/usuario', 'App\Http\Controllers\usuarioController@index');
-Route::get('/favoritos', 'App\Http\Controllers\favoritosController@index');
-Route::get('/comentarios', 'App\Http\Controllers\comentariosController@index');
+Route::get('/lugares', [LugaresController::class, 'index']);
+Route::get('/lugares/{id}', [LugaresController::class, 'show']);
+Route::get('/hospedajes', [HospedajeController::class, 'index']);
+Route::get('/municipios', [MunicipioController::class, 'index']);
+Route::get('/usuario', [usuarioController::class, 'index']);
+Route::get('/favoritos', [favoritosController::class, 'index']);
+Route::get('/comentarios', [comentariosController::class, 'index']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,8 +27,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () { 
     Route::get('/perfil', [PerfilController::class, 'show']); 
     
-    Route::put('/perfil/update', [PerfilController::class, 'update']);
-    
+    // POST para files
+    Route::post('/perfil/update', [PerfilController::class, 'update']);
     
     Route::post('/logout', [AuthController::class, 'logout']);
 });
