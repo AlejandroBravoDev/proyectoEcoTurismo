@@ -6,6 +6,7 @@ use App\Models\Comentarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth; 
 
 class ComentariosController extends Controller
 {
@@ -62,6 +63,25 @@ class ComentariosController extends Controller
         } catch (\Exception $e) {
             Log::error('Error al crear comentario:', ['error' => $e->getMessage()]);
             return response()->json(['message' => 'Error al guardar el comentario.', 'error' => $e->getMessage()], 500);
+        }
+    }
+    public function destroy(Comentarios $comentario)
+    {
+        if (Auth::id() !== $comentario->usuario_id) {
+            return response()->json(['message' => 'No autorizado para eliminar esta opinión.'], 403);
+        }
+
+        try {
+            if ($comentario->image_path) {
+                Storage::disk('public')->delete($comentario->image_path);
+            }
+            $comentario->delete();
+
+            return response()->json(['message' => 'Opinión eliminada con éxito.'], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar comentario:', ['id' => $comentario->id, 'error' => $e->getMessage()]);
+            return response()->json(['message' => 'Error interno del servidor al intentar eliminar el comentario.'], 500);
         }
     }
 }
