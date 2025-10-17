@@ -5,10 +5,15 @@ import axios from "axios";
 // IMAGENES POR DEFECTO
 import placeholderFotoUsuario from "../../assets/usuarioDemo.png";
 import bannerFondo from "../../assets/img4.jpg";
+// ICONOS
+import {
+  FaHeart,
+  FaMapMarkerAlt,
+  FaThumbsUp,
+  FaTrashAlt,
+} from "react-icons/fa";
 
-import { FaHeart, FaMapMarkerAlt } from "react-icons/fa";
-
-const LARAVEL_BASE_URL = "http://localhost:8000";
+const API_BASE = "http://localhost:8000";
 
 function PerfilUsuario() {
   const [usuario, setUsuario] = useState(null);
@@ -16,9 +21,7 @@ function PerfilUsuario() {
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({});
   const [pestanaActiva, setPestanaActiva] = useState("opiniones");
-  const [menuOpcionesAbierto, setMenuOpcionesAbierto] = useState(false);
-  const [hover, setHover] = useState(0);
-  const [rating, setRating] = useState(0);
+
   const navigate = useNavigate();
 
   const getImageUrl = (imageUrl, isBanner = false) => {
@@ -30,29 +33,18 @@ function PerfilUsuario() {
 
   const cargarPerfil = async () => {
     const token = localStorage.getItem("token");
-    console.log("Token usado en cargarPerfil:", token);
     if (!token) {
       navigate("/login");
       return;
     }
     try {
-      const res = await axios.get(`${LARAVEL_BASE_URL}/api/perfil`, {
+      const res = await axios.get(`${API_BASE}/api/perfil`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      console.log("Response completa de /api/perfil:", res.data);
-
-      if (!res.data || !res.data.usuario) {
-        throw new Error(
-          "Respuesta inválida del servidor: No se encontró el usuario"
-        );
-      }
-
       const userData = res.data.usuario;
-      console.log("Usuario cargado, avatar_url:", userData.avatar_url);
-
       setUsuario(userData);
 
       setFormData({
@@ -111,27 +103,12 @@ function PerfilUsuario() {
         data.append("bannerFile", formData.bannerFile);
       }
 
-      console.log("FormData antes de enviar:");
-      for (let [key, value] of data.entries()) {
-        console.log(key, value);
-      }
-
-      const res = await axios.post(
-        `${LARAVEL_BASE_URL}/api/perfil/update`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log("Response de update:", res.data);
-      console.log(
-        "Usuario actualizado, avatar_url:",
-        res.data.usuario.avatar_url
-      );
+      const res = await axios.post(`${API_BASE}/api/perfil/update`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setUsuario(res.data.usuario);
       setPestanaActiva("opiniones");
@@ -152,10 +129,6 @@ function PerfilUsuario() {
     }
   };
 
-  const alternarMenuOpciones = () => {
-    setMenuOpcionesAbierto(!menuOpcionesAbierto);
-  };
-
   const activarModoEdicion = () => {
     setPestanaActiva("editar");
   };
@@ -165,7 +138,7 @@ function PerfilUsuario() {
 
     if (token) {
       try {
-        await axios.post(`${LARAVEL_BASE_URL}/api/logout`, null, {
+        await axios.post(`${API_BASE}/api/logout`, null, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -182,6 +155,70 @@ function PerfilUsuario() {
     navigate("/login");
   };
 
+  const handleDeleteOpinion = async (comentarioId) => {
+    if (
+      !window.confirm("¿Estás seguro de que quieres eliminar esta opinión?")
+    ) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("No autenticado. Por favor, inicie sesión.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_BASE}/api/comentarios/${comentarioId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Opinión eliminada con éxito.");
+      cargarPerfil();
+    } catch (err) {
+      console.error(
+        "Error al eliminar opinión:",
+        err.response?.data || err.message || err
+      );
+      alert("Error al eliminar la opinión.");
+    }
+  };
+
+  // --- NUEVA FUNCIÓN: ELIMINAR FAVORITO ---
+  const handleRemoveFavorite = async (lugarId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("No autenticado. Por favor, inicie sesión.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_BASE}/api/favoritos/${lugarId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUsuario((prevUsuario) => ({
+        ...prevUsuario,
+        favoritos: prevUsuario.favoritos.filter(
+          (fav) => fav.lugar.id !== lugarId
+        ),
+      }));
+
+      alert("Lugar eliminado de favoritos.");
+    } catch (err) {
+      console.error(
+        "Error al eliminar favorito:",
+        err.response?.data || err.message || err
+      );
+      alert("Error al eliminar el lugar de favoritos.");
+    }
+  };
+  // ----------------------------------------
+
   if (cargando) {
     return <div className={styles.loading}>Cargando perfil...</div>;
   }
@@ -192,6 +229,95 @@ function PerfilUsuario() {
 
   const totalComentarios = usuario.comentarios ? usuario.comentarios.length : 0;
   const totalFavoritos = usuario.favoritos ? usuario.favoritos.length : 0;
+  const TarjetaOpinion = ({ comentario }) => (
+    <div className={styles.tarjetaOpinion}>
+      <div className={styles.cabeceraOpinion}>
+        <div className={styles.bloqueInfoAutor}>
+          <img
+            src={getImageUrl(usuario.avatar_url)}
+            alt="Autor"
+            className={styles.fotoPequenaAutor}
+          />
+          <div className={styles.metaOpinion}>
+            <h4>{usuario.nombre_completo}</h4>
+
+            {/* ESTRELLAS DEBAJO DEL NOMBRE */}
+            <div className={styles.ratingStars}>
+              {[...Array(5)].map((star, i) => (
+                <FaHeart
+                  key={i}
+                  color={i < comentario.rating ? "#4b8236" : "#e4e5e9"}
+                />
+              ))}
+            </div>
+
+            <p className={styles.metaInfo}>
+              {comentario.created_at} • {comentario.category}
+            </p>
+          </div>
+        </div>
+
+        {usuario.id === comentario.usuario_id && (
+          <div className={styles.accionesOpinion}>
+            <button
+              className={styles.botonEliminarOpinion}
+              onClick={() => handleDeleteOpinion(comentario.id)}
+            >
+              <FaTrashAlt className={styles.iconoBasura} />
+              Eliminar
+            </button>
+          </div>
+        )}
+      </div>
+
+      <p className={styles.textoOpinion}>{comentario.contenido}</p>
+      {comentario.image_url && (
+        <img
+          src={comentario.image_url}
+          alt="Foto del comentario"
+          className={styles.imagenOpinion}
+        />
+      )}
+      {comentario.lugar && (
+        <>
+          <div className={styles.infoLugarComentario}>
+            <FaMapMarkerAlt className={styles.iconoLugarComentario} />
+            <span className={styles.nombreLugarComentario}>
+              {comentario.lugar.nombre}
+            </span>
+            <span className={styles.direccionLugarComentario}>
+              ({comentario.lugar.direccion})
+            </span>
+          </div>
+          <p className={styles.descripcionLugarOpinion}>
+            {comentario.lugar.descripcion}
+          </p>
+        </>
+      )}
+    </div>
+  );
+
+  const TarjetaItemFavorito = ({ favorito }) => (
+    <div className={styles.tarjetaItemFavorito}>
+      <img
+        src={favorito.lugar.imagen_url || bannerFondo}
+        alt={favorito.lugar.nombre}
+        className={styles.imagenItemFavorito}
+      />
+      <div className={styles.detallesItemFavorito}>
+        <h4>{favorito.lugar.nombre}</h4>
+
+        <p className={styles.descripcionLugarFavorito}>
+          {favorito.lugar.descripcion || "Descripción no disponible."}
+        </p>
+      </div>
+      <FaHeart
+        className={styles.iconoCorazonFavorito}
+        onClick={() => handleRemoveFavorite(favorito.lugar.id)}
+        title="Quitar de Favoritos"
+      />
+    </div>
+  );
 
   const renderizarContenidoPerfil = () => {
     switch (pestanaActiva) {
@@ -203,10 +329,9 @@ function PerfilUsuario() {
         }
         return (
           <div className={styles.contenedorOpiniones}>
-            <h3 className={styles.tituloSeccion}>
-              Opiniones ({totalComentarios})
-            </h3>
-            <div className={styles.tarjetaOpinion}></div>
+            {usuario.comentarios.map((comentario) => (
+              <TarjetaOpinion key={comentario.id} comentario={comentario} />
+            ))}
           </div>
         );
       case "favoritos":
@@ -219,10 +344,9 @@ function PerfilUsuario() {
         }
         return (
           <div className={styles.contenedorFavoritos}>
-            <h3 className={styles.tituloSeccion}>
-              Favoritos ({totalFavoritos})
-            </h3>
-            <div className={styles.tarjetaItemFavorito}></div>
+            {usuario.favoritos.map((favorito) => (
+              <TarjetaItemFavorito key={favorito.id} favorito={favorito} />
+            ))}
           </div>
         );
       case "editar":
@@ -233,22 +357,24 @@ function PerfilUsuario() {
               className={styles.formularioEdicionPerfil}
               onSubmit={handleUpdate}
             >
-              <label>Nombre</label>
+              <label htmlFor="nombre_completo">Nombre</label>
               <input
+                id="nombre_completo"
                 type="text"
                 name="nombre_completo"
                 value={formData.nombre_completo}
                 onChange={handleEditChange}
               />
-              <label>Correo</label>
+              <label htmlFor="email">Correo</label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleEditChange}
               />
 
-              <label>Foto de perfil</label>
+              <label htmlFor="profilePictureFile">Foto de perfil</label>
               <div className={styles.areaCargaArchivo}>
                 <span>
                   {formData.profilePictureFile
@@ -256,13 +382,14 @@ function PerfilUsuario() {
                     : "Agrega una nueva imagen"}
                 </span>
                 <input
+                  id="profilePictureFile"
                   type="file"
                   name="profilePictureFile"
                   className={styles.inputArchivoOculto}
                   onChange={handleFileChange}
                 />
               </div>
-              <label>Foto de portada</label>
+              <label htmlFor="bannerFile">Foto de portada</label>
               <div className={styles.areaCargaArchivo}>
                 <span>
                   {formData.bannerFile
@@ -270,6 +397,7 @@ function PerfilUsuario() {
                     : "Agrega una nueva imagen"}
                 </span>
                 <input
+                  id="bannerFile"
                   type="file"
                   name="bannerFile"
                   className={styles.inputArchivoOculto}
@@ -277,8 +405,9 @@ function PerfilUsuario() {
                 />
               </div>
 
-              <label>ID</label>
+              <label htmlFor="userId">ID</label>
               <input
+                id="userId"
                 type="text"
                 value={usuario.id}
                 readOnly

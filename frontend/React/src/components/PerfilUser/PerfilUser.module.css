@@ -1,4 +1,3 @@
-/* --- General Layout --- */
 .estructuraPaginaPerfil {
   background-color: #f0f2f5;
   min-height: 100vh;
@@ -15,11 +14,7 @@
   background-position: center;
   background-repeat: no-repeat;
 }
-.heartIcon {
-  width: 15px;
-  height: 15px;
-}
-/* --- Main Profile Container --- */
+
 .contenedorPrincipalPerfil {
   background-color: white;
   border-radius: 15px;
@@ -33,7 +28,6 @@
   z-index: 1;
 }
 
-/* --- Profile Header --- */
 .contenidoCabeceraPerfil {
   display: flex;
   align-items: flex-end;
@@ -45,12 +39,13 @@
 
 .tituloSeccion {
   margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
 }
 .contenedorAcciones {
   display: flex;
   gap: 10px;
   margin-left: auto;
-
   align-items: flex-start;
 }
 
@@ -168,7 +163,6 @@
   box-shadow: none;
 }
 
-/* --- Opiniones --- */
 .contenedorOpiniones {
   padding: 0;
 }
@@ -183,15 +177,15 @@
 
 .cabeceraOpinion {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 15px;
   position: relative;
-  justify-content: space-between;
 }
 
 .bloqueInfoAutor {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-grow: 1;
 }
 
@@ -201,75 +195,65 @@
   border-radius: 50%;
   object-fit: cover;
   margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.metaOpinion {
+  display: flex;
+  flex-direction: column;
 }
 
 .metaOpinion h4 {
   font-size: 16px;
   font-weight: 600;
+  color: #333;
   margin: 0;
 }
 
-.metaOpinion p {
-  font-size: 12px;
-  color: #888;
-  margin: 3px 0 0;
+.ratingStars {
+  display: flex;
+  gap: 3px;
+  color: #4b8236;
+  font-size: 13px;
+  margin: 3px 0 5px 0;
 }
 
-.calificacionOpinion {
-  color: #4b8236;
-  font-size: 20px;
-  margin-top: 5px;
+.metaOpinion .metaInfo {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
 }
 
 .accionesOpinion {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
   display: flex;
   align-items: center;
-  flex-shrink: 0;
 }
 
-.contenedorActivadorMenu {
-  position: relative;
-  margin-left: auto;
-}
-
-.activadorOpciones {
-  position: static;
-  font-size: 24px;
-  color: #999;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.menuDesplegableAcciones {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  z-index: 10;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 150px;
-  overflow: hidden;
-  margin-top: 5px;
-  padding: 5px 0;
-}
-
-.itemMenuDesplegable {
-  display: block;
-  width: 100%;
-  padding: 8px 15px;
+.botonEliminarOpinion {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   background: none;
   border: none;
-  text-align: left;
-  font-size: 14px;
-  color: #333;
+  color: #f44336;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
   transition: background-color 0.2s;
-  font-weight: 500;
 }
 
-.itemMenuDesplegable:hover {
-  background-color: #f0f2f5;
+.iconoBasura {
+  font-size: 14px;
+}
+
+.botonEliminarOpinion:hover {
+  background-color: #ffebee;
 }
 
 .textoOpinion {
@@ -281,15 +265,47 @@
 
 .imagenOpinion {
   width: 100%;
-  max-height: 300px;
+  max-width: 300px;
+  height: auto;
   object-fit: cover;
   border-radius: 8px;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 15px;
 }
 
-/* --- Favoritos --- */
+.infoLugarComentario {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #777;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.iconoLugarComentario {
+  color: #4b8236;
+}
+
+.nombreLugarComentario {
+  font-weight: 600;
+  color: #555;
+}
+
+.direccionLugarComentario {
+  font-style: italic;
+  color: #888;
+}
+
+.descripcionLugarOpinion {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.4;
+  margin-top: 10px;
+  border-left: 3px solid #ddd;
+  padding-left: 10px;
+  font-style: italic;
+}
+
 .contenedorFavoritos {
   padding: 0;
 }
@@ -301,41 +317,57 @@
   padding: 20px;
   display: flex;
   align-items: flex-start;
+  margin-bottom: 20px;
   position: relative;
 }
 
 .imagenItemFavorito {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 8px;
   object-fit: cover;
   margin-right: 20px;
   flex-shrink: 0;
 }
 
-.detallesItemFavorito h4 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-top: 0;
-  margin-bottom: 10px;
+.detallesItemFavorito {
+  flex-grow: 1;
 }
 
-.detallesItemFavorito p {
+.detallesItemFavorito h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.detallesItemFavorito .descripcionLugarFavorito {
   font-size: 14px;
   color: #555;
   line-height: 1.5;
+  margin: 0;
 }
 
 .iconoCorazonFavorito {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 20px;
+  right: 20px;
   font-size: 24px;
-  color: #e74c3c;
+  color: #4b8236;
   cursor: pointer;
 }
 
-/* --- Editar Perfil --- */
+.mensajeVacio {
+  text-align: center;
+  color: #777;
+  font-size: 18px;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
 .contenedorFormularioEdicion {
   padding-bottom: 20px;
 }
@@ -345,9 +377,8 @@
   flex-direction: column;
   gap: 15px;
   width: 100%;
-
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .formularioEdicionPerfil label {
@@ -399,7 +430,8 @@
   cursor: pointer;
 }
 
-.botonGuardarPerfil {
+.botonGuardarPerfil,
+.botonCancelarEdicion {
   background-color: #4b8236;
   color: white;
   padding: 12px 25px;
@@ -409,9 +441,10 @@
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 20px;
+  margin-top: 10px;
   align-self: center;
   width: 100%;
+  max-width: 300px;
   box-sizing: border-box;
 }
 
@@ -419,12 +452,17 @@
   background-color: #38612a;
 }
 
+.botonCancelarEdicion {
+  background-color: #999;
+  margin-top: 0;
+}
+.botonCancelarEdicion:hover {
+  background-color: #777;
+}
+
 @media (max-width: 768px) {
-  .estructuraPaginaPerfil {
-    margin-top: 50px;
-  }
   .bannerSuperior {
-    height: 250px;
+    height: 200px;
   }
 
   .contenedorPrincipalPerfil {
@@ -442,11 +480,11 @@
   }
 
   .avatarPerfil {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     margin-right: 0;
     margin-bottom: 15px;
-    margin-top: -60px;
+    margin-top: -50px;
   }
 
   .bloqueInfoUsuario h3 {
@@ -456,91 +494,163 @@
   .contenedorAcciones {
     flex-direction: column;
     width: 100%;
-    gap: 5px;
+    gap: 10px;
     margin-top: 15px;
     margin-left: 0;
     align-items: center;
   }
   .botonEditarPerfil,
-  .botonCerrarSesion {
+  .botonCerrarSesion,
+  .botonGuardarPerfil,
+  .botonCancelarEdicion {
     width: 100%;
-    max-width: 300px;
+    max-width: 280px;
   }
 
   .pestanasNavegacionPerfil {
     justify-content: space-around;
     margin-bottom: 20px;
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .botonPestanaNavegacion {
-    padding: 10px 10px;
-    font-size: 15px;
+    padding: 12px 15px;
+    font-size: 16px;
     margin-right: 0;
+    flex: 1;
+    text-align: center;
   }
 
-  .bloqueInfoAutor {
-    flex-wrap: wrap;
-    flex-grow: 1;
+  .botonPestanaNavegacion span {
+    font-size: 13px;
+  }
+
+  .tarjetaOpinion {
+    padding: 15px;
+  }
+
+  .cabeceraOpinion {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
   }
 
   .accionesOpinion {
-    margin-left: auto;
+    position: static;
+    flex-shrink: 0;
+    margin-left: 10px;
   }
 
-  .formularioEdicionPerfil {
-    max-width: none;
-    margin-left: 0;
-    margin-right: 0;
-    align-items: center;
+  .botonEliminarOpinion {
+    padding: 2px 5px;
   }
 
   .tarjetaItemFavorito {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 15px;
   }
   .imagenItemFavorito {
+    width: 100px;
+    height: 100px;
     margin-right: 0;
     margin-bottom: 15px;
+  }
+  .detallesItemFavorito {
+    text-align: center;
+  }
+  .iconoCorazonFavorito {
+    top: 15px;
+    right: 15px;
   }
 }
 
 @media (max-width: 480px) {
   .bannerSuperior {
-    height: 200px;
+    height: 150px;
   }
 
   .contenedorPrincipalPerfil {
     padding: 15px;
-    margin-top: -60px;
+    margin-top: -50px;
   }
 
   .avatarPerfil {
-    width: 70px;
-    height: 70px;
-    margin-top: -45px;
+    width: 80px;
+    height: 80px;
+    margin-top: -40px;
   }
 
   .bloqueInfoUsuario h3 {
     font-size: 20px;
   }
 
-  .botonPestanaNavegacion {
+  .textoEmailUsuario {
     font-size: 14px;
   }
 
-  .areaContenidoPestana {
-    padding: 10px;
+  .idCuentaUsuario {
+    font-size: 13px;
+  }
+
+  .botonPestanaNavegacion {
+    font-size: 14px;
+    padding: 10px 8px;
+  }
+
+  .botonPestanaNavegacion span {
+    font-size: 13px;
   }
 
   .tarjetaOpinion,
   .tarjetaItemFavorito {
-    padding: 10px;
+    padding: 12px;
+  }
+
+  .metaOpinion h4 {
+    font-size: 15px;
+  }
+  .metaOpinion .metaInfo {
+    font-size: 11px;
   }
 
   .textoOpinion,
-  .detallesItemFavorito p {
+  .detallesItemFavorito .descripcionLugarFavorito {
     font-size: 13px;
+  }
+  .descripcionLugarOpinion {
+    font-size: 11px;
+  }
+
+  .ratingStars {
+    font-size: 12px;
+  }
+
+  .botonEliminarOpinion {
+    font-size: 11px;
+    padding: 3px 5px;
+  }
+  .iconoBasura {
+    font-size: 12px;
+  }
+
+  .imagenOpinion {
+    max-height: 180px;
+  }
+  .infoLugarComentario {
+    font-size: 12px;
+  }
+
+  .imagenItemFavorito {
+    width: 80px;
+    height: 80px;
+  }
+
+  .detallesItemFavorito h4 {
+    font-size: 16px;
   }
 }

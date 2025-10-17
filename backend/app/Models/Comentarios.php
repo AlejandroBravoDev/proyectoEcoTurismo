@@ -13,4 +13,8 @@ class Comentarios extends Model
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
+    public function lugar()
+    {
+        return $this->belongsTo(Lugares::class, 'lugar_id');
+    }
 }

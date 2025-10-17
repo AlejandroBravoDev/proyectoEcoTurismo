@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule; 
 use Illuminate\Support\Str;
 use App\Models\Usuario; 
+use App\Models\Lugares; 
+use Carbon\Carbon; 
 
 class PerfilController extends Controller
 {
@@ -21,18 +23,61 @@ class PerfilController extends Controller
                 return response()->json(['message' => 'No autenticado.'], 401);
             }
 
-            $usuario->comentarios = []; 
-            $usuario->favoritos = [];   
-            $usuario->append(['avatar_url', 'banner_url']);
+            $usuario->load([
+                'comentarios.lugar', 
+                'favoritos.lugar',   
+            ]);
+            
+            $comentariosFormateados = $usuario->comentarios->map(function ($comentario) {
+                $image_url = $comentario->image_path ? Storage::disk('s3')->url($comentario->image_path) : null;
+                
+                return [
+                    'id' => $comentario->id,
+                    'contenido' => $comentario->contenido,
+                    'rating' => $comentario->rating,
+                    'category' => $comentario->category,
+                    'image_url' => $image_url, 
+                    'created_at' => optional($comentario->created_at)->diffForHumans(), 
+                    'usuario_id' => $comentario->usuario_id,
+                    'lugar' => $comentario->lugar ? [
+                        'id' => $comentario->lugar->id,
+                        'nombre' => $comentario->lugar->nombre,
+                        'direccion' => $comentario->lugar->direccion,
+                        'descripcion' => $comentario->lugar->descripcion, 
+                        'imagen_url' => $comentario->lugar->imagen_url ?? null, 
+                    ] : null,
+                ];
+            });
 
-            Log::info('Show perfil - avatar path: ' . $usuario->avatar . ', URL: ' . $usuario->avatar_url);
+            $favoritosFormateados = $usuario->favoritos->map(function ($favorito) {
+                return [
+                    'id' => $favorito->id,
+                    'created_at' => optional($favorito->created_at)->diffForHumans(),
+                    'lugar' => $favorito->lugar ? [
+                        'id' => $favorito->lugar->id,
+                        'nombre' => $favorito->lugar->nombre,
+                        'descripcion' => $favorito->lugar->descripcion, 
+                        'direccion' => $favorito->lugar->direccion,
+                        'imagen_url' => $favorito->lugar->imagen_url ?? null, 
+                    ] : null,
+                ];
+            });
+            
+            $userData = $usuario->toArray();
+            $userData['comentarios'] = $comentariosFormateados;
+            $userData['favoritos'] = $favoritosFormateados;
+            $userData['avatar_url'] = $usuario->avatar_url;
+            $userData['banner_url'] = $usuario->banner_url;
+
+            Log::info('Show perfil completado, total comentarios: ' . count($comentariosFormateados));
 
             return response()->json([
-                'usuario' => $usuario
+                'usuario' => $userData
             ], 200);
+
         } catch (\Exception $e) {
             Log::error('Error en show perfil: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al cargar perfil: ' . $e->getMessage()], 500);
         }
     }
 
@@ -86,17 +131,14 @@ class PerfilController extends Controller
             Log::info('Data a guardar: ', $data);
             
             $usuario->update($data);
-
-            $usuario->fresh(); // Recarga para accesores
-
-            // Fuerza incluir accesores en JSON
+            $usuario->fresh(); 
             $usuario->append(['avatar_url', 'banner_url']);
 
             Log::info('Update exitoso, avatar path: ' . $usuario->avatar . ', URL: ' . $usuario->avatar_url);
 
             return response()->json([
                 'message' => 'Perfil actualizado con éxito.',
-                'usuario' => $usuario // Incluye avatar_url de S3
+                'usuario' => $usuario 
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error en update perfil: ' . $e->getMessage());

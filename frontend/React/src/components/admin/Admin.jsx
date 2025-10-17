@@ -18,7 +18,7 @@ function Admin() {
           <div className={adminStyles.searchInput}>
             <input type="text" placeholder="Buscar" />
             <button>
-              <i className="fas fa-search"></i> {/* Icono de lupa */}
+              <i className="fas fa-search"></i> 
             </button>
           </div>
           <select

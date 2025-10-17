@@ -19,7 +19,7 @@ import {
 } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
 
-const API_BASE_URL = "http://localhost:8000";
+const API = "http://localhost:8000";
 const CommentActionsBlock = ({
   commentId,
   isOwner,
@@ -141,7 +141,7 @@ function VerLugares() {
 
   const fetchCurrentUser = async (token) => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/user`, {
+      const res = await axios.get(`${API}/api/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -183,16 +183,12 @@ function VerLugares() {
         formData.append("image", selectedImage);
       }
 
-      const response = await axios.post(
-        `${API_BASE_URL}/api/comentarios`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${API}/api/comentarios`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       const newCommentData = response.data.comentario;
 
@@ -227,13 +223,13 @@ function VerLugares() {
     }
     try {
       if (isFavorite) {
-        await axios.delete(`${API_BASE_URL}/api/favoritos/${id}`, {
+        await axios.delete(`${API}/api/favoritos/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setIsFavorite(false);
       } else {
         await axios.post(
-          `${API_BASE_URL}/api/favoritos`,
+          `${API}/api/favoritos`,
           { lugar_id: id },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -249,7 +245,7 @@ function VerLugares() {
     const token = localStorage.getItem("token");
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/lugares/${id}`, {
+      const res = await axios.get(`${API}/api/lugares/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLugar(res.data);
@@ -275,12 +271,9 @@ function VerLugares() {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/favoritos/check/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`${API}/api/favoritos/check/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setIsFavorite(response.data.isFavorite);
       } catch (err) {
         console.error("Error al verificar favorito:", err);
@@ -306,7 +299,7 @@ function VerLugares() {
     }
 
     try {
-      await axios.delete(`${API_BASE_URL}/api/comentarios/${commentId}`, {
+      await axios.delete(`${API}/api/comentarios/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -328,7 +321,7 @@ function VerLugares() {
     }
     try {
       await axios.post(
-        `${API_BASE_URL}/api/comentarios/${commentId}/report`,
+        `${API}/api/comentarios/${commentId}/report`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -664,7 +657,7 @@ function VerLugares() {
 
                     {op.image_path && (
                       <img
-                        src={`${API_BASE_URL}/storage/${op.image_path}`}
+                        src={op.image_url || `${API}/storage/${op.image_path}`}
                         alt="Comentario"
                         className={styles.opinionImage}
                       />

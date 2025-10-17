@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Lugares;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class LugaresController extends Controller
 {
@@ -18,10 +19,10 @@ class LugaresController extends Controller
                 $query->where('municipio_id', $request->municipio_id);
             }
 
-           
+            
             $lugares = $query->get();
 
-           
+            
             $lugaresData = $lugares->map(function ($lugar) {
                 
                 $imagenes = $lugar->imagenes ?? []; 
@@ -30,7 +31,7 @@ class LugaresController extends Controller
                     'id' => $lugar->id,
                     'nombre' => $lugar->nombre,
                     'descripcion' => $lugar->descripcion,
-                   
+                    
                     'municipio' => optional($lugar->municipio)->nombre, 
                     'imagenes' => $imagenes, 
                     'ubicacion' => $lugar->ubicacion,
@@ -51,7 +52,6 @@ class LugaresController extends Controller
    public function show($id)
     {
         try {
-            // 1. CARGA CLAVE: Usar la relación renombrada 'opiniones.usuario'
             $lugar = Lugares::with(['municipio', 'opiniones.usuario'])->findOrFail($id);
             
             $comentarios = $lugar->opiniones; 
@@ -60,6 +60,11 @@ class LugaresController extends Controller
             if (optional($comentarios)->isNotEmpty()) {
                 foreach ($comentarios as $comentario) {
                     $user = $comentario->usuario;
+                    
+                    $image_url = null;
+                    if ($comentario->image_path) {
+                        $image_url = Storage::disk('s3')->url($comentario->image_path);
+                    }
 
                     $comentarioData = [
                         'id' => $comentario->id,
@@ -67,6 +72,7 @@ class LugaresController extends Controller
                         'rating' => $comentario->rating,
                         'category' => $comentario->category,
                         'image_path' => $comentario->image_path,
+                        'image_url' => $image_url, 
                         'usuario_id' => $comentario->usuario_id,
                         'lugar_id' => $comentario->lugar_id,
                         'created_at' => optional($comentario->created_at)->toDateTimeString(),
@@ -81,18 +87,10 @@ class LugaresController extends Controller
                             'avatar' => 'https://via.placeholder.com/40',
                         ],
                     ];
-                    
-                    if ($comentario->image_path) {
-                        // Si estás usando S3, asegúrate de que esto devuelve la URL correcta
-                        $comentarioData['image_url'] = url('storage/' . $comentario->image_path);
-                    }
-
                     $comentariosFormateados[] = $comentarioData;
                 }
             }
-            
             $responseData = $lugar->toArray(); 
-            // 2. RETORNO CLAVE: Devolver el array bajo el nombre 'comentarios' para React
             $responseData['comentarios'] = $comentariosFormateados;
             $responseData['municipio'] = optional($lugar->municipio)->nombre;
             $responseData['imagenes'] = $lugar->imagenes ?? []; 
