@@ -14,11 +14,13 @@ class Lugares extends Model
         'ubicacion', 
         'municipio_id', 
         'hoteles_cercanos',
-        'recomendaciones'
+        'recomendaciones',
+        'coordenadas'
     ];
 
     protected $casts = [
         'hoteles_cercanos' => 'array', 
+        'imagenes' => 'array',
     ];
     
     public function municipio()

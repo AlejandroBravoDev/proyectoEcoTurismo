@@ -4,7 +4,7 @@ import Home from "./pages/Home.jsx";
 import PerfilUser from "./pages/PerfilUser.jsx";
 import Lugares from "./pages/Lugares.jsx";
 import VerLugares from "./pages/verLugares.jsx";
-import Registro from "./pages/Registro.jsx";
+import Registro from "./pages/registro.jsx";
 import Hospedajes from "./components/Hospedajes/Hospedajes.jsx";
 import VerHospedajes from "./components/ver-hospedajes/ver-hospedajes.jsx";
 import Login from "./components/login/login.jsx";
