@@ -18,8 +18,8 @@ import {
   FaRegThumbsUp,
 } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
-
 const API = "http://localhost:8000";
+const defaultImageUrls = [imgMeerkat, imgLion, imgParrot];
 const CommentActionsBlock = ({
   commentId,
   isOwner,
@@ -119,17 +119,12 @@ function VerLugares() {
       return "Muy mala";
     }
   };
+  const imageSources =
+    lugar?.todas_las_imagenes && lugar.todas_las_imagenes.length > 0
+      ? lugar.todas_las_imagenes
+      : defaultImageUrls;
 
-  const images = [
-    { src: imgMeerkat, alt: "Suricata" },
-    { src: imgLion, alt: "Leona" },
-    { src: imgParrot, alt: "Loro" },
-  ];
-  const displayImages =
-    lugar?.imagenes && lugar.imagenes.length > 0
-      ? lugar.imagenes
-      : images.map((img) => img.src);
-  const totalSlides = displayImages.length;
+  const totalSlides = imageSources.length;
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
@@ -381,7 +376,7 @@ function VerLugares() {
         <div className={styles.pageContainer}>
           <main className={styles.mainContent}>
             <p className={styles.textWait}>
-              En un momento cargara el sitio ecoturistico que deseas ver...
+              En un momento cargará el sitio ecoturístico que deseas ver...
             </p>
           </main>
         </div>
@@ -410,9 +405,8 @@ function VerLugares() {
       <div className={styles.pageContainer}>
         <main className={styles.mainContent}>
           <section className={styles.titleSection}>
-            <h1>{lugar?.nombre || "EcoParque Ukumarí"}</h1>
+            <h1>{lugar?.nombre || "Lugar Ecoturístico"}</h1>
             <div className={styles.actionButtons}>
-              {/* <button className={styles.btnOutline}>Opinión</button> */}
               <button
                 className={`${styles.btnFilled} ${
                   isFavorite ? styles.active : ""
@@ -427,24 +421,30 @@ function VerLugares() {
           <section className={styles.gallery}>
             <div className={styles.mainImage}>
               <img
-                src={displayImages[0] || images[currentSlide].src}
+                src={imageSources[0]}
                 alt={lugar?.nombre || "Imagen principal"}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = defaultImageUrls[0];
+                }}
               />
             </div>
             <div className={styles.sideImages}>
               <img
-                src={
-                  displayImages[1] ||
-                  images[(currentSlide + 1) % totalSlides].src
-                }
+                src={imageSources[1] || defaultImageUrls[1]}
                 alt={lugar?.nombre || "Imagen lateral 1"}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = defaultImageUrls[1];
+                }}
               />
               <img
-                src={
-                  displayImages[2] ||
-                  images[(currentSlide + 2) % totalSlides].src
-                }
+                src={imageSources[2] || defaultImageUrls[2]}
                 alt={lugar?.nombre || "Imagen lateral 2"}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = defaultImageUrls[2];
+                }}
               />
             </div>
           </section>
@@ -454,15 +454,20 @@ function VerLugares() {
               className={styles.sliderTrack}
               style={{
                 transform: `translateX(-${
-                  currentSlide * (100 / displayImages.length)
+                  currentSlide * (100 / totalSlides)
                 }%)`,
               }}
             >
-              {displayImages.map((imgSrc, index) => (
+              {imageSources.map((imgSrc, index) => (
                 <div key={index} className={styles.sliderItem}>
                   <img
                     src={imgSrc}
                     alt={`${lugar?.nombre || "Lugar"} - ${index + 1}`}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src =
+                        defaultImageUrls[index % defaultImageUrls.length];
+                    }}
                   />
                 </div>
               ))}
@@ -481,7 +486,7 @@ function VerLugares() {
             </button>
 
             <div className={styles.sliderDots}>
-              {displayImages.map((_, index) => (
+              {imageSources.map((_, index) => (
                 <span
                   key={index}
                   className={`${styles.dot} ${
@@ -492,8 +497,8 @@ function VerLugares() {
               ))}
             </div>
           </section>
+
           <div className={styles.mobileActionButtons}>
-            {/* <button className={styles.btnOutline}>Opinión</button> */}
             <button
               className={`${styles.btnFilled} ${
                 isFavorite ? styles.active : ""

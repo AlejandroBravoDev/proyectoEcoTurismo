@@ -107,7 +107,7 @@ function MapaRisaralda({ sitiosRisaralda, targetPlace, setTargetPlace }) {
                   <FaMapMarkerAlt className={styles.iconoUbicacion} />
                   <span>{truncateText(sitio.ubicacionTexto, 25)}</span>
                 </div>
-                <a href={`/sitio/${sitio.id}`} className={styles.cardBoton}>
+                <a href={`/lugares/${sitio.id}`} className={styles.cardBoton}>
                   Ver detalles
                 </a>
               </div>
