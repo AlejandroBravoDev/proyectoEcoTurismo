@@ -1,8 +1,8 @@
 import React, { Suspense, useState, useEffect } from "react";
 import Footer from "../components/footer";
 import Header from "../components/header";
+import MapaOverlay from "../components/mapa/mapaOverlay";
 import Slider from "../components/slider";
-import MapaOverlay from "../components/mapa/MapaOverlay";
 import HomeHospedajes from "../components/homeHospedajes/Index";
 import styles from "../components/mapa/mapaOverlay.module.css";
 import axios from "axios";
@@ -36,6 +36,7 @@ function App() {
                 ...lugar,
                 latitud: lat,
                 longitud: lng,
+                imagen: lugar.imagen_url || "",
                 info: lugar.descripcion,
                 ubicacionTexto:
                   lugar.ubicacion ||
@@ -53,6 +54,7 @@ function App() {
       console.error("Error al cargar los lugares en el Home:", err);
     }
   };
+
   useEffect(() => {
     cargarLugares();
   }, []);
@@ -84,9 +86,11 @@ function App() {
       );
     }
   };
+
   const handleOverlayClick = () => {
     setIsOverlayVisible(false);
   };
+
   return (
     <div className="app">
             <Header />     
@@ -97,7 +101,6 @@ function App() {
           position: "relative",
         }}
       >
-        {" "}
                
         <MapaOverlay
           isVisible={isOverlayVisible}
@@ -107,20 +110,23 @@ function App() {
           handleSearch={handleSearch}
           searchError={searchError}
         />
+               
         <div className={`${styles.mapWrapper} ${mapOpacityClass}`}>
+                   
           <Suspense fallback={<div>Cargando mapa...</div>}>
-                       
             <LazyMapaRisaralda
               targetPlace={targetPlace}
               setTargetPlace={setTargetPlace}
               sitiosRisaralda={sitiosRisaralda}
-            />
+            />{" "}
+               
           </Suspense>
+               
         </div>
       </div>
             <Slider />
             <HomeHospedajes />
-            <Footer /> 
+            <Footer />   
     </div>
   );
 }

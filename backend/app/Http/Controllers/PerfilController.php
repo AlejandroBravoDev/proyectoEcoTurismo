@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; 
-use Illuminate\Support\Facades\Storage; 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule; 
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
-use App\Models\Usuario; 
-use App\Models\Lugares; 
-use Carbon\Carbon; 
+use App\Models\Usuario;
+use App\Models\Lugares;
+use Carbon\Carbon;
 
 class PerfilController extends Controller
 {
@@ -24,27 +24,27 @@ class PerfilController extends Controller
             }
 
             $usuario->load([
-                'comentarios.lugar', 
-                'favoritos.lugar',   
+                'comentarios.lugar',
+                'favoritos.lugar',
             ]);
-            
+
             $comentariosFormateados = $usuario->comentarios->map(function ($comentario) {
                 $image_url = $comentario->image_path ? Storage::disk('s3')->url($comentario->image_path) : null;
-                
+
                 return [
                     'id' => $comentario->id,
                     'contenido' => $comentario->contenido,
                     'rating' => $comentario->rating,
                     'category' => $comentario->category,
-                    'image_url' => $image_url, 
-                    'created_at' => optional($comentario->created_at)->diffForHumans(), 
+                    'image_url' => $image_url,
+                    'created_at' => optional($comentario->created_at)->diffForHumans(),
                     'usuario_id' => $comentario->usuario_id,
                     'lugar' => $comentario->lugar ? [
                         'id' => $comentario->lugar->id,
                         'nombre' => $comentario->lugar->nombre,
                         'direccion' => $comentario->lugar->direccion,
-                        'descripcion' => $comentario->lugar->descripcion, 
-                        'imagen_url' => $comentario->lugar->imagen_url ?? null, 
+                        'descripcion' => $comentario->lugar->descripcion,
+                        'imagen_url' => $comentario->lugar->imagen_url ?? null,
                     ] : null,
                 ];
             });
@@ -56,13 +56,13 @@ class PerfilController extends Controller
                     'lugar' => $favorito->lugar ? [
                         'id' => $favorito->lugar->id,
                         'nombre' => $favorito->lugar->nombre,
-                        'descripcion' => $favorito->lugar->descripcion, 
+                        'descripcion' => $favorito->lugar->descripcion,
                         'direccion' => $favorito->lugar->direccion,
-                        'imagen_url' => $favorito->lugar->imagen_url ?? null, 
+                        'imagen_url' => $favorito->lugar->imagen_url ?? null,
                     ] : null,
                 ];
             });
-            
+
             $userData = $usuario->toArray();
             $userData['comentarios'] = $comentariosFormateados;
             $userData['favoritos'] = $favoritosFormateados;
@@ -85,27 +85,27 @@ class PerfilController extends Controller
     {
         try {
             $usuario = $request->user();
-            
+
             Log::info('Update perfil iniciado para user ID: ' . $usuario->id);
             Log::info('Files detectados: profilePictureFile=' . ($request->hasFile('profilePictureFile') ? 'Sí' : 'No') . ', bannerFile=' . ($request->hasFile('bannerFile') ? 'Sí' : 'No'));
-            
+
             $request->validate([
                 'nombre_completo' => 'sometimes|required|string|max:100',
                 'email' => ['sometimes', 'required', 'email', Rule::unique('usuarios', 'email')->ignore($usuario->id)],
                 'profilePictureFile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'bannerFile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-            
+
             $data = $request->only('nombre_completo', 'email');
-            
+
             if ($request->hasFile('profilePictureFile')) {
                 Log::info('Subiendo avatar: ' . $request->file('profilePictureFile')->getClientOriginalName());
-                
+
                 if ($usuario->avatar && $usuario->avatar !== '0') {
                     Storage::disk('s3')->delete($usuario->avatar);
                     Log::info('Avatar viejo borrado: ' . $usuario->avatar);
                 }
-                
+
                 $profileFile = $request->file('profilePictureFile');
                 $profileFilename = Str::uuid() . '.' . $profileFile->getClientOriginalExtension();
                 $profilePath = $profileFile->storeAs('avatars', $profileFilename, 's3');
@@ -115,12 +115,12 @@ class PerfilController extends Controller
 
             if ($request->hasFile('bannerFile')) {
                 Log::info('Subiendo banner: ' . $request->file('bannerFile')->getClientOriginalName());
-                
+
                 if ($usuario->banner && $usuario->banner !== '0') {
                     Storage::disk('s3')->delete($usuario->banner);
                     Log::info('Banner viejo borrado: ' . $usuario->banner);
                 }
-                
+
                 $bannerFile = $request->file('bannerFile');
                 $bannerFilename = Str::uuid() . '.' . $bannerFile->getClientOriginalExtension();
                 $bannerPath = $bannerFile->storeAs('banners', $bannerFilename, 's3');
@@ -129,16 +129,16 @@ class PerfilController extends Controller
             }
 
             Log::info('Data a guardar: ', $data);
-            
+
             $usuario->update($data);
-            $usuario->fresh(); 
+            $usuario->fresh();
             $usuario->append(['avatar_url', 'banner_url']);
 
             Log::info('Update exitoso, avatar path: ' . $usuario->avatar . ', URL: ' . $usuario->avatar_url);
 
             return response()->json([
                 'message' => 'Perfil actualizado con éxito.',
-                'usuario' => $usuario 
+                'usuario' => $usuario
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error en update perfil: ' . $e->getMessage());
