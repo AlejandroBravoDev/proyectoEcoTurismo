@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import React, { Suspense, useState, useEffect } from "react";
+import React, { Suspense, useState } from "react";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import MapaOverlay from "../components/mapa/mapaOverlay";

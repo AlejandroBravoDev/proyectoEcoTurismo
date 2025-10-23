@@ -20,6 +20,8 @@ function Lugares() {
   const [selectedMunicipioId, setSelectedMunicipioId] =
     useState(PEREIRA_MUNICIPIO_ID);
 
+  const storedUser = JSON.parse(localStorage.getItem("usuario"));
+
   const fetchLugares = async () => {
     setLoading(true);
     setError(null);
@@ -96,7 +98,12 @@ function Lugares() {
             No se encontraron lugares con estos filtros.
           </p>
         ) : (
-          <Cards lugares={lugares} />
+          <Cards
+            user={storedUser} // viene del contexto o de tu estado
+            lugares={lugares}
+            onEdit={(id) => console.log("Editar lugar:", id)}
+            onDelete={(id) => console.log("Eliminar lugar:", id)}
+          />
         )}
       </div>
 

@@ -2,7 +2,7 @@ import SearchBarStyles from "./lugares.module.css";
 import { Link } from "react-router-dom";
 import defaultImage from "../../assets/img6.jpg";
 
-function Cards({ lugares }) {
+function Cards({ lugares, user, onEdit, onDelete }) {
   const getImageUrl = (lugar) => {
     if (lugar.imagen_url) {
       return lugar.imagen_url;
@@ -26,11 +26,29 @@ function Cards({ lugares }) {
             <div className={SearchBarStyles.cardContent}>
               <h3>{lugar.nombre}</h3>
               <p>{lugar.descripcion}</p>
-              <Link to={`/lugares/${lugar.id}`}>
-                <button className={SearchBarStyles.detailsButton}>
-                  Ver detalles
-                </button>
-              </Link>
+
+              {user?.rol === "admin" ? (
+                <div className={SearchBarStyles.adminButtons}>
+                  <button
+                    onClick={() => onEdit(lugar.id)}
+                    className={SearchBarStyles.editButton}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => onDelete(lugar.id)}
+                    className={SearchBarStyles.deleteButton}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              ) : (
+                <Link to={`/lugares/${lugar.id}`}>
+                  <button className={SearchBarStyles.detailsButton}>
+                    Ver detalles
+                  </button>
+                </Link>
+              )}
             </div>
           </div>
         ))}
@@ -38,4 +56,5 @@ function Cards({ lugares }) {
     </section>
   );
 }
+
 export default Cards;
