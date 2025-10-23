@@ -34,8 +34,6 @@ function Login() {
       const token = res.data.token; // Corregido de access_token a token
       const usuario = res.data.usuario; // Obtener el objeto usuario
       localStorage.setItem("token", token);
-      localStorage.setItem("usuario", JSON.stringify(usuario));
-      setMensaje(res.data.mensaje);
       localStorage.setItem("usuario", JSON.stringify(usuario)); // Guardar usuario
       setMensaje(res.data.message); // Corregido de mensaje a message
       setFormData({ email: "", password: "" });
