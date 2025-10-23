@@ -2,60 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario; 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; 
-use Illuminate\Validation\ValidationException; 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule; 
+use App\Models\Usuario;
 
 class AuthController extends Controller
 {
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $usuario = Usuario::where('email', $request->email)->first();
+
+        if (!$usuario || !Hash::check($request->password, $usuario->password)) {
+            return response()->json(['message' => 'Credenciales inválidas'], 401);
+        }
+
+        // Crea el token Sanctum
+        $token = $usuario->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login exitoso',
+            'token' => $token,
+            'usuario' => $usuario,  // Opcional, para datos iniciales
+        ], 200);
+    }
+
     public function register(Request $request)
     {
         $request->validate([
-    'nombre_completo' => 'required|string|max:100',
-    'email' => ['required', 'string', 'email', Rule::unique('usuarios', 'email')],  
-    'password' => 'required|string|min:6',
-]);
+            'nombre_completo' => 'required|string|max:100',
+            'email' => 'required|email|unique:usuarios',
+            'password' => 'required|min:8',
+        ]);
 
         $usuario = Usuario::create([
             'nombre_completo' => $request->nombre_completo,
             'email' => $request->email,
             'password' => $request->password,
-            'rol' => 'usuario',
+            'rol' => 'usuario',  // Default
         ]);
 
-        $token = $usuario->createToken('auth_token')->plainTextToken;
+        $token = $usuario->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
+            'message' => 'Registro exitoso',
+            'token' => $token,
             'usuario' => $usuario,
         ], 201);
     }
 
-    public function login(Request $request)
-    {
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'message' => 'Credenciales inválidas. Verifica tu email y contraseña.'
-            ], 401);
-        }
-        $usuario = Auth::user(); 
-        $usuario->tokens()->delete();
-        $token = $usuario->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'usuario' => $usuario,
-        ]);
-    }
-
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete(); 
-        return response()->json(['message' => 'Sesión cerrada.'], 200);
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logout exitoso'], 200);
     }
 }

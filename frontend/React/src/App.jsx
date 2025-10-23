@@ -4,13 +4,27 @@ import Home from "./pages/Home.jsx";
 import PerfilUser from "./pages/PerfilUser.jsx";
 import Lugares from "./pages/Lugares.jsx";
 import VerLugares from "./pages/verLugares.jsx";
-import Registro from "./pages/Registro.jsx";
+import Registro from "./pages/registro.jsx";
 import Hospedajes from "./components/Hospedajes/Hospedajes.jsx";
 import VerHospedajes from "./components/ver-hospedajes/ver-hospedajes.jsx";
 import Login from "./components/login/login.jsx";
 import Admin from "./pages/Admin.jsx";
 
 function Rutas() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      if (usuario && usuario.rol === "admin") {
+        navigate("/admin");
+      }
+    } catch (err) {
+      console.error("Error al parsear usuario en localStorage:", err);
+      localStorage.removeItem("usuario");
+    }
+  }, [navigate]);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />

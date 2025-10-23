@@ -4,10 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comentarios extends Model
+class Favorito extends Model
 {
-    protected $fillable = ['lugar_id', 'usuario_id', 'contenido', 'rating', 'image_path', 'category'];
-    protected $table = 'comentarios'; 
+    protected $fillable = ['usuario_id', 'lugar_id'];
 
     public function usuario()
     {

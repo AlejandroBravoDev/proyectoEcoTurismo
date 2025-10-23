@@ -7,7 +7,7 @@ import Footer from "../components/footer";
 import Header from "../components/header";
 import fondoLugares from "../assets/img7.jpg";
 
-const API_BASE_URL = "http://localhost:8000/api";
+const API = "http://localhost:8000/api";
 const PEREIRA_MUNICIPIO_ID = 1;
 
 function Lugares() {
@@ -24,7 +24,7 @@ function Lugares() {
     setLoading(true);
     setError(null);
     try {
-      let url = `${API_BASE_URL}/lugares?`;
+      let url = `${API}/lugares?`;
 
       if (searchQuery) {
         url += `search=${encodeURIComponent(searchQuery)}&`;
@@ -46,7 +46,7 @@ function Lugares() {
 
   const fetchMunicipios = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/municipios`);
+      const response = await axios.get(`${API}/municipios`);
       setMunicipios(response.data);
     } catch (err) {
       console.error("Error al obtener municipios:", err);

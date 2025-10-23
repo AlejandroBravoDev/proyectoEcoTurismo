@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./Login.module.css";
 import { useNavigate } from "react-router-dom";
@@ -31,11 +31,13 @@ function Login() {
     e.preventDefault();
     try {
       const res = await axios.post("/api/login", formData);
-      const token = res.data.access_token;
-      const usuario = res.data.usuario;
+      const token = res.data.token; // Corregido de access_token a token
+      const usuario = res.data.usuario; // Obtener el objeto usuario
       localStorage.setItem("token", token);
       localStorage.setItem("usuario", JSON.stringify(usuario));
       setMensaje(res.data.mensaje);
+      localStorage.setItem("usuario", JSON.stringify(usuario)); // Guardar usuario
+      setMensaje(res.data.message); // Corregido de mensaje a message
       setFormData({ email: "", password: "" });
       setTimeout(() => {
         if (usuario.rol === "admin") {
@@ -46,12 +48,9 @@ function Login() {
       }, 1500);
     } catch (err) {
       console.error("Error en login:", err);
-
-      //Manejo de erroes
       const errorMsg =
         err.response?.data?.message ||
         "No se pudo iniciar sesión. Verifica tus credenciales.";
-
       setMensaje(errorMsg);
     }
   };

@@ -1,10 +1,11 @@
 import SearchBarStyles from "./lugares.module.css";
 import { Link } from "react-router-dom";
 import defaultImage from "../../assets/img6.jpg";
+
 function Cards({ lugares }) {
   const getImageUrl = (lugar) => {
-    if (lugar.imagenes) {
-      return lugar.imagenes;
+    if (lugar.imagen_url) {
+      return lugar.imagen_url;
     }
     return defaultImage;
   };
@@ -14,7 +15,14 @@ function Cards({ lugares }) {
       <div className={SearchBarStyles.cardsContainer}>
         {lugares.map((lugar) => (
           <div key={lugar.id} className={SearchBarStyles.card}>
-            <img src={getImageUrl(lugar)} alt={lugar.nombre} />
+            <img
+              src={getImageUrl(lugar)}
+              alt={lugar.nombre}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = defaultImage;
+              }}
+            />
             <div className={SearchBarStyles.cardContent}>
               <h3>{lugar.nombre}</h3>
               <p>{lugar.descripcion}</p>
