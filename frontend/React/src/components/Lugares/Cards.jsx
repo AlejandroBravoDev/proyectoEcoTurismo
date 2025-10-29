@@ -13,6 +13,21 @@ function Cards({ lugares, user, onEdit, onDelete }) {
   return (
     <section className={SearchBarStyles.cardsSection}>
       <div className={SearchBarStyles.cardsContainer}>
+        {/* 👇 Mostrar tarjeta para crear lugar solo si es admin */}
+        {user?.rol === "admin" && (
+          <div
+            className={`${SearchBarStyles.card} ${SearchBarStyles.createCard}`}
+          >
+            <Link to="/crear-lugar" className={SearchBarStyles.createLink}>
+              <div className={SearchBarStyles.createContent}>
+                <span className={SearchBarStyles.plusIcon}>＋</span>
+                <h3>Crear nuevo lugar</h3>
+              </div>
+            </Link>
+          </div>
+        )}
+
+        {/* 👇 Tarjetas normales */}
         {lugares.map((lugar) => (
           <div key={lugar.id} className={SearchBarStyles.card}>
             <img

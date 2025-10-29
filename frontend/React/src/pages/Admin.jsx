@@ -5,7 +5,13 @@ import CardsAdmin from "../components/admin/CardsAdmins";
 import SearchBarStyles from "../components/Lugares/lugares.module.css";
 import Footer from "../components/footer";
 import Header from "../components/header";
+import useAuthRedirect from "../hooks/useAuthRedirect";
+import useAdminRedirect from "../hooks/useAdminRedirect";
+
 function Lugares() {
+  useAuthRedirect();
+  useAdminRedirect();
+
   return (
     <>
       <Header />

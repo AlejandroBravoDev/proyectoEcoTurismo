@@ -16,15 +16,6 @@ const LazyMapaRisaralda = React.lazy(() =>
 const API_BASE = "http://localhost:8000";
 
 function App() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    if (usuario && usuario.rol === "admin") {
-      navigate("/admin");
-    }
-  }, [navigate]);
-
   const [isOverlayVisible, setIsOverlayVisible] = useState(true);
   const [sitiosRisaralda, setSitiosRisaralda] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

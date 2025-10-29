@@ -360,3 +360,32 @@ body {
 .deleteButton:hover {
   background-color: #b02a37;
 }
+.createCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #42702f;
+  background-color: #f0fff1;
+  transition: all 0.3s ease;
+}
+
+.createCard:hover {
+  background-color: #e6f0ff;
+  transform: scale(1.03);
+}
+
+.createContent {
+  text-align: center;
+  color: #4b8236;
+}
+
+.plusIcon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.createLink {
+  text-decoration: none;
+  color: inherit;
+}

@@ -6,11 +6,14 @@ import styles from "../components/Lugares/lugares.module.css";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import fondoLugares from "../assets/img7.jpg";
+import useAuthRedirect from "../hooks/useAuthRedirect";
 
 const API = "http://localhost:8000/api";
 const PEREIRA_MUNICIPIO_ID = 1;
 
 function Lugares() {
+  useAuthRedirect();
+
   const [lugares, setLugares] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -99,7 +102,7 @@ function Lugares() {
           </p>
         ) : (
           <Cards
-            user={storedUser} // viene del contexto o de tu estado
+            user={storedUser}
             lugares={lugares}
             onEdit={(id) => console.log("Editar lugar:", id)}
             onDelete={(id) => console.log("Eliminar lugar:", id)}
