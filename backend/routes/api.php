@@ -44,4 +44,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/favoritos/{id}', [favoritosController::class, 'destroy']);
     Route::get('/favoritos/check/{lugarId}', [favoritosController::class, 'check']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    //lugares
+    
+    Route::post('/lugares', [LugaresController::class, 'store']);
+    Route::put('/lugares/{id}', [LugaresController::class, 'update']);
+    Route::delete('/lugares/{id}', [LugaresController::class, 'destroy']);
 });

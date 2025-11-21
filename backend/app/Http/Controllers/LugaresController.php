@@ -75,4 +75,12 @@ class LugaresController extends Controller{
             return response()->json(['message' => 'Error al obtener los detalles del lugar.'], 500);
         }
     }
+
+    public function destroy($id){
+        
+        $lugar = Lugar::findOrFail($id);
+        $lugar->delete();
+
+        return response()->json(['message' => 'Lugar eliminado'], 200);
+    }
 }
