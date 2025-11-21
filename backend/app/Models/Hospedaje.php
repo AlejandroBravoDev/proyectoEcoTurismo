@@ -9,10 +9,13 @@ use App\Models\Municipios;
 class Hospedaje extends Model
 {
     protected $table = 'hospedajes';
+    protected $primaryKey = 'hospedaje_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
     protected $fillable = [
         'nombre',
-        'descripcion',
         'ubicacion',
+        'descripcion',
         'municipio_id',
         'tipo',            // Ej: hotel, cabaña, glamping, finca, etc.
         'contacto',        // Teléfono o correo
@@ -31,7 +34,7 @@ class Hospedaje extends Model
         return $this->belongsTo(Municipios::class, 'municipio_id');
     }
 
-    public function opiniones()
+    public function comentarios()
     {
         return $this->hasMany(Comentarios::class, 'hospedaje_id')->latest();
     }
