@@ -19,7 +19,11 @@ function Rutas() {
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
       <Route path="/hospedajes" element={<Hospedajes />} />
-      <Route path="/verHospedajes" element={<VerHospedajes />} />
+      // CÓDIGO ORIGINAL (Ruta estática)
+<Route path="/verHospedajes" element={<VerHospedajes />} />
+
+// CÓDIGO CORREGIDO (Ruta dinámica)
+<Route path="/verHospedajes/:id" element={<VerHospedajes />} />
       <Route path="/admin" element={<Admin />} />
     </Routes>
   );

@@ -15,7 +15,7 @@ function Hospedajes() {
   const [municipios, setMunicipios] = useState([]);
   const [pueblos, setPueblos] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Filtros
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMunicipio, setSelectedMunicipio] = useState("");
@@ -36,14 +36,14 @@ function Hospedajes() {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      
+
       if (filters.search) params.append("search", filters.search);
       if (filters.municipio) params.append("municipio_id", filters.municipio);
       if (filters.pueblo) params.append("pueblo_id", filters.pueblo);
 
       const response = await fetch(`${API_URL}/hospedajes?${params}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setHospedajes(data.data);
       }
@@ -59,7 +59,7 @@ function Hospedajes() {
     try {
       const response = await fetch(`${API_URL}/municipios`);
       const data = await response.json();
-      
+
       if (data.success) {
         setMunicipios(data.data);
       }
@@ -73,7 +73,7 @@ function Hospedajes() {
     try {
       const response = await fetch(`${API_URL}/pueblos?municipio_id=${municipioId}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setPueblos(data.data);
       }
@@ -104,9 +104,9 @@ function Hospedajes() {
   const handlePuebloSelect = (puebloId) => {
     setSelectedPueblo(puebloId);
     setShowPueblos(false);
-    fetchHospedajes({ 
-      municipio: selectedMunicipio, 
-      pueblo: puebloId 
+    fetchHospedajes({
+      municipio: selectedMunicipio,
+      pueblo: puebloId
     });
   };
 
@@ -136,9 +136,9 @@ function Hospedajes() {
             </p>
             <div className={styles.searchFilters}>
               <div className={styles.searchInput}>
-                <input 
-                  type="text" 
-                  placeholder="Buscar" 
+                <input
+                  type="text"
+                  placeholder="Buscar"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -151,16 +151,17 @@ function Hospedajes() {
               {/* Dropdown Municipios */}
               <div className={styles.filterButton}>
                 <button onClick={() => setShowMunicipios(!showMunicipios)}>
-                  {selectedMunicipio 
-                    ? municipios.find(m => m.id === selectedMunicipio)?.nombre 
+                  {selectedMunicipio
+                    ? municipios.find(m => m.id === selectedMunicipio)?.nombre
                     : "Municipios"
                   } <span>❯</span>
                 </button>
                 {showMunicipios && (
                   <div className={styles.dropdown}>
-                    {municipios.map((municipio) => (
-                      <div 
-                        key={municipio.id}
+                    {municipios.map((municipio, index) => (
+                      <div
+                        // CORRECCIÓN 1: Usar index si municipio.id es nulo/undefined
+                        key={municipio.id ?? index}
                         className={styles.dropdownItem}
                         onClick={() => handleMunicipioSelect(municipio.id)}
                       >
@@ -173,20 +174,21 @@ function Hospedajes() {
 
               {/* Dropdown Pueblos */}
               <div className={styles.filterButton}>
-                <button 
+                <button
                   onClick={() => setShowPueblos(!showPueblos)}
                   disabled={!selectedMunicipio}
                 >
-                  {selectedPueblo 
-                    ? pueblos.find(p => p.id === selectedPueblo)?.nombre 
+                  {selectedPueblo
+                    ? pueblos.find(p => p.id === selectedPueblo)?.nombre
                     : "Pueblos"
                   } <span>❯</span>
                 </button>
                 {showPueblos && pueblos.length > 0 && (
                   <div className={styles.dropdown}>
-                    {pueblos.map((pueblo) => (
-                      <div 
-                        key={pueblo.id}
+                    {pueblos.map((pueblo, index) => (
+                      <div
+                        // CORRECCIÓN 2: Usar index si pueblo.id es nulo/undefined
+                        key={pueblo.id ?? index}
                         className={styles.dropdownItem}
                         onClick={() => handlePuebloSelect(pueblo.id)}
                       >
@@ -199,7 +201,7 @@ function Hospedajes() {
 
               {/* Botón limpiar filtros */}
               {(selectedMunicipio || selectedPueblo || searchTerm) && (
-                <button 
+                <button
                   className={styles.clearButton}
                   onClick={clearFilters}
                 >
@@ -219,10 +221,14 @@ function Hospedajes() {
             </div>
           ) : (
             <div className={styles.cardsContainer}>
-              {hospedajes.map((hospedaje) => (
-                <div key={hospedaje.id} className={styles.card}>
-                  <img 
-                    src={hospedaje.imagen_principal || imagenCard} 
+              {hospedajes.map((hospedaje, index) => (
+                <div
+                  // CORRECCIÓN 3: Usar index si hospedaje.id es nulo/undefined
+                  key={hospedaje.id ?? index}
+                  className={styles.card}
+                >
+                  <img
+                    src={hospedaje.imagen_principal || imagenCard}
                     alt={hospedaje.nombre}
                     onError={(e) => e.target.src = imagenCard}
                   />
