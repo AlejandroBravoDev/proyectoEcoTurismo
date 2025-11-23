@@ -46,8 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     //lugares
-    
-    Route::post('/lugares', [LugaresController::class, 'store']);
+        Route::post('/lugares', [LugaresController::class, 'store']);
     Route::put('/lugares/{id}', [LugaresController::class, 'update']);
     Route::delete('/lugares/{id}', [LugaresController::class, 'destroy']);
 });

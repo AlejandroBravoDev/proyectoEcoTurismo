@@ -34,6 +34,13 @@ class LugaresController extends Controller{
         }
     }
     public function show($id){
+
+        $lugar = Lugares::find($id);
+        if (!$lugar) {
+            return response()->json(['message' => 'Lugar no encontrado'], 404);
+        }
+
+        return response()->json($lugar);
         try{
             $lugar = Lugares::with(['municipio', 'opiniones.usuario'])->findOrFail($id);
             $imagenes = $lugar->imagenes ?? [];

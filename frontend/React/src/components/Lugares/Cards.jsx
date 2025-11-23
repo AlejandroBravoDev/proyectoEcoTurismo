@@ -1,8 +1,9 @@
 import SearchBarStyles from "./lugares.module.css";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import defaultImage from "../../assets/img6.jpg";
 
-function Cards({ lugares, user, onEdit, onDelete }) {
+function Cards({ lugares, user, onDelete }) {
+  const navigate = useNavigate();
   const getImageUrl = (lugar) => {
     if (lugar.imagen_url) {
       return lugar.imagen_url;
@@ -13,7 +14,6 @@ function Cards({ lugares, user, onEdit, onDelete }) {
   return (
     <section className={SearchBarStyles.cardsSection}>
       <div className={SearchBarStyles.cardsContainer}>
-        {/* 👇 Mostrar tarjeta para crear lugar solo si es admin */}
         {user?.rol === "admin" && (
           <div
             className={`${SearchBarStyles.card} ${SearchBarStyles.createCard}`}
@@ -27,7 +27,6 @@ function Cards({ lugares, user, onEdit, onDelete }) {
           </div>
         )}
 
-        {/* 👇 Tarjetas normales */}
         {lugares.map((lugar) => (
           <div key={lugar.id} className={SearchBarStyles.card}>
             <img
@@ -45,7 +44,7 @@ function Cards({ lugares, user, onEdit, onDelete }) {
               {user?.rol === "admin" ? (
                 <div className={SearchBarStyles.adminButtons}>
                   <button
-                    onClick={() => onEdit(lugar.id)}
+                    onClick={() => navigate(`/editar/lugares/${lugar.id}`)}
                     className={SearchBarStyles.editButton}
                   >
                     Editar

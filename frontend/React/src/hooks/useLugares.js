@@ -4,7 +4,7 @@ import {
   getLugares,
   getMunicipios,
   deleteLugar,
-} from "../services/lugaresService";
+} from "../services/lugaresServices";
 
 export default function useLugares() {
   const [lugares, setLugares] = useState([]);

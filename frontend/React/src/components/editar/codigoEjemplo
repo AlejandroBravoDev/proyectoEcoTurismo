@@ -1,0 +1,100 @@
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const API = "http://localhost:8000/api";
+
+function EditorUniversal() {
+  const { tipo, id } = useParams(); // "lugar", "hospedaje", "usuario"
+  const [data, setData] = useState(null);
+
+  // Cargar los datos según el tipo
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get(`${API}/${tipo}s/${id}`);
+      setData(res.data);
+    };
+    fetchData();
+  }, [tipo, id]);
+
+  if (!data) return <p>Cargando...</p>;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    await axios.put(`${API}/${tipo}s/${id}`, data);
+
+    alert(`${tipo} actualizado correctamente`);
+  };
+
+  // 🔥 Diferentes formularios según el tipo
+  const renderFormulario = () => {
+    switch (tipo) {
+      case "lugar":
+        return (
+          <>
+            <label>Título</label>
+            <input
+              value={data.titulo}
+              onChange={(e) => setData({ ...data, titulo: e.target.value })}
+            />
+
+            <label>Descripción</label>
+            <textarea
+              value={data.descripcion}
+              onChange={(e) =>
+                setData({ ...data, descripcion: e.target.value })
+              }
+            />
+          </>
+        );
+
+      case "hospedaje":
+        return (
+          <>
+            <label>Nombre</label>
+            <input
+              value={data.nombre}
+              onChange={(e) => setData({ ...data, nombre: e.target.value })}
+            />
+
+            <label>Ubicación</label>
+            <input
+              value={data.ubicacion}
+              onChange={(e) => setData({ ...data, ubicacion: e.target.value })}
+            />
+          </>
+        );
+
+      case "usuario":
+        return (
+          <>
+            <label>Nombre</label>
+            <input
+              value={data.nombre}
+              onChange={(e) => setData({ ...data, nombre: e.target.value })}
+            />
+
+            <label>Email</label>
+            <input
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
+            />
+          </>
+        );
+
+      default:
+        return <p>Tipo inválido</p>;
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h1>Editando {tipo}</h1>
+      {renderFormulario()}
+      <button type="submit">Guardar cambios</button>
+    </form>
+  );
+}
+
+export default EditorUniversal;
