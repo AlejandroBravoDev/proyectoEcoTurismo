@@ -83,6 +83,13 @@ class LugaresController extends Controller{
         }
     }
 
+    public function update(Request $request, $id){
+        $lugar = Lugares::findOrFail($id);
+
+        $lugar->update($request->all());
+        return response()->json(['lugar' => $lugar], 200);
+    }
+
     public function destroy($id){
         
         $lugar = Lugar::findOrFail($id);

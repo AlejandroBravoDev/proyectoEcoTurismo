@@ -1,21 +1,25 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
-import Header from "../header/index";
-import Footer from "../footer/index";
-import "../panelAdmin/tailwind.css";
 import Lugares from "../../pages/Lugares";
+import "../panelAdmin/tailwind.css";
+import Swal from "sweetalert2";
 
 function Editar() {
+  //se extraen los datos de la url
   const { tipo, id } = useParams();
+
+  //se definen las variables donde van los datos
   const [data, setData] = useState(null);
+
+  //se definen las variables que van a hacer la carga
   const [loading, setLoading] = useState(true);
 
   //states para que los campos sean editables
   const [nombre, setNombre] = useState(Lugares.nombre || "");
   const [descripcion, setDescripcion] = useState(Lugares.descripcion || "");
 
+  //defino los endpoints que se van a usar en cualquier caso
   const endpoints = {
     lugares: `http://localhost:8000/api/lugares/${id}`,
     hospedaje: `http://localhost:8000/api/hospedajes/${id}`,
@@ -24,6 +28,7 @@ function Editar() {
 
   const endpoint = endpoints[tipo];
 
+  //useEffect para traer los datos de la DB con axios
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,14 +48,51 @@ function Editar() {
     fetchData();
   }, [endpoint]);
 
+  //useEffect para acutalizar los datos editados
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.put(
+        endpoint,
+        { nombre, descripcion },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      Swal.fire({
+        title: "Cambios guardados",
+        text: `el ${tipo} se actualizó correctamente`,
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "green",
+      });
+    } catch (err) {
+      console.error(err);
+      alert("error al editar los datos");
+    }
+  };
+
+  //carga
+
   if (loading) return <p>cargando...</p>;
-  if (!data) return <p>No se pudo encontrar el {tipo}</p>;
+  if (!data)
+    return Swal.fire({
+      title: "Error",
+      text: "Error al cargar los datos",
+      icon: "error",
+    });
 
   return (
     <>
-      <Header />
-      <div className="w-full h-full flex flex-row items-center justify-evenly py-20">
-        <form className="rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-3xl h-145 bg-gray-150 p-8 flex flex-col gap-5">
+      <div className="w-full h-full flex flex-row items-center justify-evenly py-10 bg-rgba(0,0,0,0.05)">
+        <form
+          onSubmit={handleUpdate}
+          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-3xl h-160 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
+        >
           <h1 className="text-2xl font-bold text-[#60a244]">
             Editando {data.nombre}
           </h1>
@@ -60,6 +102,7 @@ function Editar() {
           <input
             type="text"
             name="nombre"
+            className="border-1 w-110 h-10 border-[#555] rounded-lg"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
           />
@@ -70,7 +113,7 @@ function Editar() {
           <textarea
             type="text"
             name="nombre"
-            className="h-25"
+            className="w-110 h-35 border-1 border-[#555] rounded-lg"
             value={descripcion}
             onChange={(e) => setDescripcion(e.target.value)}
           />
@@ -88,13 +131,36 @@ function Editar() {
               />
             ))}
           </div>
+
+          <button
+            type="submit"
+            className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6"
+          >
+            Completar edición
+          </button>
         </form>
         {/*resultado de la edición*/}
-        <div className="w-lg shadow-[0_0_20px_rgba(0,0,0,0.05)] h-145 rounded-2xl p-8">
-          <h1 className="text-2xl font-bold text-[#60a244]">resultado</h1>
+        <div className="w-lg shadow-[0_0_20px_rgba(0,0,0,0.05)] h-160 rounded-xl p-8 bg-white flex flex-col text-start items-center justify-center">
+          {/* tarjeta en la que se va a ver lo editado */}
+          <div className="w-80 bg-[#f9f9f9] rounded-2xl flex flex-col items-center py-5 gap-4">
+            <img
+              src=""
+              alt="Imagen"
+              className="mt-4 mx-auto w-5/6 h-50 object-cover rounded-2xl border-1"
+            />
+
+            <h1 className="text-2xl font-bold ">{nombre}</h1>
+
+            <p className="text-[.9rem] text-[#555] w-5/6 text-center">
+              {descripcion}
+            </p>
+
+            <button className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6">
+              Ver Detalles
+            </button>
+          </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

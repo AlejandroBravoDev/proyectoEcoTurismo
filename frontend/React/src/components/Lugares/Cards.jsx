@@ -44,7 +44,7 @@ function Cards({ lugares, user, onDelete }) {
               {user?.rol === "admin" ? (
                 <div className={SearchBarStyles.adminButtons}>
                   <button
-                    onClick={() => navigate(`/editar/lugares/${lugar.id}`)}
+                    onClick={() => navigate(`/pages/lugares/${lugar.id}`)}
                     className={SearchBarStyles.editButton}
                   >
                     Editar
