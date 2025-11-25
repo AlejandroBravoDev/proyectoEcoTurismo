@@ -9,6 +9,7 @@ import VerHospedajes from "./components/ver-hospedajes/ver-hospedajes.jsx";
 import Login from "./components/login/login.jsx";
 import Admin from "./pages/Admin.jsx";
 
+
 function Rutas() {
   return (
     <Routes>
@@ -19,6 +20,7 @@ function Rutas() {
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
       <Route path="/hospedajes" element={<Hospedajes />} />
+      <Route path="/admin" element={<Admin />} />
       // CÓDIGO ORIGINAL (Ruta estática)
 <Route path="/verHospedajes" element={<VerHospedajes />} />
 
