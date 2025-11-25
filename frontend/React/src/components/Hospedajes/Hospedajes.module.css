@@ -103,6 +103,7 @@ body {
 }
 
 .filterButton {
+  position: relative;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px 20px;
@@ -116,8 +117,60 @@ body {
   color: #555;
 }
 
+.filterButton button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
 .filterButton span {
   font-weight: bold;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.dropdownItem {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdownItem:hover {
+  background-color: #f0f0f0;
+}
+
+.clearButton {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.clearButton:hover {
+  background-color: #c0392b;
 }
 
 .cardsSection {
@@ -134,10 +187,10 @@ body {
 }
 
 .cardsContainer {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
-  flex-wrap: wrap;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
   margin-top: 0;
@@ -147,7 +200,7 @@ body {
   background-color: #f9f9f9;
   border-radius: 15px;
   overflow: hidden;
-  width: 320px;
+  width: 100%;
   text-align: center;
   padding-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -193,6 +246,20 @@ body {
   background-color: #42702f;
 }
 
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.noResults {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.1rem;
+  color: #999;
+}
+
 @media (max-width: 1024px) {
   .heroSection {
     height: 400px;
@@ -213,24 +280,27 @@ body {
   }
 
   .cardsContainer {
+    grid-template-columns: repeat(2, 1fr);
     max-width: 800px;
     gap: 20px;
   }
 
   .card {
-    width: 30%;
-    min-width: 250px;
+    width: 100%;
   }
+  
   .detailsButton {
     margin-top: 10px;
   }
 }
+
 @media (max-width: 768px) {
   .heroSection {
     margin-top: 80px;
     height: 550px;
     padding-top: 20px;
   }
+  
   .searchContainer {
     padding: 30px 20px;
     border-radius: 80px 80px 0 0;
@@ -239,6 +309,7 @@ body {
   .searchContainer h2 {
     font-size: 1.8rem;
   }
+  
   .searchFilters {
     flex-direction: column;
     width: 95%;
@@ -256,28 +327,27 @@ body {
     justify-content: space-between;
     order: 2;
   }
+  
   .cardsContainer {
+    grid-template-columns: repeat(2, 1fr);
     padding: 0 15px;
     max-width: 600px;
-    flex-direction: column;
-    align-items: center;
     gap: 20px;
   }
 
   .card {
-    width: 90%;
-    min-width: 280px;
-    max-width: 350px;
-    padding-bottom: 15px;
+    width: 100%;
   }
 
   .card p {
     min-height: auto;
   }
+  
   .detailsButton {
     margin-top: 10px;
   }
 }
+
 @media (max-width: 480px) {
   .heroSection {
     height: 500px;
@@ -298,13 +368,13 @@ body {
   }
 
   .cardsContainer {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
   }
 
   .card {
-    width: 90%;
+    width: 100%;
     max-width: 350px;
+    margin: 0 auto;
   }
 
   .card img {
@@ -314,7 +384,8 @@ body {
   .card h3 {
     font-size: 1.2rem;
   }
+  
   .detailsButton {
-    margin-top: 10px;
+    margin-top: 2rem;
   }
 }
