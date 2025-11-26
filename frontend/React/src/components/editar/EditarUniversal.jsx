@@ -91,7 +91,7 @@ function Editar() {
       <div className="w-full h-full flex flex-row items-center justify-evenly py-10 bg-rgba(0,0,0,0.05)">
         <form
           onSubmit={handleUpdate}
-          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-3xl h-160 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
+          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-170 bg-gray-150 p-8 flex flex-col gap-5 flex-wrap bg-white"
         >
           <h1 className="text-2xl font-bold text-[#60a244]">
             Editando {data.nombre}
@@ -102,22 +102,20 @@ function Editar() {
           <input
             type="text"
             name="nombre"
-            className="border-1 w-110 h-10 border-[#555] rounded-lg"
+            className="shadow-[0_0_20px_rgba(0,0,0,0.3)] p-3 w-110 h-10 rounded-lg"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
           />
-
-          <label htmlFor="nombre" className="font-semibold text-[#60a244]">
+          <label htmlFor="nombre" className=" font-semibold text-[#60a244]">
             Descripción
           </label>
           <textarea
             type="text"
             name="nombre"
-            className="w-110 h-35 border-1 border-[#555] rounded-lg"
+            className="shadow-[0_0_20px_rgba(0,0,0,0.3)] p-3 w-110 h-38 bg-white border-[#555] rounded-lg"
             value={descripcion}
             onChange={(e) => setDescripcion(e.target.value)}
           />
-
           <label className="font-semibold text-[#60a244]">
             imagen principal
           </label>
@@ -138,9 +136,17 @@ function Editar() {
           >
             Completar edición
           </button>
+
+          <label htmlFor="" className="font-semibold text-[#60a244] pt-13">
+            Imagen de la tarjeta
+          </label>
+          <input
+            type="file"
+            className="shadow-[0_0_20px_rgba(0,0,0,0.3)] p-3 w-xs h-40 rounded-lg"
+          />
         </form>
         {/*resultado de la edición*/}
-        <div className="w-lg shadow-[0_0_20px_rgba(0,0,0,0.05)] h-160 rounded-xl p-8 bg-white flex flex-col text-start items-center justify-center">
+        <div className="w-2lg shadow-[0_0_20px_rgba(0,0,0,0.05)] h-160 rounded-xl p-8 bg-white flex flex-col text-start items-center justify-center">
           {/* tarjeta en la que se va a ver lo editado */}
           <div className="w-80 bg-[#f9f9f9] rounded-2xl flex flex-col items-center py-5 gap-4">
             <img
@@ -164,5 +170,4 @@ function Editar() {
     </>
   );
 }
-
 export default Editar;
