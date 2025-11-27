@@ -8,7 +8,8 @@ import Hospedajes from "./components/Hospedajes/Hospedajes.jsx";
 import VerHospedajes from "./components/ver-hospedajes/ver-hospedajes.jsx";
 import Login from "./components/login/login.jsx";
 import Admin from "./pages/Admin.jsx";
-
+import AdminUsers from "./pages/AdminUsers.jsx";
+import EditarUsuario from "./pages/EditarUsuario.jsx";
 
 function Rutas() {
   return (
@@ -20,13 +21,10 @@ function Rutas() {
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
       <Route path="/hospedajes" element={<Hospedajes />} />
+      <Route path="/verHospedajes/:id" element={<VerHospedajes />} />
       <Route path="/admin" element={<Admin />} />
-      // CÓDIGO ORIGINAL (Ruta estática)
-<Route path="/verHospedajes" element={<VerHospedajes />} />
-
-// CÓDIGO CORREGIDO (Ruta dinámica)
-<Route path="/verHospedajes/:id" element={<VerHospedajes />} />
-      <Route path="/admin" element={<Admin />} />
+      <Route path="/adminUsuarios" element={<AdminUsers />} />
+      <Route path="/admin/usuarios/:id" element={<EditarUsuario />} />
     </Routes>
   );
 }

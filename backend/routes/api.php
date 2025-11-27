@@ -11,14 +11,20 @@ use App\Http\Controllers\favoritosController;
 use App\Http\Controllers\ComentariosController;
 use App\Http\Controllers\PerfilController;
 
-/* Apis */
+/* Apis públicas */
 Route::get('/lugares', [LugaresController::class, 'index']);
 Route::get('/lugares/{id}', [LugaresController::class, 'show']);
 Route::get('/hospedajes', [HospedajeController::class, 'index']);
+Route::get('/hospedajes/{id}', [HospedajeController::class, 'show']);
 Route::get('/municipios', [MunicipioController::class, 'index']);
-Route::get('/usuario', [UsuarioController::class, 'index']);
 Route::get('/favoritos', [favoritosController::class, 'index']);
 Route::get('/comentarios', [ComentariosController::class, 'index']);
+
+// TEMPORAL: Rutas de usuarios sin auth para probar
+Route::get('/usuarios', [UsuarioController::class, 'index']);
+Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
+Route::post('/usuarios/{id}', [UsuarioController::class, 'update']);
+Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -38,10 +44,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/perfil', [PerfilController::class, 'show']);
     Route::post('/perfil/update', [PerfilController::class, 'update']);
     Route::post('/comentarios', [ComentariosController::class, 'store']);
-    Route::delete('comentarios/{comentario}', [ComentariosController::class, 'destroy'])->middleware('auth:sanctum');
     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
     Route::post('/favoritos', [favoritosController::class, 'store']);
     Route::delete('/favoritos/{id}', [favoritosController::class, 'destroy']);
     Route::get('/favoritos/check/{lugarId}', [favoritosController::class, 'check']);
+    
     Route::post('/logout', [AuthController::class, 'logout']);
 });

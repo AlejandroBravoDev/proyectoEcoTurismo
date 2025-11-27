@@ -1,76 +1,122 @@
-// frontend/React/src/pages/AdminUsers.jsx
-
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-// Supongo que tienes un componente de diseño o layout para el Admin
-// Reemplaza 'AdminLayout' con el nombre de tu componente de layout si es diferente (ej. PanelAdmin)
-import AdminLayout from '../components/admin/Admin.jsx'; // O el componente que uses para la estructura base del admin
-
-// Supongo que tienes un componente de tarjeta que puedes reutilizar
-import AdminCard from '../components/admin/AdminCard.jsx'; // O el nombre del componente de tarjeta para Hospedajes/Lugares
+import Header from '../components/header';
+import Footer from '../components/footer';
+import styles from '../components/Hospedajes/Hospedajes.module.css';
+import defaultAvatar from '../assets/img4.jpg'; // Imagen por defecto
 
 const AdminUsers = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+  const API_URL = 'http://127.0.0.1:8000/api';
 
-    const fetchUsers = async () => {
-        try {
-            // Asegúrate de usar la URL correcta de tu backend Laravel
-            const response = await axios.get('http://localhost:8000/api/users', {
-                // Aquí podrías necesitar enviar el token de autenticación (Sanctum)
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}` // Asegúrate de que tu token esté guardado aquí
-                }
-            });
-            setUsers(response.data.users);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error al obtener los usuarios:', error);
-            setLoading(false);
-            // Manejo de errores: por ejemplo, redirigir al login si no está autorizado
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/usuarios`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
-    };
-
-    const handleNavigateToEdit = (userId) => {
-        // Esta ruta la definiremos más tarde
-        navigate(`/admin/users/edit/${userId}`);
-    };
-
-    if (loading) {
-        return <AdminLayout>Cargando usuarios...</AdminLayout>;
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setUsers(data.data);
+      }
+    } catch (error) {
+      console.error('Error al cargar usuarios:', error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return (
-        <AdminLayout>
-            <div className="admin-content">
-                <h2>Administración de Usuarios</h2>
-                <div className="card-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
-                    {users.length > 0 ? (
-                        users.map((user) => (
-                            // **Aquí reutilizamos el componente de tarjeta existente**
-                            <AdminCard 
-                                key={user.id}
-                                title={user.name}
-                                description={user.email}
-                                imageUrl={user.profile_photo_url || '/default-profile.png'} // Usa la URL de la foto de perfil o una por defecto
-                                buttonText="Ver Perfil"
-                                onButtonClick={() => handleNavigateToEdit(user.id)}
-                            />
-                        ))
-                    ) : (
-                        <p>No hay usuarios registrados.</p>
-                    )}
-                </div>
+  const handleViewProfile = (userId) => {
+    navigate(`/admin/usuarios/${userId}`);
+  };
+
+  const filteredUsers = users.filter(user =>
+    user.nombre_completo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <>
+      <Header />
+      
+      <div className={styles.mainContainer}>
+        <div className={styles.heroSection} style={{ 
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          height: '300px'
+        }}>
+          <div className={styles.searchContainer} style={{ padding: '40px 60px' }}>
+            <h2>Administrar Usuarios</h2>
+            <p>Gestiona los usuarios registrados en la plataforma</p>
+            
+            <div className={styles.searchFilters}>
+              <div className={styles.searchInput}>
+                <input 
+                  type="text" 
+                  placeholder="Buscar por nombre o correo" 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button>
+                  <i className="fas fa-search"></i>
+                </button>
+              </div>
             </div>
-        </AdminLayout>
-    );
+          </div>
+        </div>
+
+        <div className={styles.cardsSection}>
+          {loading ? (
+            <div className={styles.loading}>Cargando usuarios...</div>
+          ) : filteredUsers.length === 0 ? (
+            <div className={styles.noResults}>
+              {searchTerm ? 'No se encontraron usuarios' : 'No hay usuarios registrados'}
+            </div>
+          ) : (
+            <div className={styles.cardsContainer}>
+              {filteredUsers.map((user) => (
+                <div key={user.id} className={styles.card}>
+                  <img 
+                    src={user.avatar_url || defaultAvatar} 
+                    alt={user.nombre_completo}
+                    onError={(e) => e.target.src = defaultAvatar}
+                    style={{ borderRadius: '50%', width: '150px', height: '150px', objectFit: 'cover' }}
+                  />
+                  <div className={styles.cardContent}>
+                    <h3>{user.nombre_completo}</h3>
+                    <p style={{ minHeight: 'auto', marginBottom: '10px' }}>
+                      <strong>Email:</strong> {user.email}
+                    </p>
+                    <p style={{ minHeight: 'auto', fontSize: '0.85rem', color: '#999' }}>
+                      Registrado: {new Date(user.created_at).toLocaleDateString()}
+                    </p>
+                    <button 
+                      className={styles.detailsButton}
+                      onClick={() => handleViewProfile(user.id)}
+                    >
+                      Ver Perfil
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <Footer />
+    </>
+  );
 };
 
 export default AdminUsers;
