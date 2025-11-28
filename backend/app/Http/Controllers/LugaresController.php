@@ -97,4 +97,39 @@ class LugaresController extends Controller{
 
         return response()->json(['message' => 'Lugar eliminado'], 200);
     }
+
+    public function store(Request $request){
+        dd($request->all());
+        
+        $request->validate([
+            'nombre' => 'required|string',
+            'descripcion' => 'required|string',
+            'municipio_id' => 'required|exists:municipios,id',
+            'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096'
+        ]);
+
+        $imagenesGuardadas = [];
+
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $img) {
+                $path = $img->store('lugares', 'public');
+                $imagenesGuardadas[] = $path;
+            }
+        }
+
+        $lugar = Lugares::create([
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'coordenadas' => $request->coordenadas,
+            'municipio_id' => $request->municipio_id,
+            'imagenes' => $request->imagenes,
+            'ubicacion' => $request->ubicacion,
+        ]);
+
+        return response()->json([
+            'message' => 'Lugar creado correctamente',
+            'data' => $lugar
+        ], 201);
+    }
+
 }

@@ -13,6 +13,8 @@ import PerfilUser from "./pages/PerfilUser.jsx";
 import Lugares from "./pages/Lugares.jsx";
 import VerLugares from "./pages/verLugares.jsx";
 import Editar from "./pages/AdminEditar.jsx";
+// import Crear from "./components/adminActions/crear.jsx";
+import AdminCrearPage from "./pages/AdminCrear";
 
 function Rutas() {
   return (
@@ -26,6 +28,10 @@ function Rutas() {
       <Route path="/hospedajes" element={<Hospedajes />} />
       <Route path="/verHospedajes" element={<VerHospedajes />} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/admin/crear/:tipo" element={<AdminCrearPage />} />
+      <Route path="/admin/crear" element={<AdminCrearPage />} />
+      {/* <Route path="/crear/:tipo" element={<Crear />} />
+      <Route path="/crear" element={<Crear />} /> */}
       /*ruta dinamica para editar lugares, hospedajes o usuarios*/
       <Route path="/pages/:tipo/:id" element={<Editar />} />
     </Routes>

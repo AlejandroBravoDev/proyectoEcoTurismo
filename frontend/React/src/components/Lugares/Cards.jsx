@@ -14,17 +14,18 @@ function Cards({ lugares, user, onDelete }) {
   return (
     <section className={SearchBarStyles.cardsSection}>
       <div className={SearchBarStyles.cardsContainer}>
+        {/*IMPORTANTE: Esto lo tengo que agregar a las tarjetas de los hospedajes de valen*/}
         {user?.rol === "admin" && (
-          <div
-            className={`${SearchBarStyles.card} ${SearchBarStyles.createCard}`}
+          <Link
+            to="/admin/crear/lugar"
+            className={`${SearchBarStyles.card} ${SearchBarStyles.createCard} ${SearchBarStyles.createLink}`}
+            role="button"
           >
-            <Link to="/crear-lugar" className={SearchBarStyles.createLink}>
-              <div className={SearchBarStyles.createContent}>
-                <span className={SearchBarStyles.plusIcon}>＋</span>
-                <h3>Crear nuevo lugar</h3>
-              </div>
-            </Link>
-          </div>
+            <div className={SearchBarStyles.createContent}>
+              <span className={SearchBarStyles.plusIcon}>＋</span>
+              <h3>Crear nuevo lugar</h3>
+            </div>
+          </Link>
         )}
 
         {lugares.map((lugar) => (

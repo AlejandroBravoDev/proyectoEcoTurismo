@@ -9,39 +9,27 @@ function CardsAdmin() {
       <div className={adminStyles.cardsContainer}>
         <div className={adminStyles.card}>
           <img src={img1} alt="" className={adminStyles.img} />
-          <h3>Crear</h3>
+          <h3>Crear Lugar</h3>
           <p>Crea un lugar</p>
-          <Link to="/crearLugar">
+          <Link to="/admin/crear/lugares">
             <button className={adminStyles.button}>Crear lugar</button>
           </Link>
         </div>
         <div className={adminStyles.card}>
           <img src={img1} alt="" className={adminStyles.img} />
-          <h3>Titulo</h3>
-          <p>Lorem ipsum dolor dicta. Porro fuga saepe corporis</p>
-          <Link to="/verLugares">
-            <button className={adminStyles.button}>Editar</button>
+          <h3>Crear Hospedaje</h3>
+          <p>Agregar un nuevo hospedaje</p>
+          <Link to="/admin/crear/hospedaje">
+            <button className={adminStyles.button}>Crear hospedaje</button>
           </Link>
-          <button
-            className={adminStyles.button}
-            style={{ backgroundColor: "red" }}
-          >
-            Eliminar
-          </button>
         </div>
         <div className={adminStyles.card}>
           <img src={img1} alt="" className={adminStyles.img} />
-          <h3>Titulo</h3>
-          <p>Lorem ipsum dolor dicta. Porro fuga saepe corporis</p>
-          <Link to="/verLugares">
-            <button className={adminStyles.button}>Editar</button>
+          <h3>Crear Usuario</h3>
+          <p>Agregar un nuevo usuario</p>
+          <Link to="/admin/crear/usuario">
+            <button className={adminStyles.button}>Crear usuario</button>
           </Link>
-          <button
-            className={adminStyles.button}
-            style={{ backgroundColor: "red" }}
-          >
-            Eliminar
-          </button>
         </div>
       </div>
     </section>

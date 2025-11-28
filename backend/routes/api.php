@@ -49,4 +49,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/lugares', [LugaresController::class, 'store']);
     Route::put('/lugares/{id}', [LugaresController::class, 'update']);
     Route::delete('/lugares/{id}', [LugaresController::class, 'destroy']);
+
+    //hospedajes
+    Route::post('/hospedajes', [HospedajeController::class, 'store']);
+    Route::put('/hospedajes/{id}', [HospedajeController::class, 'update']);
+    Route::delete('/hospedajes/{id}', [HospedajeController::class, 'destroy']);
+
+     // Usuarios (si el admin puede crear usuarios)
+    Route::post('/usuario', [UsuarioController::class, 'store']);
+    Route::put('/usuario/{id}', [UsuarioController::class, 'update']);
+    Route::delete('/usuario/{id}', [UsuarioController::class, 'destroy']);
+
 });
