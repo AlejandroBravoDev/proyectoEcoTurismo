@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/header';
 import Footer from '../components/footer';
-import styles from '../components/Hospedajes/Hospedajes.module.css';
-import defaultAvatar from '../assets/img4.jpg'; // Imagen por defecto
+import styles from '../components/Hospedajes/admin.module.css';
+import defaultAvatar from '../assets/img4.jpg';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -26,7 +26,7 @@ const AdminUsers = () => {
         }
       });
       const data = await response.json();
-      
+
       if (data.success) {
         setUsers(data.data);
       }
@@ -49,32 +49,37 @@ const AdminUsers = () => {
   return (
     <>
       <Header />
-      
+
       <div className={styles.mainContainer}>
-        <div className={styles.heroSection} style={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          height: '300px'
-        }}>
-          <div className={styles.searchContainer} style={{ padding: '40px 60px' }}>
-            <h2>Administrar Usuarios</h2>
-            <p>Gestiona los usuarios registrados en la plataforma</p>
-            
-            <div className={styles.searchFilters}>
-              <div className={styles.searchInput}>
-                <input 
-                  type="text" 
-                  placeholder="Buscar por nombre o correo" 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <button>
-                  <i className="fas fa-search"></i>
-                </button>
-              </div>
-            </div>
+        
+        {/* HERO */}
+        <div 
+          className={styles.heroSection}
+          style={{
+            backgroundImage: `url("https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1400&q=80")`
+          }}
+        />
+
+        {/* CAJA BLANCA FLOTANTE */}
+        <div className={styles.searchContainer}>
+          <h2>¿En dónde deseas hospedarte?</h2>
+          <p>¡Filtra los usuarios registrados o encuéntralos rápidamente!</p>
+
+          {/* BARRA DE BÚSQUEDA */}
+          <div className={styles.searchInput}>
+            <input
+              type="text"
+              placeholder="Buscar por nombre o correo"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button>
+              <i className="fas fa-search"></i>
+            </button>
           </div>
         </div>
 
+        {/* CARDS DE USUARIOS */}
         <div className={styles.cardsSection}>
           {loading ? (
             <div className={styles.loading}>Cargando usuarios...</div>
@@ -86,32 +91,39 @@ const AdminUsers = () => {
             <div className={styles.cardsContainer}>
               {filteredUsers.map((user) => (
                 <div key={user.id} className={styles.card}>
+                  
+                  {/* IMAGEN RECTANGULAR COMO EN LA MAQUETA */}
                   <img 
-                    src={user.avatar_url || defaultAvatar} 
+                    src={user.avatar_url || defaultAvatar}
                     alt={user.nombre_completo}
-                    onError={(e) => e.target.src = defaultAvatar}
-                    style={{ borderRadius: '50%', width: '150px', height: '150px', objectFit: 'cover' }}
+                    onError={(e) => (e.target.src = defaultAvatar)}
                   />
+
                   <div className={styles.cardContent}>
                     <h3>{user.nombre_completo}</h3>
-                    <p style={{ minHeight: 'auto', marginBottom: '10px' }}>
+
+                    <p>
                       <strong>Email:</strong> {user.email}
                     </p>
-                    <p style={{ minHeight: 'auto', fontSize: '0.85rem', color: '#999' }}>
+
+                    <p className={styles.date}>
                       Registrado: {new Date(user.created_at).toLocaleDateString()}
                     </p>
-                    <button 
+
+                    <button
                       className={styles.detailsButton}
                       onClick={() => handleViewProfile(user.id)}
                     >
                       Ver Perfil
                     </button>
                   </div>
+
                 </div>
               ))}
             </div>
           )}
         </div>
+
       </div>
 
       <Footer />
