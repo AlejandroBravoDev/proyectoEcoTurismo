@@ -1,8 +1,10 @@
 import SearchBarStyles from "./lugares.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import defaultImage from "../../assets/img6.jpg";
 
-function Cards({ lugares, user, onEdit, onDelete }) {
+function Cards({ lugares, user, onDelete }) {
+  const navigate = useNavigate();
+
   const getImageUrl = (lugar) => {
     if (lugar.imagen_url) {
       return lugar.imagen_url;
@@ -10,24 +12,28 @@ function Cards({ lugares, user, onEdit, onDelete }) {
     return defaultImage;
   };
 
+  const handleDelete = (lugarId) => {
+    // Llamar la función onDelete que viene del componente padre
+    // Esta función debería abrir el modal y guardar el ID
+    onDelete(lugarId);
+  };
+
   return (
     <section className={SearchBarStyles.cardsSection}>
       <div className={SearchBarStyles.cardsContainer}>
-        {/* 👇 Mostrar tarjeta para crear lugar solo si es admin */}
         {user?.rol === "admin" && (
-          <div
-            className={`${SearchBarStyles.card} ${SearchBarStyles.createCard}`}
+          <Link
+            to="/admin/crear/lugar"
+            className={`${SearchBarStyles.card} ${SearchBarStyles.createCard} ${SearchBarStyles.createLink}`}
+            role="button"
           >
-            <Link to="/crear-lugar" className={SearchBarStyles.createLink}>
-              <div className={SearchBarStyles.createContent}>
-                <span className={SearchBarStyles.plusIcon}>＋</span>
-                <h3>Crear nuevo lugar</h3>
-              </div>
-            </Link>
-          </div>
+            <div className={SearchBarStyles.createContent}>
+              <span className={SearchBarStyles.plusIcon}>＋</span>
+              <h3>Crear nuevo lugar</h3>
+            </div>
+          </Link>
         )}
 
-        {/* 👇 Tarjetas normales */}
         {lugares.map((lugar) => (
           <div key={lugar.id} className={SearchBarStyles.card}>
             <img
@@ -45,13 +51,13 @@ function Cards({ lugares, user, onEdit, onDelete }) {
               {user?.rol === "admin" ? (
                 <div className={SearchBarStyles.adminButtons}>
                   <button
-                    onClick={() => onEdit(lugar.id)}
+                    onClick={() => navigate(`/pages/lugares/${lugar.id}`)}
                     className={SearchBarStyles.editButton}
                   >
                     Editar
                   </button>
                   <button
-                    onClick={() => onDelete(lugar.id)}
+                    onClick={() => handleDelete(lugar.id)}
                     className={SearchBarStyles.deleteButton}
                   >
                     Eliminar

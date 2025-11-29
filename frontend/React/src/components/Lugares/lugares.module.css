@@ -150,7 +150,7 @@ body {
 }
 .card {
   background-color: #f9f9f9;
-  border-radius: 15px;
+  border-radius: 16px;
   overflow: hidden;
   width: 320px;
   text-align: center;
@@ -370,7 +370,7 @@ body {
 }
 
 .createCard:hover {
-  background-color: #e6f0ff;
+  background-color: #7ccf5c3c;
   transform: scale(1.03);
 }
 
