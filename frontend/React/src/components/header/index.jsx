@@ -25,21 +25,26 @@ function Header() {
       }
 
       try {
-        const res = await axios.get("/api/perfil", {
+        const res = await axios.get(`${LARAVEL_BASE_URL}/api/perfil`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        const userAvatarPath = res.data.usuario.avatar;
+        console.log("Response de fetchAvatar:", res.data); // Log para debug
 
-        if (userAvatarPath) {
-          setAvatarUrl(`${LARAVEL_BASE_URL}/storage/${userAvatarPath}`);
-        } else {
+        if (!res.data || !res.data.usuario || !res.data.usuario.avatar_url) {
+          console.warn("No se encontró avatar_url, usando default");
           setAvatarUrl(usuarioDemo);
+          return;
         }
+
+        setAvatarUrl(res.data.usuario.avatar_url);
       } catch (err) {
-        console.warn("Fallo al cargar avatar del Header:", err);
+        console.warn(
+          "Fallo al cargar avatar del Header:",
+          err.response?.data || err.message || err
+        );
         setAvatarUrl(usuarioDemo);
         if (err.response && err.response.status === 401) {
           localStorage.removeItem("token");
@@ -115,4 +120,5 @@ function Header() {
     </div>
   );
 }
+
 export default Header;

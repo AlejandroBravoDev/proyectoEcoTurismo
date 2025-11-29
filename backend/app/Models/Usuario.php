@@ -7,8 +7,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash; 
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Comentario; 
+use App\Models\Comentarios; 
 use App\Models\Favorito; 
+use Illuminate\Support\Facades\Storage; 
 
 class Usuario extends Authenticatable 
 {
@@ -32,15 +33,32 @@ class Usuario extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
     }
     
-    // 3. Relaciones
+    
+    public function getAvatarUrlAttribute(): string
+    {
+        if (!$this->avatar) {
+            return asset('assets/usuarioDemo.png'); 
+        }
+        return Storage::disk('s3')->url($this->avatar); 
+    }
+    
+    public function getBannerUrlAttribute(): string
+    {
+        if (!$this->banner) {
+            return asset('assets/img4.jpg'); 
+        }
+        return Storage::disk('s3')->url($this->banner);
+    }
+    
     public function comentarios()
     {
-        return $this->hasMany(Comentario::class, 'usuario_id');
+        return $this->hasMany(Comentarios::class, 'usuario_id');
     }
 
     public function favoritos()
@@ -52,6 +70,4 @@ class Usuario extends Authenticatable
     {
         return $this->rol === 'admin';
     }
-
-    
 }

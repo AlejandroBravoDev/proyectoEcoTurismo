@@ -5,6 +5,7 @@ import Footer from "../footer";
 import fondoHospedajes from "../../assets/img4.jpg";
 import imagenCard from "../../assets/img4.jpg";
 import { Link } from "react-router-dom";
+import useAuthRedirect from "../../hooks/useAuthRedirect";
 
 const hospedajesData = [
   {
@@ -31,6 +32,8 @@ const hospedajesData = [
 ];
 
 function Hospedajes() {
+  useAuthRedirect();
+
   return (
     <>
       <Header />

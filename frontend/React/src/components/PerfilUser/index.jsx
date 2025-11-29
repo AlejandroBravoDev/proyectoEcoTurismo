@@ -5,10 +5,15 @@ import axios from "axios";
 // IMAGENES POR DEFECTO
 import placeholderFotoUsuario from "../../assets/usuarioDemo.png";
 import bannerFondo from "../../assets/img4.jpg";
+// ICONOS
+import {
+  FaHeart,
+  FaMapMarkerAlt,
+  FaThumbsUp,
+  FaTrashAlt,
+} from "react-icons/fa";
 
-import { FaHeart, FaMapMarkerAlt } from "react-icons/fa";
-
-const LARAVEL_BASE_URL = "http://localhost:8000";
+const API_BASE = "http://localhost:8000";
 
 function PerfilUsuario() {
   const [usuario, setUsuario] = useState(null);
@@ -16,25 +21,24 @@ function PerfilUsuario() {
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({});
   const [pestanaActiva, setPestanaActiva] = useState("opiniones");
-  const [menuOpcionesAbierto, setMenuOpcionesAbierto] = useState(false);
-  const [hover, setHover] = useState(0);
-  const [rating, setRating] = useState(0);
+
   const navigate = useNavigate();
-  const getImageUrl = (path, isBanner = false) => {
-    if (path && typeof path === "string") {
-      return `${LARAVEL_BASE_URL}/storage/${path}`;
+
+  const getImageUrl = (imageUrl, isBanner = false) => {
+    if (imageUrl && typeof imageUrl === "string") {
+      return imageUrl;
     }
     return isBanner ? bannerFondo : placeholderFotoUsuario;
   };
+
   const cargarPerfil = async () => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       navigate("/login");
       return;
     }
     try {
-      const res = await axios.get("/api/perfil", {
+      const res = await axios.get(`${API_BASE}/api/perfil`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -50,12 +54,16 @@ function PerfilUsuario() {
       setCargando(false);
       setError(null);
     } catch (err) {
-      console.error("Error al cargar el perfil:", err.response || err);
+      console.error(
+        "Error al cargar el perfil:",
+        err.response?.data || err.message || err
+      );
       setError("No se pudo cargar el perfil. Por favor, inicie sesión.");
       setCargando(false);
 
-      if (err.response && err.response.status === 401) {
+      if (err.response?.status === 401) {
         localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
         navigate("/login");
       }
     }
@@ -71,6 +79,7 @@ function PerfilUsuario() {
       [e.target.name]: e.target.value,
     });
   };
+
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
@@ -93,11 +102,11 @@ function PerfilUsuario() {
       if (formData.bannerFile) {
         data.append("bannerFile", formData.bannerFile);
       }
-      data.append("_method", "PUT");
 
-      const res = await axios.post("/api/perfil/update", data, {
+      const res = await axios.post(`${API_BASE}/api/perfil/update`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -105,17 +114,19 @@ function PerfilUsuario() {
       setPestanaActiva("opiniones");
       alert("Perfil actualizado con éxito!");
     } catch (err) {
-      console.error("Error al actualizar perfil:", err.response || err);
+      console.error(
+        "Error al actualizar perfil:",
+        err.response?.data || err.message || err
+      );
       let errorMsg = "Error al actualizar. Revisa los datos.";
-      if (err.response && err.response.data && err.response.data.errors) {
+      if (err.response?.data?.message) {
+        errorMsg = err.response.data.message;
+      } else if (err.response?.data?.errors) {
         const firstErrorKey = Object.keys(err.response.data.errors)[0];
         errorMsg = err.response.data.errors[firstErrorKey][0];
       }
       alert(errorMsg);
     }
-  };
-  const alternarMenuOpciones = () => {
-    setMenuOpcionesAbierto(!menuOpcionesAbierto);
   };
 
   const activarModoEdicion = () => {
@@ -127,7 +138,7 @@ function PerfilUsuario() {
 
     if (token) {
       try {
-        await axios.post("/api/logout", null, {
+        await axios.post(`${API_BASE}/api/logout`, null, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -140,8 +151,73 @@ function PerfilUsuario() {
     }
 
     localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
     navigate("/login");
   };
+
+  const handleDeleteOpinion = async (comentarioId) => {
+    if (
+      !window.confirm("¿Estás seguro de que quieres eliminar esta opinión?")
+    ) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("No autenticado. Por favor, inicie sesión.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_BASE}/api/comentarios/${comentarioId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Opinión eliminada con éxito.");
+      cargarPerfil();
+    } catch (err) {
+      console.error(
+        "Error al eliminar opinión:",
+        err.response?.data || err.message || err
+      );
+      alert("Error al eliminar la opinión.");
+    }
+  };
+
+  // --- NUEVA FUNCIÓN: ELIMINAR FAVORITO ---
+  const handleRemoveFavorite = async (lugarId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("No autenticado. Por favor, inicie sesión.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_BASE}/api/favoritos/${lugarId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUsuario((prevUsuario) => ({
+        ...prevUsuario,
+        favoritos: prevUsuario.favoritos.filter(
+          (fav) => fav.lugar.id !== lugarId
+        ),
+      }));
+
+      alert("Lugar eliminado de favoritos.");
+    } catch (err) {
+      console.error(
+        "Error al eliminar favorito:",
+        err.response?.data || err.message || err
+      );
+      alert("Error al eliminar el lugar de favoritos.");
+    }
+  };
+  // ----------------------------------------
 
   if (cargando) {
     return <div className={styles.loading}>Cargando perfil...</div>;
@@ -153,6 +229,95 @@ function PerfilUsuario() {
 
   const totalComentarios = usuario.comentarios ? usuario.comentarios.length : 0;
   const totalFavoritos = usuario.favoritos ? usuario.favoritos.length : 0;
+  const TarjetaOpinion = ({ comentario }) => (
+    <div className={styles.tarjetaOpinion}>
+      <div className={styles.cabeceraOpinion}>
+        <div className={styles.bloqueInfoAutor}>
+          <img
+            src={getImageUrl(usuario.avatar_url)}
+            alt="Autor"
+            className={styles.fotoPequenaAutor}
+          />
+          <div className={styles.metaOpinion}>
+            <h4>{usuario.nombre_completo}</h4>
+
+            {/* ESTRELLAS DEBAJO DEL NOMBRE */}
+            <div className={styles.ratingStars}>
+              {[...Array(5)].map((star, i) => (
+                <FaHeart
+                  key={i}
+                  color={i < comentario.rating ? "#4b8236" : "#e4e5e9"}
+                />
+              ))}
+            </div>
+
+            <p className={styles.metaInfo}>
+              {comentario.created_at} • {comentario.category}
+            </p>
+          </div>
+        </div>
+
+        {usuario.id === comentario.usuario_id && (
+          <div className={styles.accionesOpinion}>
+            <button
+              className={styles.botonEliminarOpinion}
+              onClick={() => handleDeleteOpinion(comentario.id)}
+            >
+              <FaTrashAlt className={styles.iconoBasura} />
+              Eliminar
+            </button>
+          </div>
+        )}
+      </div>
+
+      <p className={styles.textoOpinion}>{comentario.contenido}</p>
+      {comentario.image_url && (
+        <img
+          src={comentario.image_url}
+          alt="Foto del comentario"
+          className={styles.imagenOpinion}
+        />
+      )}
+      {comentario.lugar && (
+        <>
+          <div className={styles.infoLugarComentario}>
+            <FaMapMarkerAlt className={styles.iconoLugarComentario} />
+            <span className={styles.nombreLugarComentario}>
+              {comentario.lugar.nombre}
+            </span>
+            <span className={styles.direccionLugarComentario}>
+              ({comentario.lugar.direccion})
+            </span>
+          </div>
+          <p className={styles.descripcionLugarOpinion}>
+            {comentario.lugar.descripcion}
+          </p>
+        </>
+      )}
+    </div>
+  );
+
+  const TarjetaItemFavorito = ({ favorito }) => (
+    <div className={styles.tarjetaItemFavorito}>
+      <img
+        src={favorito.lugar.imagen_url || bannerFondo}
+        alt={favorito.lugar.nombre}
+        className={styles.imagenItemFavorito}
+      />
+      <div className={styles.detallesItemFavorito}>
+        <h4>{favorito.lugar.nombre}</h4>
+
+        <p className={styles.descripcionLugarFavorito}>
+          {favorito.lugar.descripcion || "Descripción no disponible."}
+        </p>
+      </div>
+      <FaHeart
+        className={styles.iconoCorazonFavorito}
+        onClick={() => handleRemoveFavorite(favorito.lugar.id)}
+        title="Quitar de Favoritos"
+      />
+    </div>
+  );
 
   const renderizarContenidoPerfil = () => {
     switch (pestanaActiva) {
@@ -164,11 +329,9 @@ function PerfilUsuario() {
         }
         return (
           <div className={styles.contenedorOpiniones}>
-            <h3 className={styles.tituloSeccion}>
-              Opiniones ({totalComentarios})
-            </h3>
-            {/* Aquí va el mapeo de usuario.comentarios */}
-            <div className={styles.tarjetaOpinion}>{/* ... */}</div>
+            {usuario.comentarios.map((comentario) => (
+              <TarjetaOpinion key={comentario.id} comentario={comentario} />
+            ))}
           </div>
         );
       case "favoritos":
@@ -181,11 +344,9 @@ function PerfilUsuario() {
         }
         return (
           <div className={styles.contenedorFavoritos}>
-            <h3 className={styles.tituloSeccion}>
-              Favoritos ({totalFavoritos})
-            </h3>
-            {/* Aquí va el mapeo de usuario.favoritos */}
-            <div className={styles.tarjetaItemFavorito}>{/* ... */}</div>
+            {usuario.favoritos.map((favorito) => (
+              <TarjetaItemFavorito key={favorito.id} favorito={favorito} />
+            ))}
           </div>
         );
       case "editar":
@@ -196,22 +357,24 @@ function PerfilUsuario() {
               className={styles.formularioEdicionPerfil}
               onSubmit={handleUpdate}
             >
-              <label>Nombre</label>
+              <label htmlFor="nombre_completo">Nombre</label>
               <input
+                id="nombre_completo"
                 type="text"
                 name="nombre_completo"
                 value={formData.nombre_completo}
                 onChange={handleEditChange}
               />
-              <label>Correo</label>
+              <label htmlFor="email">Correo</label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleEditChange}
               />
 
-              <label>Foto de perfil</label>
+              <label htmlFor="profilePictureFile">Foto de perfil</label>
               <div className={styles.areaCargaArchivo}>
                 <span>
                   {formData.profilePictureFile
@@ -219,13 +382,14 @@ function PerfilUsuario() {
                     : "Agrega una nueva imagen"}
                 </span>
                 <input
+                  id="profilePictureFile"
                   type="file"
                   name="profilePictureFile"
                   className={styles.inputArchivoOculto}
                   onChange={handleFileChange}
                 />
               </div>
-              <label>Foto de portada</label>
+              <label htmlFor="bannerFile">Foto de portada</label>
               <div className={styles.areaCargaArchivo}>
                 <span>
                   {formData.bannerFile
@@ -233,6 +397,7 @@ function PerfilUsuario() {
                     : "Agrega una nueva imagen"}
                 </span>
                 <input
+                  id="bannerFile"
                   type="file"
                   name="bannerFile"
                   className={styles.inputArchivoOculto}
@@ -240,8 +405,9 @@ function PerfilUsuario() {
                 />
               </div>
 
-              <label>ID</label>
+              <label htmlFor="userId">ID</label>
               <input
+                id="userId"
                 type="text"
                 value={usuario.id}
                 readOnly
@@ -269,12 +435,14 @@ function PerfilUsuario() {
     <main className={styles.estructuraPaginaPerfil}>
       <div
         className={styles.bannerSuperior}
-        style={{ backgroundImage: `url(${getImageUrl(usuario.banner, true)})` }}
+        style={{
+          backgroundImage: `url(${getImageUrl(usuario.banner_url, true)})`,
+        }}
       ></div>
       <div className={styles.contenedorPrincipalPerfil}>
         <div className={styles.contenidoCabeceraPerfil}>
           <img
-            src={getImageUrl(usuario.avatar)}
+            src={getImageUrl(usuario.avatar_url)}
             alt="Perfil"
             className={styles.avatarPerfil}
           />

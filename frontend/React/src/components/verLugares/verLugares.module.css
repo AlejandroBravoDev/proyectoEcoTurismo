@@ -1,7 +1,9 @@
 :root {
-  --main-green: #4b8236; /* Nuevo color de marca */
+  --main-green: #4b8236;
   --light-gray: #f9f9f9;
   --text-color: #333;
+  --rating-color: #4b8236;
+  --gray-text: #666;
 }
 .pageContainer {
   padding: 0;
@@ -28,24 +30,49 @@
   margin: 0;
   flex-grow: 1;
 }
-
+.textWait {
+  text-align: center;
+  height: 450px;
+  font-size: 30px;
+  font-weight: 800;
+}
 .actionButtons {
   display: flex;
   gap: 1rem;
   flex-shrink: 0;
 }
 
-/* BOTONES MÓVILES (OCULTOS EN ESCRITORIO) */
 .mobileActionButtons {
   display: none;
 }
 
-/* SLIDER MÓVIL (OCULTO EN ESCRITORIO) */
 .mobileSlider {
   display: none;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 12px;
+  height: 400px;
 }
 
-/* Controles del Slider (Ocultos en Escritorio) */
+.sliderTrack {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.sliderItem {
+  width: 33.3333%;
+  flex-shrink: 0;
+  height: 100%;
+}
+.sliderItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .sliderControl {
   position: absolute;
   top: 50%;
@@ -58,6 +85,7 @@
   z-index: 10;
   opacity: 0;
   transition: opacity 0.3s;
+  border-radius: 50%;
 }
 
 .mobileSlider:hover .sliderControl {
@@ -66,12 +94,10 @@
 
 .prev {
   left: 10px;
-  border-radius: 50%;
 }
 
 .next {
   right: 10px;
-  border-radius: 50%;
 }
 
 .sliderDots {
@@ -98,7 +124,6 @@
   border: 1px solid white;
 }
 
-/* BOTONES GENERALES */
 .btnOutline {
   background: transparent;
   border: 1px solid var(--main-green);
@@ -122,7 +147,7 @@
   background-color: var(--main-green);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -138,7 +163,6 @@
   border: solid 1px #4b8236;
 }
 
-/* GALERÍA DE IMÁGENES (ESCRITORIO) */
 .gallery {
   display: flex;
   gap: 1rem;
@@ -172,7 +196,6 @@
   border-radius: 12px;
 }
 
-/* SECCIÓN DE INFORMACIÓN Y UBICACIÓN */
 .infoSection {
   margin-bottom: 2rem;
   padding: 0 0 1rem 0;
@@ -191,7 +214,6 @@
 .locationIcon {
   font-size: 1.5rem;
   color: var(--main-green);
-
   flex-shrink: 0;
 }
 .locationText {
@@ -200,12 +222,33 @@
 .locationText p {
   margin-top: -10px;
 }
-/* SECCIÓN DE OPINIONES Y FORMULARIO */
 
 .reviewSection {
   margin-top: 2rem;
-  padding-bottom: 2rem;
-  border-top: 1px solid #eee;
+  padding: 2rem;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.reviewSection h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.reviewSection h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.reviewFormContainer {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1.5rem;
 }
 
 .reviewForm {
@@ -216,66 +259,280 @@
 }
 
 .reviewForm textarea {
-  flex: 2;
-  height: 65px;
+  flex: 1;
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid #ccc;
-  resize: vertical;
+  resize: none;
   font-size: 1rem;
   align-self: stretch;
 }
 
 .reviewActions {
   display: flex;
-  flex: 1;
-  gap: 1rem;
   flex-direction: column;
+  gap: 0.5rem;
+  width: 200px;
+  flex-shrink: 0;
 }
 
 .reviewActions .btnOutline {
   width: 100%;
   justify-content: center;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  color: #333;
+  background-color: #f9f9f9;
 }
 
-/* Estrellas/Corazones */
+.reviewActions .btnOutline:hover {
+  background-color: #eee;
+  color: #333;
+}
+
+.categorySelectContainer {
+  position: relative;
+  width: 100%;
+}
+
+.categorySelect {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  appearance: none;
+  background-color: #fff;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.categoryArrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.ratingAndButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 1.5rem;
+}
+
+.ratingGroup {
+  display: flex;
+  flex-direction: column;
+}
+
 .heartRating {
   display: flex;
-  gap: 0.5rem;
-  margin: 1rem 0;
+  gap: 0.3rem;
+  align-items: center;
 }
 
 .heartIcon {
   cursor: pointer;
   transition: transform 0.2s;
-  color: var(--main-green);
 }
 
-.reviewSection .btnFilled {
-  margin-top: 1rem;
-  max-width: 250px;
+.ratingText {
+  font-size: 1rem;
+  color: var(--gray-text);
+  margin-left: 1rem;
 }
 
-/* OPINIONES EXISTENTES */
 .opinionsSection {
-  margin-top: 2rem;
-  border-top: 1px solid #eee;
+  margin-top: 3rem;
   padding-top: 1rem;
 }
 
+.opinionsSection h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  border-bottom: none;
+  display: block;
+  padding-bottom: 0;
+}
+
+.noComments {
+  color: var(--gray-text);
+  margin-top: -1rem;
+}
+
 .opinionCard {
-  background: white;
-  padding: 1.5rem;
+  background: #fff;
   border-radius: 8px;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: none;
+  box-shadow: none;
+  position: relative;
+}
+
+.opinionContent {
+  flex-grow: 1;
+  padding-right: 30px;
+  min-width: 0;
+}
+
+.opinionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.userAvatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 15px;
+  object-fit: cover;
+  border: none;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.userInfo h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 3px;
 }
 
 .opinionRating {
   display: flex;
-  gap: 0.3rem;
-  margin-top: 0.5rem;
+  gap: 3px;
+}
+.opinionRating svg {
+  font-size: 14px;
+}
+
+.opinionCategoryDate {
+  font-size: 13px;
+  color: var(--gray-text);
+  font-weight: normal;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+.opinionText {
+  margin: 0 0 15px 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #444;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.opinionImage {
+  width: 250px;
+  height: 200px;
+  object-fit: cover;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.commentActionsBlock {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0;
+  position: relative;
+  padding-top: 5px;
+}
+
+.likeContainer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--gray-text);
+  font-size: 1.1rem;
+}
+
+.likeButton {
+  cursor: pointer;
+  padding: 3px;
+  transition: color 0.2s;
+}
+
+.likeButton svg {
+  font-size: 1.1rem;
+}
+
+.likeCount {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.menuIcon {
+  cursor: pointer;
+  color: #999;
+  padding: 5px;
+  position: relative;
+  z-index: 20;
+}
+
+.menuIcon:hover {
+  color: #333;
+}
+
+.sideOptionsMenu {
+  position: absolute;
+  top: -5px;
+  right: 30px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 15;
+  min-width: 150px;
+  overflow: hidden;
+  padding: 5px 0;
+}
+
+.sideOptionItem {
+  display: block;
+  width: 100%;
+  padding: 8px 15px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.delete {
   color: var(--main-green);
+  font-weight: bold;
+}
+.delete:hover {
+  background: #e6ffe6;
+}
+
+.report {
+  color: #e74c3c;
+  font-weight: normal;
+}
+.report:hover {
+  background: #fdeaea;
 }
 
 h3 {
@@ -283,7 +540,7 @@ h3 {
   margin-bottom: 0.5rem;
 }
 
-/*tablet*/
+/* tablet */
 @media (max-width: 1024px) {
   .mainContent {
     max-width: 90%;
@@ -313,58 +570,19 @@ h3 {
     padding: 1rem;
     margin-top: 70px;
   }
-  /* Oculto la galeria pa transformala en un slider */
+
   .gallery {
     display: none;
   }
 
-  /* Hago visible el slider */
   .mobileSlider {
     display: block;
-    width: 100%;
-    overflow: hidden;
-    margin-top: 1rem;
-    margin-bottom: 0;
-    position: relative;
-    border-radius: 12px;
-    height: 400px;
-  }
-  .sliderTrack {
-    display: flex;
-    width: 300%;
-    height: 100%;
-    transition: transform 0.5s ease-in-out;
-  }
-  .sliderItem {
-    width: 33.3333%;
-    flex-shrink: 0;
-    height: 100%;
-  }
-  .sliderItem img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Hago visibles los controles de el slider */
-  .sliderControl {
-    opacity: 0.7;
-    padding: 0.4rem;
-  }
-
-  .mobileSlider:hover .sliderControl {
-    opacity: 1;
+    margin-bottom: 2rem;
   }
 
   .titleSection {
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 0;
-  }
-
-  .titleSection h1 {
-    font-size: 1.8rem;
-    width: 100%;
     margin-bottom: 0;
   }
 
@@ -382,50 +600,79 @@ h3 {
   }
   .mobileActionButtons .btnOutline,
   .mobileActionButtons .btnFilled {
-    flex: 1; /*cada boton ocupa la mitad de el espacio*/
+    flex: 1;
     justify-content: center;
     font-size: 1rem;
   }
 
+  .reviewSection {
+    padding: 1rem;
+  }
+
   .reviewForm {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
     width: 100%;
   }
 
   .reviewForm textarea {
-    height: 100px;
-    flex: none;
     width: 100%;
-    align-self: auto;
-    box-sizing: border-box;
+    height: 80px;
   }
 
   .reviewActions {
-    flex-direction: row;
     width: 100%;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    box-sizing: border-box;
+    flex-direction: row;
   }
 
-  .reviewActions .btnOutline {
-    flex: 1;
-    font-size: 0.85rem;
-    box-sizing: border-box;
-  }
-
-  .heartRating {
-    margin: 1rem 0 1.5rem 0;
+  .ratingAndButton {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
 
   .reviewSection .btnFilled {
     width: 100%;
     max-width: none;
-    padding: 0.8rem 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  }
+
+  .opinionCard {
+    flex-direction: column;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .commentActionsBlock {
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
+    order: -1;
+    margin-bottom: 10px;
+  }
+
+  .likeContainer {
+    order: 1;
+    margin-right: auto;
+  }
+
+  .menuIcon {
+    order: 2;
+  }
+
+  .opinionContent {
+    padding-right: 0;
+  }
+
+  .opinionImage {
+    width: 100%;
+    height: auto;
+    max-height: 250px;
+  }
+
+  .sideOptionsMenu {
+    top: 35px;
+    right: 0;
+    text-align: left;
   }
 }
 
