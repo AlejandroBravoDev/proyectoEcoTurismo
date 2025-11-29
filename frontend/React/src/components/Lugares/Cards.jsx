@@ -77,5 +77,5 @@ function Cards({ lugares, user, onDelete }) {
     </section>
   );
 }
-
+ 
 export default Cards;

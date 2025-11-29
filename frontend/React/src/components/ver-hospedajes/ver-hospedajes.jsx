@@ -22,6 +22,17 @@ function VerHospedaje() {
   const [opinions, setOpinions] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // ➤ NUEVO: Favoritos
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // ➤ NUEVO: Imagen seleccionada
+  const [_selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  // ➤ NUEVO: Tipo de visita
+  const [visitType, setVisitType] = useState("");
+  const visitOptions = ["Familia", "Amigos", "Turistas", "Trabajo", "Vacaciones"];
+
   const images = [
     { src: imgMeerkat, alt: "Suricata" },
     { src: imgLion, alt: "Leona" },
@@ -37,12 +48,31 @@ function VerHospedaje() {
     setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
   };
 
+  // ➤ NUEVO: leer imagen
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = () => {
     if (comment.trim() === "") return;
-    const newOpinion = { comment, rating };
+
+    const newOpinion = {
+      comment,
+      rating,
+      visitType,
+      imagePreview,
+    };
+
     setOpinions([...opinions, newOpinion]);
     setComment("");
     setRating(0);
+    setVisitType("");
+    setSelectedImage(null);
+    setImagePreview(null);
   };
 
   return (
@@ -53,12 +83,18 @@ function VerHospedaje() {
           <section className={styles.titleSection}>
             <h1>Casa Luz Hospedaje Campestre</h1>
             <div className={styles.actionButtons}>
-              <button className={styles.btnOutline}>Opinión</button>
-              <button className={styles.btnFilled}>
-                <FaRegHeart /> Favoritas
+              {/* ➤ FAVORITOS */}
+              <button
+                className={styles.btnFilled}
+                onClick={() => setIsFavorite(!isFavorite)}
+              >
+                {isFavorite ? <FaHeart color="red" /> : <FaRegHeart />}
+                {" "}Favoritas
               </button>
             </div>
           </section>
+
+          {/* ❗SE MANTIENE LA GALERÍA ORIGNAL */}
           <section className={styles.gallery}>
             <div className={styles.mainImage}>
               <img src={images[0].src} alt={images[0].alt} />
@@ -69,6 +105,7 @@ function VerHospedaje() {
             </div>
           </section>
 
+          {/* ❗SLIDER ORIGINAL */}
           <section className={styles.mobileSlider}>
             <div
               className={styles.sliderTrack}
@@ -105,6 +142,7 @@ function VerHospedaje() {
               ))}
             </div>
           </section>
+
           <div className={styles.mobileActionButtons}>
             <button className={styles.btnOutline}>Opinión</button>
             <button className={styles.btnFilled}>
@@ -112,6 +150,7 @@ function VerHospedaje() {
             </button>
           </div>
 
+          {/* ❗SECCIÓN ORIGINAL */}
           <section className={styles.infoSection}>
             <h3>Acerca de</h3>
             <p>
@@ -136,8 +175,12 @@ function VerHospedaje() {
             <p>Este hospedaje es cercano al Bioparque Ukumarí.</p>
           </section>
 
+          {/* ===========================================================
+              ➤ FORMULARIO DE OPINIÓN → SOLO SE AGREGA LO NECESARIO
+              =========================================================== */}
           <section className={styles.reviewSection}>
             <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
+
             <div className={styles.reviewForm}>
               <textarea
                 placeholder="Cuéntanos aquí"
@@ -145,13 +188,41 @@ function VerHospedaje() {
                 onChange={(e) => setComment(e.target.value)}
               />
               <div className={styles.reviewActions}>
-                <button className={styles.btnOutline}>
+
+                {/* ➤ INPUT DE IMAGEN REAL SIN BORRAR TU BOTÓN */}
+                <label className={styles.btnOutline}>
                   <MdAddPhotoAlternate /> Adjuntar una imagen
-                </button>
-                <button className={styles.btnOutline}>Familia ❯</button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleImageUpload}
+                  />
+                </label>
+
+                {/* ➤ SELECTOR TIPO DE VISITA */}
+                <select
+                  className={styles.btnOutline}
+                  value={visitType}
+                  onChange={(e) => setVisitType(e.target.value)}
+                >
+                  <option value="">Familia ❯</option>
+                  {visitOptions.map((opt, i) => (
+                    <option key={i} value={opt}>{opt}</option>
+                  ))}
+                </select>
               </div>
+
+              {/* ➤ VISTA PREVIA */}
+              {imagePreview && (
+                <div className={styles.previewContainer}>
+                  <p>Esta es la imagen seleccionada:</p>
+                  <img src={imagePreview} className={styles.previewImage} />
+                </div>
+              )}
             </div>
 
+            {/* CALIFICACIÓN ORIGINAL */}
             <h3>¿Cómo calificarías tu experiencia?</h3>
             <div className={styles.heartRating}>
               {[...Array(5)].map((_, index) => {
@@ -178,11 +249,15 @@ function VerHospedaje() {
                 );
               })}
             </div>
+
             <button className={styles.btnFilled} onClick={handleSubmit}>
               Enviar opinión
             </button>
           </section>
 
+          {/* ===========================================================
+              ➤ OPINIONES → SOLO SE AGREGA MOSTRAR IMAGEN + VISITA
+              =========================================================== */}
           <section className={styles.opinionsSection}>
             <h2>Opiniones</h2>
             {opinions.length === 0 ? (
@@ -190,7 +265,19 @@ function VerHospedaje() {
             ) : (
               opinions.map((op, i) => (
                 <div key={i} className={styles.opinionCard}>
+
+                  {/* imagen */}
+                  {op.imagePreview && (
+                    <img src={op.imagePreview} className={styles.opinionImage} />
+                  )}
+
+                  {/* tipo de visita */}
+                  {op.visitType && (
+                    <p><strong>Tipo de visita:</strong> {op.visitType}</p>
+                  )}
+
                   <p>{op.comment}</p>
+
                   <div className={styles.opinionRating}>
                     {[...Array(op.rating)].map((_, idx) => (
                       <FaHeart key={idx} color="#4b8236" />
