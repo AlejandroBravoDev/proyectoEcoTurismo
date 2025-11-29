@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class favoritosController extends Controller
+class FavoritosController extends Controller
 {
     public function store(Request $request)
     {

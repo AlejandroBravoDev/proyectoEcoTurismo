@@ -150,7 +150,7 @@ body {
 }
 .card {
   background-color: #f9f9f9;
-  border-radius: 15px;
+  border-radius: 16px;
   overflow: hidden;
   width: 320px;
   text-align: center;
@@ -325,4 +325,67 @@ body {
   .card h3 {
     font-size: 1.2rem;
   }
+}
+.adminButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.editButton {
+  background-color: #4b8236;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.editButton:hover {
+  background-color: #3f6c2e;
+}
+
+.deleteButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background-color: #b02a37;
+}
+.createCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #42702f;
+  background-color: #f0fff1;
+  transition: all 0.3s ease;
+}
+
+.createCard:hover {
+  background-color: #7ccf5c3c;
+  transform: scale(1.03);
+}
+
+.createContent {
+  text-align: center;
+  color: #4b8236;
+}
+
+.plusIcon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.createLink {
+  text-decoration: none;
+  color: inherit;
 }

@@ -15,7 +15,8 @@ class Lugares extends Model
         'municipio_id',
         'hoteles_cercanos',
         'recomendaciones',
-        'coordenadas'
+        'coordenadas',
+        'imagenes',
     ];
 
     protected $casts = [

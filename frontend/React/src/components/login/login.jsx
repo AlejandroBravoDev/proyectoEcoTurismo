@@ -38,7 +38,11 @@ function Login() {
       setMensaje(res.data.message); // Corregido de mensaje a message
       setFormData({ email: "", password: "" });
       setTimeout(() => {
-        navigate("/");
+        if (usuario.rol === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }, 1500);
     } catch (err) {
       console.error("Error en login:", err);
