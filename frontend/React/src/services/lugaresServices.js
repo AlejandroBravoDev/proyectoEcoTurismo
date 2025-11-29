@@ -1,4 +1,4 @@
-//archivo para peticiones http
+// archivo para peticiones http
 
 import axios from "axios";
 const API = "http://localhost:8000/api";
@@ -12,5 +12,10 @@ export const getMunicipios = () => {
 };
 
 export const deleteLugar = (id) => {
-  return axios.delete(`${API}/lugares/${id}`);
+  const token = localStorage.getItem("token");
+  return axios.delete(`${API}/lugares/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };

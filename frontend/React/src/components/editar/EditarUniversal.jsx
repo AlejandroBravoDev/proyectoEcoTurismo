@@ -120,14 +120,14 @@ function Editar() {
             imagen principal
           </label>
           <div className="flex gap-2">
-            {data.imagenes.map((img) => (
+            {data?.imagenes?.map((img) => (
               <img
                 key={img.id}
-                src={img.ruta} // ya tiene la URL completa
-                alt={data.nombre}
-                className="w-32 h-32 object-cover rounded"
+                src={img}
+                alt="Imagen del lugar"
+                className="w-20 h-20 object-cover rounded"
               />
-            ))}
+            )) || <p>No hay imágenes</p>}
           </div>
 
           <button
@@ -136,14 +136,6 @@ function Editar() {
           >
             Completar edición
           </button>
-
-          <label htmlFor="" className="font-semibold text-[#60a244] pt-13">
-            Imagen de la tarjeta
-          </label>
-          <input
-            type="file"
-            className="shadow-[0_0_20px_rgba(0,0,0,0.3)] p-3 w-xs h-40 rounded-lg"
-          />
         </form>
         {/*resultado de la edición*/}
         <div className="w-2lg shadow-[0_0_20px_rgba(0,0,0,0.05)] h-160 rounded-xl p-8 bg-white flex flex-col text-start items-center justify-center">

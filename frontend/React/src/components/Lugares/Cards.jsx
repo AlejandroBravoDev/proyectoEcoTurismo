@@ -1,9 +1,10 @@
 import SearchBarStyles from "./lugares.module.css";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import defaultImage from "../../assets/img6.jpg";
 
 function Cards({ lugares, user, onDelete }) {
   const navigate = useNavigate();
+
   const getImageUrl = (lugar) => {
     if (lugar.imagen_url) {
       return lugar.imagen_url;
@@ -11,10 +12,15 @@ function Cards({ lugares, user, onDelete }) {
     return defaultImage;
   };
 
+  const handleDelete = (lugarId) => {
+    // Llamar la función onDelete que viene del componente padre
+    // Esta función debería abrir el modal y guardar el ID
+    onDelete(lugarId);
+  };
+
   return (
     <section className={SearchBarStyles.cardsSection}>
       <div className={SearchBarStyles.cardsContainer}>
-        {/*IMPORTANTE: Esto lo tengo que agregar a las tarjetas de los hospedajes de valen*/}
         {user?.rol === "admin" && (
           <Link
             to="/admin/crear/lugar"
@@ -51,7 +57,7 @@ function Cards({ lugares, user, onDelete }) {
                     Editar
                   </button>
                   <button
-                    onClick={() => onDelete(lugar.id)}
+                    onClick={() => handleDelete(lugar.id)}
                     className={SearchBarStyles.deleteButton}
                   >
                     Eliminar

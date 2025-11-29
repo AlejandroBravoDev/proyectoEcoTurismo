@@ -34,6 +34,7 @@ export default function useLugares() {
       });
       setLugares(response.data);
     } catch (e) {
+      console.error("Error al cargar lugares:", e);
       setError("No se pudieron cargar los lugares.");
     } finally {
       setLoading(false);
@@ -45,15 +46,29 @@ export default function useLugares() {
       const response = await getMunicipios();
       setMunicipios(response.data);
     } catch (e) {
-      console.error(e);
+      console.error("Error al cargar municipios:", e);
     }
   };
 
   const eliminar = async () => {
+    if (!lugarAEliminar) {
+      console.error("No hay lugar para eliminar");
+      return;
+    }
+
     try {
+      console.log("Eliminando lugar con ID:", lugarAEliminar);
       await deleteLugar(lugarAEliminar);
+
+      // Actualizar la lista de lugares eliminando el que se borró
       setLugares((prev) => prev.filter((l) => l.id !== lugarAEliminar));
+
+      console.log("Lugar eliminado exitosamente");
+    } catch (error) {
+      console.error("Error al eliminar el lugar:", error);
+      setError("No se pudo eliminar el lugar. Por favor, intenta de nuevo.");
     } finally {
+      // Cerrar modal y limpiar estado
       setShowModal(false);
       setLugarAEliminar(null);
     }

@@ -34,6 +34,24 @@ function Lugares() {
   //se obtiene la información de el usuario que está navegando
   const storedUser = JSON.parse(localStorage.getItem("usuario"));
 
+  // Función para abrir el modal de eliminación
+  const handleOpenDeleteModal = (id) => {
+    setLugarAEliminar(id);
+    setShowModal(true);
+  };
+
+  // Función para cancelar la eliminación
+  const handleCancelDelete = () => {
+    setShowModal(false);
+    setLugarAEliminar(null); // Limpiar el ID del lugar
+  };
+
+  // Función para confirmar la eliminación
+  const handleConfirmDelete = async () => {
+    await eliminar();
+    // El modal se cierra automáticamente en la función eliminar del hook
+  };
+
   return (
     <>
       <Header />
@@ -58,10 +76,7 @@ function Lugares() {
           <Cards
             user={storedUser}
             lugares={lugares}
-            onDelete={(id) => {
-              setLugarAEliminar(id);
-              setShowModal(true);
-            }}
+            onDelete={handleOpenDeleteModal}
           />
         )}
       </div>
@@ -69,8 +84,8 @@ function Lugares() {
       {showModal && (
         <AvisoEliminar
           message="¿Seguro que deseas eliminar este lugar?"
-          onConfirm={eliminar}
-          onCancel={() => setShowModal(false)}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
         />
       )}
 
