@@ -1,11 +1,9 @@
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import React, { Suspense, useState } from "react";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import MapaOverlay from "../components/mapa/mapaOverlay";
 import Slider from "../components/slider";
-import HomeHospedajes from "../components/homeHospedajes/Index";
 import styles from "../components/mapa/mapaOverlay.module.css";
 import axios from "axios";
 
@@ -95,7 +93,7 @@ function App() {
 
   return (
     <div className="app">
-            <Header />     
+      <Header />
       <div
         className={styles.mapContainerWrapper}
         style={{
@@ -103,7 +101,6 @@ function App() {
           position: "relative",
         }}
       >
-               
         <MapaOverlay
           isVisible={isOverlayVisible}
           onClick={handleOverlayClick}
@@ -112,23 +109,24 @@ function App() {
           handleSearch={handleSearch}
           searchError={searchError}
         />
-               
+
         <div className={`${styles.mapWrapper} ${mapOpacityClass}`}>
-                   
           <Suspense fallback={<div>Cargando mapa...</div>}>
             <LazyMapaRisaralda
               targetPlace={targetPlace}
               setTargetPlace={setTargetPlace}
               sitiosRisaralda={sitiosRisaralda}
-            />{" "}
-               
+            />
           </Suspense>
-               
         </div>
       </div>
-            <Slider />
-            <HomeHospedajes />
-            <Footer />   
+
+      <Slider />
+      
+      {/* ✅ LÍNEA 130 CORREGIDA - Comentada temporalmente */}
+      {/* Si quieres mostrar hospedajes aquí, necesitas crear un componente específico */}
+      
+      <Footer />
     </div>
   );
 }

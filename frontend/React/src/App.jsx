@@ -1,7 +1,6 @@
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 /*importaciones de componentes */
-import Hospedajes from "./components/Hospedajes/Hospedajes.jsx";
 import VerHospedajes from "./components/ver-hospedajes/ver-hospedajes.jsx";
 import Login from "./components/login/login.jsx";
 
@@ -15,8 +14,10 @@ import PerfilUser from "./pages/PerfilUser.jsx";
 import Lugares from "./pages/Lugares.jsx";
 import VerLugares from "./pages/verLugares.jsx";
 import Editar from "./pages/AdminEditar.jsx";
-// import Crear from "./components/adminActions/crear.jsx";
 import AdminCrearPage from "./pages/AdminCrear";
+
+// ✅ IMPORTACIÓN CORRECTA DE HOSPEDAJES
+import HospedajesPage from "./pages/hospedajes.jsx";
 
 function Rutas() {
   return (
@@ -27,16 +28,18 @@ function Rutas() {
       <Route path="/lugares/:id" element={<VerLugares />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/hospedajes" element={<Hospedajes />} />
-      <Route path="/verHospedajes/:id" element={<VerHospedajes />} />
+      
+      {/* ✅ RUTAS DE HOSPEDAJES CORREGIDAS */}
+      <Route path="/hospedajes" element={<HospedajesPage />} />
+      <Route path="/hospedajes/:id" element={<VerHospedajes />} />
+      
       <Route path="/admin" element={<Admin />} />
       <Route path="/adminUsuarios" element={<AdminUsers />} />
       <Route path="/admin/usuarios/:id" element={<EditarUsuario />} />
       <Route path="/admin/crear/:tipo" element={<AdminCrearPage />} />
       <Route path="/admin/crear" element={<AdminCrearPage />} />
-      {/* <Route path="/crear/:tipo" element={<Crear />} />
-      <Route path="/crear" element={<Crear />} /> */}
-      /*ruta dinamica para editar lugares, hospedajes o usuarios*/
+      
+      {/* ruta dinámica para editar lugares, hospedajes o usuarios */}
       <Route path="/pages/:tipo/:id" element={<Editar />} />
     </Routes>
   );
