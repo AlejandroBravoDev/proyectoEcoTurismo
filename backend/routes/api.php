@@ -11,7 +11,7 @@ use App\Http\Controllers\favoritosController;
 use App\Http\Controllers\ComentariosController;
 use App\Http\Controllers\PerfilController;
 
-/* Apis */
+/* Rutas */
 Route::get('/lugares', [LugaresController::class, 'index']);
 Route::get('/lugares/{id}', [LugaresController::class, 'show']);
 Route::get('/hospedajes', [HospedajeController::class, 'index']);
