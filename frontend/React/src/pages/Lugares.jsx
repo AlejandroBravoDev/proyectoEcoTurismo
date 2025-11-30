@@ -1,74 +1,55 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+//se importan dependencias, componentes y apoyo
+import React from "react";
+import useAuthRedirect from "../hooks/useAuthRedirect";
+import useLugares from "../hooks/useLugares";
+import Header from "../components/header";
+import Footer from "../components/footer";
 import SearchBar from "../components/Lugares/SearchBar";
 import Cards from "../components/Lugares/Cards";
+import AvisoEliminar from "../components/adminActions/avisoEliminar";
 import styles from "../components/Lugares/lugares.module.css";
-import Footer from "../components/footer";
-import Header from "../components/header";
 import fondoLugares from "../assets/img7.jpg";
 
-const API = "http://localhost:8000/api";
-const PEREIRA_MUNICIPIO_ID = 1;
-
+//funcion de lugares que obtiene todo lo que necesita para mostrar la información
 function Lugares() {
-  const [lugares, setLugares] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [municipios, setMunicipios] = useState([]);
+  //hook para que si el usuario no está logeado lo redireccione a el log in
+  useAuthRedirect();
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMunicipioId, setSelectedMunicipioId] =
-    useState(PEREIRA_MUNICIPIO_ID);
+  //trae la información del hook que la tiene y la convierte en variables locales
+  const {
+    lugares,
+    municipios,
+    loading,
+    error,
+    searchQuery,
+    selectedMunicipioId,
+    showModal,
+    setShowModal,
+    setLugarAEliminar,
+    setSearchQuery,
+    setSelectedMunicipioId,
+    eliminar,
+  } = useLugares();
 
-  const fetchLugares = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      let url = `${API}/lugares?`;
+  //se obtiene la información de el usuario que está navegando
+  const storedUser = JSON.parse(localStorage.getItem("usuario"));
 
-      if (searchQuery) {
-        url += `search=${encodeURIComponent(searchQuery)}&`;
-      }
-
-      if (selectedMunicipioId !== null) {
-        url += `municipio_id=${selectedMunicipioId}&`;
-      }
-
-      const response = await axios.get(url);
-      setLugares(response.data);
-    } catch (err) {
-      setError("Fallo al cargar los lugares o al aplicar el filtro.");
-      console.error("Error al obtener lugares:", err);
-    } finally {
-      setLoading(false);
-    }
+  // Función para abrir el modal de eliminación
+  const handleOpenDeleteModal = (id) => {
+    setLugarAEliminar(id);
+    setShowModal(true);
   };
 
-  const fetchMunicipios = async () => {
-    try {
-      const response = await axios.get(`${API}/municipios`);
-      setMunicipios(response.data);
-    } catch (err) {
-      console.error("Error al obtener municipios:", err);
-    }
+  // Función para cancelar la eliminación
+  const handleCancelDelete = () => {
+    setShowModal(false);
+    setLugarAEliminar(null); // Limpiar el ID del lugar
   };
 
-  useEffect(() => {
-    fetchLugares();
-  }, [searchQuery, selectedMunicipioId]);
-
-  useEffect(() => {
-    fetchMunicipios();
-  }, []);
-
-  const handleSearchSubmit = (query) => {
-    setSearchQuery(query);
-    setSelectedMunicipioId(null);
-  };
-
-  const handleMunicipioChange = (id) => {
-    setSelectedMunicipioId(id);
-    setSearchQuery("");
+  // Función para confirmar la eliminación
+  const handleConfirmDelete = async () => {
+    await eliminar();
+    // El modal se cierra automáticamente en la función eliminar del hook
   };
 
   return (
@@ -82,23 +63,31 @@ function Lugares() {
         >
           <SearchBar
             municipios={municipios}
-            onSearchSubmit={handleSearchSubmit}
-            onMunicipioChange={handleMunicipioChange}
+            onSearchSubmit={setSearchQuery}
+            onMunicipioChange={setSelectedMunicipioId}
             currentMunicipioId={selectedMunicipioId}
           />
         </div>
-        {loading ? (
-          <p className={styles.loadingText}>Cargando lugares...</p>
-        ) : error ? (
-          <p className={styles.errorText}>Error: {error}</p>
-        ) : lugares.length === 0 ? (
-          <p className={styles.noResultsText}>
-            No se encontraron lugares con estos filtros.
-          </p>
-        ) : (
-          <Cards lugares={lugares} />
+
+        {loading && <p>Cargando...</p>}
+        {error && <p>{error}</p>}
+
+        {!loading && !error && (
+          <Cards
+            user={storedUser}
+            lugares={lugares}
+            onDelete={handleOpenDeleteModal}
+          />
         )}
       </div>
+
+      {showModal && (
+        <AvisoEliminar
+          message="¿Seguro que deseas eliminar este lugar?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
 
       <Footer />
     </>

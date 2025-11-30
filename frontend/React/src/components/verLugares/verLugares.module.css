@@ -381,6 +381,7 @@
 .opinionContent {
   flex-grow: 1;
   padding-right: 30px;
+  min-width: 0;
 }
 
 .opinionHeader {
@@ -433,6 +434,9 @@
   font-size: 15px;
   line-height: 1.5;
   color: #444;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .opinionImage {
