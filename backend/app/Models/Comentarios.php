@@ -8,7 +8,7 @@ class Comentarios extends Model
 {
     protected $fillable = [
         'lugar_id',
-        'hospedaje_id', // ✅ AÑADIDO
+        'hospedaje_id', 
         'usuario_id',
         'contenido',
         'rating',

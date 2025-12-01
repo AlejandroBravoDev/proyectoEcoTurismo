@@ -61,8 +61,7 @@ class HospedajeController extends Controller
         }
     }
 
-    public function show($id)
-    {
+    public function show($id){
         try {
             $hospedaje = Hospedaje::with(['municipio', 'opiniones.usuario'])->findOrFail($id);
 
@@ -71,45 +70,71 @@ class HospedajeController extends Controller
                 ? $imagenes[0]
                 : '';
 
-            return response()->json([
+           return response()->json([
                 'id' => $hospedaje->id,
                 'nombre' => $hospedaje->nombre,
                 'descripcion' => $hospedaje->descripcion,
                 'coordenadas' => $hospedaje->coordenadas,
                 'municipio' => optional($hospedaje->municipio)->nombre,
                 'imagen_principal_url' => $imagenPrincipalUrl,
-                'todas_las_imagenes' => $imagenes,
+                'imagenes' => $imagenes,
                 'ubicacion' => $hospedaje->ubicacion,
                 'tipo' => $hospedaje->tipo,
-                'contacto' => $hospedaje->contacto,
-                'comentarios' => $hospedaje->opiniones->map(function ($comentario) {
-                    return [
-                        'id' => $comentario->id,
-                        'contenido' => $comentario->contenido,
-                        'rating' => $comentario->rating,
-                        'category' => $comentario->category,
-                        'image_path' => $comentario->image_path,
-                        'image_url' => $comentario->image_path
-                            ? Storage::disk('s3')->url($comentario->image_path)
-                            : null,
-                        'created_at' => $comentario->created_at->toDateTimeString(),
-                        'updated_at' => $comentario->updated_at->toDateTimeString(),
-                        'usuario_id' => $comentario->usuario_id,
-                        'hospedaje_id' => $comentario->hospedaje_id,
-                        'user' => [
-                            'id' => optional($comentario->usuario)->id,
-                            'name' => optional($comentario->usuario)->nombre_completo,
-                            'avatar' => optional($comentario->usuario)->avatar_url,
-                        ]
-                    ];
-                }),
+                'contacto' => $hospedaje->contacto
             ], 200);
 
         } catch (\Exception $e) {
             Log::error('Error en HospedajeController@show: ' . $e->getMessage());
             return response()->json([
+                'success' => false,
                 'message' => 'Error al obtener el hospedaje.'
             ], 500);
         }
     }
+
+    public function store(Request $request){
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'ubicacion' => 'nullable|string',
+                'descripcion' => 'nullable|string',
+                'municipio_id' => 'required|integer',
+                'tipo' => 'nullable|string',
+                'contacto' => 'nullable|string',
+                'servicios' => 'nullable|array',
+                'imagenes' => 'nullable|array',
+            ]);
+
+            $hospedaje = Hospedaje::create($validated);
+
+            return response()->json([
+                'message' => 'Hospedaje creado con éxito',
+                'data' => $hospedaje
+            ], 201);
+
+        } catch (\Exception $e) {
+            \Log::error("Error creando hospedaje: " . $e->getMessage());
+            return response()->json(['error' => 'Error al crear el hospedaje'], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $hospedaje = Hospedaje::findOrFail($id);
+
+            // Si quieres eliminar también sus imágenes y relaciones, puedes hacerlo aquí
+
+            $hospedaje->delete();
+
+            return response()->json([
+                'message' => 'Hospedaje eliminado correctamente'
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error("Error eliminando hospedaje: " . $e->getMessage());
+            return response()->json(['error' => 'Error al eliminar el hospedaje'], 500);
+        }
+    }
+
 }

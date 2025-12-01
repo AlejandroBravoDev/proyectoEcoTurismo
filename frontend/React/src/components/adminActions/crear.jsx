@@ -27,12 +27,20 @@ function CrearUniversal() {
   useEffect(() => {
     const fetchMunicipios = async () => {
       try {
-        const { data } = await axios.get(
+        const response = await axios.get(
           "http://localhost:8000/api/municipios"
         );
-        setMunicipios(data);
+
+        // Imprime para ver qué estás recibiendo
+        console.log("Respuesta de municipios:", response.data);
+
+        // La estructura es {success: true, data: Array(8)}
+        setMunicipios(
+          Array.isArray(response.data.data) ? response.data.data : []
+        );
       } catch (error) {
         console.error("Error al cargar municipios", error);
+        setMunicipios([]); // ← Importante: establece array vacío en caso de error
       }
     };
 
@@ -100,119 +108,165 @@ function CrearUniversal() {
         {/* FORM CARD */}
         <form
           onSubmit={handleSubmit}
-          className="w-[48%] bg-white rounded-2xl p-10 shadow flex flex-col gap-6 border border-gray-200"
+          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-180 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
         >
-          <h1 className="text-3xl font-extrabold text-[#4b8236] capitalize mb-2">
-            Crear {tipo}
-          </h1>
+          <div className="w-full h-135 flex flex-col flex-wrap gap-6">
+            <h1 className="text-3xl font-extrabold text-[#4b8236] capitalize mb-2">
+              Crear {tipo}
+            </h1>
 
-          {/* CAMPOS PARA LUGAR Y HOSPEDAJE */}
-          {(tipo === "lugar" || tipo === "hospedaje") && (
-            <>
-              {/* Nombre */}
-              <label className="font-semibold text-[#4b8236]">Nombre</label>
-              <input
-                type="text"
-                name="nombre"
-                className="p-3 rounded-lg bg-gray-50 border border-gray-300"
-                value={formData.nombre}
-                onChange={handleChange}
-              />
+            {/* CAMPOS PARA LUGAR Y HOSPEDAJE */}
+            {tipo === "lugar" && (
+              <>
+                {/* Nombre */}
+                <label className="font-semibold text-[#4b8236]">Nombre</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  maxlength="45"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                />
 
-              {/* Descripción */}
-              <label className="font-semibold text-[#4b8236]">
-                Descripción
-              </label>
-              <textarea
-                name="descripcion"
-                className="p-3 min-h-32 rounded-lg bg-gray-50 border border-gray-300"
-                value={formData.descripcion}
-                onChange={handleChange}
-              />
+                {/* Descripción */}
+                <label className="font-semibold text-[#4b8236]">
+                  Descripción
+                </label>
+                <textarea
+                  name="descripcion"
+                  maxLength="250"
+                  className="p-3 min-h-32 w-[48%] rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                />
 
-              {/* Ubicación */}
-              <label className="font-semibold text-[#4b8236]">Ubicación</label>
-              <input
-                type="text"
-                name="ubicacion"
-                className="p-3 rounded-lg bg-gray-50 border border-gray-300"
-                value={formData.ubicacion}
-                onChange={handleChange}
-              />
+                {/* Ubicación */}
+                <label className="font-semibold text-[#4b8236]">
+                  Ubicación
+                </label>
+                <input
+                  type="text"
+                  name="ubicacion"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.ubicacion}
+                  onChange={handleChange}
+                />
 
-              {/* Coordenadas */}
-              <label className="font-semibold text-[#4b8236]">
-                Coordenadas
-              </label>
-              <input
-                type="text"
-                name="coordenadas"
-                className="p-3 rounded-lg bg-gray-50 border border-gray-300"
-                value={formData.coordenadas}
-                onChange={handleChange}
-              />
+                {/* Coordenadas */}
+                <label className="font-semibold text-[#4b8236] pt-15">
+                  Coordenadas
+                </label>
+                <input
+                  type="text"
+                  name="coordenadas"
+                  className="p-3 w-[48%] rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.coordenadas}
+                  onChange={handleChange}
+                />
 
-              {/* Municipio */}
-              <label className="font-semibold text-[#4b8236]">Municipio</label>
-              <select
-                name="municipio_id"
-                className="p-3 rounded-lg bg-gray-50 border border-gray-300"
-                value={formData.municipio_id}
-                onChange={handleChange}
-              >
-                <option value="">Seleccione un municipio</option>
-                {municipios.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.nombre}
-                  </option>
-                ))}
-              </select>
+                {/* Municipio */}
+                <label className="font-semibold text-[#4b8236]">
+                  Municipio
+                </label>
+                <select
+                  name="municipio_id"
+                  className="p-3 w-[48%] rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.municipio_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Seleccione un municipio</option>
+                  {Array.isArray(municipios) &&
+                    municipios.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.nombre}
+                      </option>
+                    ))}
+                </select>
 
-              {/* Imagen principal */}
-              <label className="font-semibold text-[#4b8236]">
-                Imagenes del lugar (la primera imagen va a ser la que aparezca
-                en la tarjeta)
-              </label>
-              <input
-                type="file"
-                name="imagen_principal"
-                className="p-3 rounded-lg bg-gray-50 border border-gray-300"
-                onChange={handleChange}
-              />
-            </>
-          )}
+                {/* Imagen principal */}
+                <label className="font-semibold text-[#4b8236] w-[48%]">
+                  Imagenes del lugar (la primera imagen va a ser la que aparezca
+                  en la tarjeta)
+                </label>
+                <input
+                  type="file"
+                  name="imagen_principal"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-[48%]"
+                  onChange={handleChange}
+                />
+              </>
+            )}
+            {tipo === "hospedaje" && (
+              <>
+                {/* Nombre */}
+                <label className="font-semibold text-[#4b8236]">Nombre</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  maxlength="45"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                />
 
-          {/* CAMPOS TIPO = USUARIO */}
-          {tipo === "usuario" && (
-            <>
-              <label className="font-semibold text-[#4b8236]">Nombre</label>
-              <input
-                type="text"
-                name="nombre"
-                className="p-3 rounded-lg bg-gray-50 border border-gray-300"
-                value={formData.nombre}
-                onChange={handleChange}
-              />
+                {/* Descripción */}
+                <label className="font-semibold text-[#4b8236]">
+                  Descripción
+                </label>
+                <textarea
+                  name="descripcion"
+                  maxLength="250"
+                  className="p-3 min-h-32 w-[48%] rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                />
 
-              <label className="font-semibold text-[#4b8236]">Correo</label>
-              <input
-                type="email"
-                name="email"
-                className="p-3 rounded-lg bg-gray-50 border border-gray-300"
-                value={formData.email}
-                onChange={handleChange}
-              />
+                {/* Ubicación */}
+                <label className="font-semibold text-[#4b8236]">
+                  Ubicación (dirección)
+                </label>
+                <input
+                  type="text"
+                  name="ubicacion"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.ubicacion}
+                  onChange={handleChange}
+                />
 
-              <label className="font-semibold text-[#4b8236]">Contraseña</label>
-              <input
-                type="password"
-                name="password"
-                className="p-3 rounded-lg bg-gray-50 border border-gray-300"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </>
-          )}
+                {/* Municipio */}
+                <label className="font-semibold text-[#4b8236] pt-15">
+                  Municipio
+                </label>
+                <select
+                  name="municipio_id"
+                  className="p-3 w-[48%] rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.municipio_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Seleccione un municipio</option>
+                  {Array.isArray(municipios) &&
+                    municipios.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.nombre}
+                      </option>
+                    ))}
+                </select>
+
+                {/* Imagen principal */}
+                <label className="font-semibold text-[#4b8236] w-[48%]">
+                  Imagenes del lugar (la primera imagen va a ser la que aparezca
+                  en la tarjeta)
+                </label>
+                <input
+                  type="file"
+                  name="imagen_principal"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-[48%]"
+                  onChange={handleChange}
+                />
+              </>
+            )}
+          </div>
 
           <button
             type="submit"
@@ -223,29 +277,30 @@ function CrearUniversal() {
         </form>
 
         {/* PREVIEW */}
-        <div className="w-[34%] bg-white rounded-2xl p-8 shadow flex flex-col gap-5 items-center border border-gray-200">
-          <h2 className="text-xl font-bold text-gray-700">Vista previa</h2>
-
-          <div className="w-80 bg-white rounded-2xl flex flex-col items-center py-5 gap-4 shadow">
+        <div className="w-[28%] h-180  bg-white rounded-2xl p-8 shadow flex flex-col gap-10 items-center border border-gray-200 ">
+          <h1 className="font-semibold text-[#4b8236] text-2xl ">
+            Vista Previa
+          </h1>
+          <div className="w-80 h-[2000em] bg-white rounded-2xl flex flex-col items-center py-5 gap-4 shadow break-words overflow-hidden flex-wrap">
             <img
               src={previewImage}
               alt="Preview"
               className="w-5/6 h-52 object-cover rounded-xl border"
             />
 
-            <h1 className="text-2xl font-bold text-gray-800 text-center">
-              {formData.nombre || "Nombre..."}
+            <h1 className="text-2xl font-bold text-gray-800 text-center  w-5/6">
+              {formData.nombre || "Nombre"}
             </h1>
 
             {(tipo === "lugar" || tipo === "hospedaje") && (
-              <p className="text-sm text-gray-600 text-center">
-                {formData.descripcion || "Descripción..."}
+              <p className="text-sm text-gray-600 text-center h-40  w-5/6">
+                {formData.descripcion || "Descripción"}
               </p>
             )}
 
-            {tipo === "usuario" && (
-              <p className="text-gray-600">{formData.email || "Correo..."}</p>
-            )}
+            <button className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6 mt-10">
+              Ver Detalles
+            </button>
           </div>
         </div>
       </div>

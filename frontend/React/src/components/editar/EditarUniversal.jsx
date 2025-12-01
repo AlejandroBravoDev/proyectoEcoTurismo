@@ -9,6 +9,8 @@ function Editar() {
   //se extraen los datos de la url
   const { tipo, id } = useParams();
 
+  const api = "http://localhost:8000/api";
+
   //se definen las variables donde van los datos
   const [data, setData] = useState(null);
 
@@ -16,18 +18,12 @@ function Editar() {
   const [loading, setLoading] = useState(true);
 
   //states para que los campos sean editables
-  const [nombre, setNombre] = useState(Lugares.nombre || "");
-  const [descripcion, setDescripcion] = useState(Lugares.descripcion || "");
+  const [nombre, setNombre] = useState("");
+  const [descripcion, setDescripcion] = useState("");
 
   //defino los endpoints que se van a usar en cualquier caso
-  const endpoints = {
-    lugares: `http://localhost:8000/api/lugares/${id}`,
-    hospedaje: `http://localhost:8000/api/hospedajes/${id}`,
-    usuario: `http://localhost:8000/api/usuario/${id}`,
-  };
-
-  const endpoint = endpoints[tipo];
-
+  const endpoint = `${api}/${tipo}/${id}`;
+  console.log("Endpoint final", endpoint);
   //useEffect para traer los datos de la DB con axios
   useEffect(() => {
     const fetchData = async () => {
@@ -79,57 +75,52 @@ function Editar() {
   //carga
 
   if (loading) return <p>cargando...</p>;
-  if (!data)
-    return Swal.fire({
-      title: "Error",
-      text: "Error al cargar los datos",
-      icon: "error",
-    });
+  if (!data) {
+    return <p>Error al cargar los datos</p>;
+  }
 
   return (
     <>
       <div className="w-full h-full flex flex-row items-center justify-evenly py-10 bg-rgba(0,0,0,0.05)">
         <form
           onSubmit={handleUpdate}
-          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-170 bg-gray-150 p-8 flex flex-col gap-5 flex-wrap bg-white"
+          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-170 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
         >
           <h1 className="text-2xl font-bold text-[#60a244]">
             Editando {data.nombre}
           </h1>
-          <label htmlFor="nombre" className="font-semibold text-[#60a244]">
-            nombre
-          </label>
-          <input
-            type="text"
-            name="nombre"
-            className="shadow-[0_0_20px_rgba(0,0,0,0.3)] p-3 w-110 h-10 rounded-lg"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-          />
-          <label htmlFor="nombre" className=" font-semibold text-[#60a244]">
-            Descripción
-          </label>
-          <textarea
-            type="text"
-            name="nombre"
-            className="shadow-[0_0_20px_rgba(0,0,0,0.3)] p-3 w-110 h-38 bg-white border-[#555] rounded-lg"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-          />
-          <label className="font-semibold text-[#60a244]">
-            imagen principal
-          </label>
-          <div className="flex gap-2">
-            {data?.imagenes?.map((img) => (
-              <img
-                key={img.id}
-                src={img}
-                alt="Imagen del lugar"
-                className="w-20 h-20 object-cover rounded"
-              />
-            )) || <p>No hay imágenes</p>}
-          </div>
+          {/*Div que va a contener los campos para que el flex-wraped no se haga con el botón y quede bien bonito */}
+          <div className="w-full h-110 flex flex-col flex-wrap gap-6">
+            <label htmlFor="nombre" className="font-semibold text-[#60a244]">
+              nombre
+            </label>
+            <input
+              type="text"
+              maxlength={45}
+              name="nombre"
+              className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-[55%]"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+            />
+            <label htmlFor="nombre" className=" font-semibold text-[#60a244]">
+              Descripción
+            </label>
+            <textarea
+              maxlength={250}
+              type="text"
+              name="nombre"
+              className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-[55%] h-40  "
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+            />
+            <label className="font-semibold text-[#60a244]">Imagenes</label>
+            <img src="" alt="" />
 
+            <label className="font-semibold text-[#60a244]">
+              Imagen principal
+            </label>
+            <input type="file" className="w-70 h-50 border-1" />
+          </div>
           <button
             type="submit"
             className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6"
@@ -140,7 +131,7 @@ function Editar() {
         {/*resultado de la edición*/}
         <div className="w-2lg shadow-[0_0_20px_rgba(0,0,0,0.05)] h-160 rounded-xl p-8 bg-white flex flex-col text-start items-center justify-center">
           {/* tarjeta en la que se va a ver lo editado */}
-          <div className="w-80 bg-[#f9f9f9] rounded-2xl flex flex-col items-center py-5 gap-4">
+          <div className="w-80 bg-[#f9f9f9] rounded-2xl flex flex-col items-center py-5 gap-4 break-words overflow-hidden flex-wrap">
             <img
               src=""
               alt="Imagen"
