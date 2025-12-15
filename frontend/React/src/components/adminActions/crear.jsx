@@ -108,7 +108,11 @@ function CrearUniversal() {
         {/* FORM CARD */}
         <form
           onSubmit={handleSubmit}
+<<<<<<< HEAD
           className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-170 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
+=======
+          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-180 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
+>>>>>>> 8935116f53b37694aef3a10b15e160874e19bf79
         >
           <div className="w-full h-135 flex flex-col flex-wrap gap-6">
             <h1 className="text-3xl font-extrabold text-[#4b8236] capitalize mb-2">
@@ -116,7 +120,11 @@ function CrearUniversal() {
             </h1>
 
             {/* CAMPOS PARA LUGAR Y HOSPEDAJE */}
+<<<<<<< HEAD
             {(tipo === "lugar" || tipo === "hospedaje") && (
+=======
+            {tipo === "lugar" && (
+>>>>>>> 8935116f53b37694aef3a10b15e160874e19bf79
               <>
                 {/* Nombre */}
                 <label className="font-semibold text-[#4b8236]">Nombre</label>
@@ -197,6 +205,7 @@ function CrearUniversal() {
                 />
               </>
             )}
+<<<<<<< HEAD
 
             {/* CAMPOS TIPO = USUARIO */}
             {tipo === "usuario" && (
@@ -227,6 +236,73 @@ function CrearUniversal() {
                   name="password"
                   className="p-3 rounded-lg bg-gray-50 border border-gray-300"
                   value={formData.password}
+=======
+            {tipo === "hospedaje" && (
+              <>
+                {/* Nombre */}
+                <label className="font-semibold text-[#4b8236]">Nombre</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  maxlength="45"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                />
+
+                {/* Descripción */}
+                <label className="font-semibold text-[#4b8236]">
+                  Descripción
+                </label>
+                <textarea
+                  name="descripcion"
+                  maxLength="250"
+                  className="p-3 min-h-32 w-[48%] rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                />
+
+                {/* Ubicación */}
+                <label className="font-semibold text-[#4b8236]">
+                  Ubicación (dirección)
+                </label>
+                <input
+                  type="text"
+                  name="ubicacion"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.ubicacion}
+                  onChange={handleChange}
+                />
+
+                {/* Municipio */}
+                <label className="font-semibold text-[#4b8236] pt-15">
+                  Municipio
+                </label>
+                <select
+                  name="municipio_id"
+                  className="p-3 w-[48%] rounded-lg bg-gray-50 border border-gray-300"
+                  value={formData.municipio_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Seleccione un municipio</option>
+                  {Array.isArray(municipios) &&
+                    municipios.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.nombre}
+                      </option>
+                    ))}
+                </select>
+
+                {/* Imagen principal */}
+                <label className="font-semibold text-[#4b8236] w-[48%]">
+                  Imagenes del lugar (la primera imagen va a ser la que aparezca
+                  en la tarjeta)
+                </label>
+                <input
+                  type="file"
+                  name="imagen_principal"
+                  className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-[48%]"
+>>>>>>> 8935116f53b37694aef3a10b15e160874e19bf79
                   onChange={handleChange}
                 />
               </>
@@ -242,8 +318,16 @@ function CrearUniversal() {
         </form>
 
         {/* PREVIEW */}
+<<<<<<< HEAD
         <div className="w-[28%] h-170  bg-white rounded-2xl p-8 shadow flex flex-col gap-5 items-center border border-gray-200 ">
           <div className="w-80 h-150 bg-white rounded-2xl flex flex-col items-center py-5 gap-4 shadow break-words overflow-hidden flex-wrap">
+=======
+        <div className="w-[28%] h-180  bg-white rounded-2xl p-8 shadow flex flex-col gap-10 items-center border border-gray-200 ">
+          <h1 className="font-semibold text-[#4b8236] text-2xl ">
+            Vista Previa
+          </h1>
+          <div className="w-80 h-[2000em] bg-white rounded-2xl flex flex-col items-center py-5 gap-4 shadow break-words overflow-hidden flex-wrap">
+>>>>>>> 8935116f53b37694aef3a10b15e160874e19bf79
             <img
               src={previewImage}
               alt="Preview"
@@ -251,11 +335,16 @@ function CrearUniversal() {
             />
 
             <h1 className="text-2xl font-bold text-gray-800 text-center  w-5/6">
+<<<<<<< HEAD
               {formData.nombre || "Nombre..."}
+=======
+              {formData.nombre || "Nombre"}
+>>>>>>> 8935116f53b37694aef3a10b15e160874e19bf79
             </h1>
 
             {(tipo === "lugar" || tipo === "hospedaje") && (
               <p className="text-sm text-gray-600 text-center h-40  w-5/6">
+<<<<<<< HEAD
                 {formData.descripcion || "Descripción..."}
               </p>
             )}
@@ -265,6 +354,13 @@ function CrearUniversal() {
             )}
 
             <button className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6 ">
+=======
+                {formData.descripcion || "Descripción"}
+              </p>
+            )}
+
+            <button className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6 mt-10">
+>>>>>>> 8935116f53b37694aef3a10b15e160874e19bf79
               Ver Detalles
             </button>
           </div>

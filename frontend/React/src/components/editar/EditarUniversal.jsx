@@ -8,6 +8,8 @@ function Editar() {
   //se extraen los datos de la url
   const { tipo, id } = useParams();
 
+  const api = "http://localhost:8000/api";
+
   //se definen las variables donde van los datos
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,6 +19,8 @@ function Editar() {
   const [imagenPrincipalUrl, setImagenPrincipalUrl] = useState(""); // URL para previsualización
 
   //states para que los campos sean editables
+  const [nombre, setNombre] = useState("");
+  const [descripcion, setDescripcion] = useState("");
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
 
@@ -142,6 +146,7 @@ function Editar() {
         <form
           onSubmit={handleUpdate}
           className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-170 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
+          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-170 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
         >
           <h1 className="text-2xl font-bold text-[#60a244]">
             Editando {data.nombre}
@@ -203,7 +208,6 @@ function Editar() {
               onChange={handleFileChange}
             />
           </div>
-
           <button
             type="submit"
             className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6"
@@ -215,6 +219,7 @@ function Editar() {
         {/* resultado de la edición (Previsualización) */}
         <div className="w-2lg shadow-[0_0_20px_rgba(0,0,0,0.05)] h-160 rounded-xl p-8 bg-white flex flex-col text-start items-center justify-center">
           {/* tarjeta en la que se va a ver lo editado */}
+          <div className="w-80 bg-[#f9f9f9] rounded-2xl flex flex-col items-center py-5 gap-4 break-words overflow-hidden flex-wrap">
           <div className="w-80 bg-[#f9f9f9] rounded-2xl flex flex-col items-center py-5 gap-4 break-words overflow-hidden flex-wrap">
             <img
               src={imagenPrincipalUrl || "placeholder_default_url"} // Usa la URL de previsualización o un placeholder

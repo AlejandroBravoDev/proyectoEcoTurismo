@@ -9,19 +9,20 @@ use App\Models\Municipios;
 class Hospedaje extends Model
 {
     protected $table = 'hospedajes';
-    protected $primaryKey = 'hospedaje_id';
+    protected $primaryKey = 'id'; // ✅ CORREGIDO: usar 'id' en lugar de 'hospedaje_id'
     public $incrementing = true;
     protected $keyType = 'int';
+    
     protected $fillable = [
         'nombre',
         'ubicacion',
         'descripcion',
         'municipio_id',
-        'tipo',            // Ej: hotel, cabaña, glamping, finca, etc.
-        'contacto',        // Teléfono o correo
+        'tipo',
+        'contacto',
         'coordenadas',
-        'servicios',       // Opcional: jacuzzi, wifi, senderismo, etc.
-        'imagenes',        // Array de imágenes
+        'servicios',
+        'imagenes',
     ];
 
     protected $casts = [
@@ -34,8 +35,9 @@ class Hospedaje extends Model
         return $this->belongsTo(Municipios::class, 'municipio_id');
     }
 
-    public function comentarios()
+    // ✅ CORREGIDO: Relación con comentarios (igual que Lugares)
+    public function opiniones()
     {
-        return $this->hasMany(Comentarios::class, 'hospedaje_id')->latest();
+        return $this->hasMany(Comentarios::class, 'id')->latest();
     }
 }

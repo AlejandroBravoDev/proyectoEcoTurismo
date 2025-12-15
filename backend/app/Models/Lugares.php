@@ -33,4 +33,10 @@ class Lugares extends Model
     {
         return $this->hasMany(Comentarios::class, 'lugar_id')->latest();
     }
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'usuario_id');
+    }
+
 }
