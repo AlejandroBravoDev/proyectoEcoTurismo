@@ -45,9 +45,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/perfil/update', [PerfilController::class, 'update']);
     Route::post('/comentarios', [ComentariosController::class, 'store']);
     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
+    
+    // ✅ RUTAS DE FAVORITOS ACTUALIZADAS
     Route::post('/favoritos', [favoritosController::class, 'store']);
     Route::delete('/favoritos/{id}', [favoritosController::class, 'destroy']);
-    Route::get('/favoritos/check/{lugarId}', [favoritosController::class, 'check']);
+    Route::get('/favoritos/check/{id}', [favoritosController::class, 'check']); // Cambiado de lugarId a id
     
     Route::post('/logout', [AuthController::class, 'logout']);
 

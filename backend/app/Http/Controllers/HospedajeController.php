@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hospedaje;
+use App\Models\Favorito;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class HospedajeController extends Controller
 {
@@ -37,6 +39,14 @@ class HospedajeController extends Controller
                     ? $imagenes[0]
                     : '';
 
+                // Verificar si está en favoritos
+                $isFavorite = false;
+                if (Auth::check()) {
+                    $isFavorite = Favorito::where('usuario_id', Auth::id())
+                        ->where('hospedaje_id', $hospedaje->id)
+                        ->exists();
+                }
+
                 return [
                     'id' => $hospedaje->id,
                     'nombre' => $hospedaje->nombre,
@@ -48,6 +58,7 @@ class HospedajeController extends Controller
                     'ubicacion' => $hospedaje->ubicacion,
                     'tipo' => $hospedaje->tipo,
                     'contacto' => $hospedaje->contacto,
+                    'isFavorite' => $isFavorite, // ✅ AÑADIDO
                 ];
             });
 
@@ -70,6 +81,14 @@ class HospedajeController extends Controller
                 ? $imagenes[0]
                 : '';
 
+            // Verificar si está en favoritos
+            $isFavorite = false;
+            if (Auth::check()) {
+                $isFavorite = Favorito::where('usuario_id', Auth::id())
+                    ->where('hospedaje_id', $hospedaje->id)
+                    ->exists();
+            }
+
            return response()->json([
                 'id' => $hospedaje->id,
                 'nombre' => $hospedaje->nombre,
@@ -80,7 +99,8 @@ class HospedajeController extends Controller
                 'imagenes' => $imagenes,
                 'ubicacion' => $hospedaje->ubicacion,
                 'tipo' => $hospedaje->tipo,
-                'contacto' => $hospedaje->contacto
+                'contacto' => $hospedaje->contacto,
+                'isFavorite' => $isFavorite, // ✅ AÑADIDO
             ], 200);
 
         } catch (\Exception $e) {
@@ -136,5 +156,4 @@ class HospedajeController extends Controller
             return response()->json(['error' => 'Error al eliminar el hospedaje'], 500);
         }
     }
-
 }
