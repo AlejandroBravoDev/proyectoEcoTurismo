@@ -22,10 +22,11 @@ Route::get('/municipios', [MunicipioController::class, 'index']);
 Route::get('/favoritos', [favoritosController::class, 'index']);
 Route::get('/comentarios', [ComentariosController::class, 'index']);
 
-// TEMPORAL: Rutas de usuarios sin auth para probar
+// Rutas de usuarios sin auth para probar
 Route::get('/usuarios', [UsuarioController::class, 'index']);
 Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
+Route::put('/usuarios/{id}', [UsuarioController::class, 'update']); 
 Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -47,15 +48,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/perfil/update', [PerfilController::class, 'update']);
     Route::post('/comentarios', [ComentariosController::class, 'store']);
     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
+    
+    // ✅ RUTAS DE FAVORITOS ACTUALIZADAS
     Route::post('/favoritos', [favoritosController::class, 'store']);
     Route::delete('/favoritos/{id}', [favoritosController::class, 'destroy']);
-    Route::get('/favoritos/check/{lugarId}', [favoritosController::class, 'check']);
+    Route::get('/favoritos/check/{id}', [favoritosController::class, 'check']); // Cambiado de lugarId a id
     
     Route::post('/logout', [AuthController::class, 'logout']);
 
     //lugares
     Route::post('/lugares', [LugaresController::class, 'store']);
-    Route::put('/lugares/{id}', [LugaresController::class, 'update']);
+    Route::put('/lugares/{id}', [LugaresController::class, 'update']); // 🛑 Se utiliza PUT
     Route::delete('/lugares/{id}', [LugaresController::class, 'destroy']);
 
     //hospedajes
@@ -63,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/hospedajes/{id}', [HospedajeController::class, 'update']);
     Route::delete('/hospedajes/{id}', [HospedajeController::class, 'destroy']);
 
-     // Usuarios (si el admin puede crear usuarios)
+    // Usuarios (si el admin puede crear usuarios)
     Route::post('/usuario', [UsuarioController::class, 'store']);
     Route::put('/usuario/{id}', [UsuarioController::class, 'update']);
     Route::delete('/usuario/{id}', [UsuarioController::class, 'destroy']);

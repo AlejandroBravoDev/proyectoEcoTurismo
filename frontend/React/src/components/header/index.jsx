@@ -10,6 +10,7 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
   const navigate = useNavigate();
+  const user = localStorage.getItem("usuario");
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -101,19 +102,35 @@ function Header() {
               menuOpen ? stylesHeader.menuOpen : ""
             }`}
           >
-            <ul className={stylesHeader.navList}>
-              <li>
-                <Link to="/lugares">Lugares</Link>
-              </li>
-              <li>
-                <Link to="/hospedajes">Hospedajes</Link>
-              </li>
-              <li className={stylesHeader.profileLink}>
-                <Link to={profileLinkTarget}>
-                  <img src={currentAvatar} alt="Perfil de Usuario" />
-                </Link>
-              </li>
-            </ul>
+            {!user ? (
+              <>
+                <ul className={stylesHeader.navList}>
+                  <li>
+                    <Link to="/login">Iniciar sesión</Link>
+                  </li>
+                  <li>
+                    <Link to="/registro">Registrarse</Link>
+                  </li>
+            
+                </ul>
+              </>
+            ) : (
+              <>
+                <ul className={stylesHeader.navList}>
+                  <li>
+                    <Link to="/lugares">Lugares</Link>
+                  </li>
+                  <li>
+                    <Link to="/hospedajes">Hospedajes</Link>
+                  </li>
+                  <li className={stylesHeader.profileLink}>
+                    <Link to={profileLinkTarget}>
+                      <img src={currentAvatar} alt="Perfil de Usuario" />
+                    </Link>
+                  </li>
+                </ul>
+              </>
+            )}
           </nav>
         </div>
       </header>
