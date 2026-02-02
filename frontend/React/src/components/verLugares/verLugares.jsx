@@ -579,6 +579,7 @@ function VerLugares() {
                 <img
                   src={URL.createObjectURL(selectedImage)}
                   alt="Vista previa"
+                  className="w-50 h-50 rounded-xl"
                 />
               </div>
             )}

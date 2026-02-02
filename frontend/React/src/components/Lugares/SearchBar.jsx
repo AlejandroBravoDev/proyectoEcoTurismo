@@ -7,9 +7,9 @@ function SearchBar({
   onMunicipioChange,
   currentMunicipioId,
 }) {
-
   console.log("SearchBar → municipios:", municipios);
   console.log("Es array?", Array.isArray(municipios));
+  console.log(municipios)
 
   const [searchText, setSearchText] = useState("");
 
@@ -52,11 +52,12 @@ function SearchBar({
           value={currentMunicipioId === null ? "" : currentMunicipioId}
         >
           <option value="">Municipios</option>
-          {(Array.isArray(municipios) ? municipios : []).map((municipio) => (
-            <option key={municipio.id} value={municipio.id}>
-              {municipio.nombre}
-            </option>
-          ))}
+          {Array.isArray(municipios.data) &&
+            municipios.data.map((municipio) => (
+              <option key={municipio.id} value={municipio.id}>
+                {municipio.nombre}
+              </option>
+            ))}
         </select>
       </div>
     </div>
