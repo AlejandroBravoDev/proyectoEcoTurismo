@@ -17,6 +17,7 @@
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-dropzone": "^14.4.0",
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.9.6",
     "tailwindcss": "^4.1.14"

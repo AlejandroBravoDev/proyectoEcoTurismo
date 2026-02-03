@@ -51,7 +51,7 @@ function Cards({ hospedajes, user, onDelete }) {
                 <div className={styles.adminButtons}>
                   <button
                     onClick={() =>
-                      navigate(`/pages/hospedaje /${hospedaje.id}`)
+                      navigate(`/pages/hospedajes/${hospedaje.id}`)
                     }
                     className={styles.editButton}
                   >

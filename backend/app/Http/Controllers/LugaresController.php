@@ -115,78 +115,63 @@ class LugaresController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         try {
             $lugar = Lugares::findOrFail($id);
 
-            // 1. Validación (se agregó la regla para la imagen)
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'descripcion' => 'required|string',
-                'municipio_id' => 'sometimes|exists:municipios,id', // Se asume que estos campos pueden actualizarse
-                'ubicacion' => 'nullable|string',
-                'coordenadas' => 'nullable|string',
-                'imagen_principal' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096', // La nueva imagen
+                'imagenes_existentes' => 'nullable|string',
+                'imagenes_nuevas.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             ]);
 
-            $data = $request->only(['nombre', 'descripcion', 'municipio_id', 'ubicacion', 'coordenadas']);
-            $imagenesGuardadas = $lugar->imagenes ?? []; // Array con rutas relativas existentes
+            $imagenesFinales = [];
 
-            // 2. Procesar la nueva imagen si se sube
-            if ($request->hasFile('imagen_principal')) {
-                $imagen = $request->file('imagen_principal');
-                $folder = 'lugares'; 
-                $disk = 's3'; // Usar el disco S3
-
-                // Si ya había una imagen principal, la eliminamos de S3 antes de subir la nueva
-                if (!empty($imagenesGuardadas)) {
-                    // La primera ruta en el array es la imagen principal
-                    $oldImagePath = $imagenesGuardadas[0]; 
-                    
-                    // Solo intentar borrar si no es una URL completa
-                    if (!filter_var($oldImagePath, FILTER_VALIDATE_URL)) {
-                        Storage::disk($disk)->delete($oldImagePath);
-                    }
-                    
-                    // Quitar la antigua imagen principal del array
-                    array_shift($imagenesGuardadas); 
-                }
-
-                // Subir la nueva imagen
-                $path = $imagen->store($folder, $disk);
-                
-                // Añadir la nueva ruta al inicio del array
-                array_unshift($imagenesGuardadas, $path);
+            // 1️⃣ Imágenes que el usuario dejó (vienen como JSON)
+            if ($request->filled('imagenes_existentes')) {
+                $imagenesFinales = json_decode($request->imagenes_existentes, true) ?? [];
             }
-            
-            $data['imagenes'] = $imagenesGuardadas;
 
-            // 3. Actualizar el lugar
-            $lugar->update($data);
+            // 2️⃣ Subir nuevas imágenes a S3
+            if ($request->hasFile('imagenes_nuevas')) {
+                foreach ($request->file('imagenes_nuevas') as $imagen) {
+                    $path = $imagen->store('lugares', 's3');
+                    $imagenesFinales[] = $path;
+                }
+            }
 
-            // 4. Devolver la respuesta con la URL de la imagen principal actualizada
-            $lugar->refresh(); // Asegurar que el modelo tenga los últimos datos, incluyendo 'updated_at'
-            $imagenesPaths = $lugar->imagenes ?? [];
-            
+            // 3️⃣ Seguridad: máximo 3 imágenes
+            $imagenesFinales = array_slice($imagenesFinales, 0, 3);
+
+            // 4️⃣ Actualizar datos
+            $lugar->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'imagenes' => $imagenesFinales,
+            ]);
+
             return response()->json([
                 'message' => 'Lugar actualizado correctamente',
-                'lugar' => [
-                    'id' => $lugar->id,
-                    'nombre' => $lugar->nombre,
-                    'descripcion' => $lugar->descripcion,
-                    'imagen_principal_url' => $this->getImagenPrincipalUrl($imagenesPaths),
-                    'todas_las_imagenes' => collect($imagenesPaths)->map(function ($path) {
-                         return filter_var($path, FILTER_VALIDATE_URL) ? $path : Storage::disk('s3')->url($path);
-                    })->toArray(),
-                ],
+                'imagenes' => collect($imagenesFinales)->map(fn ($img) =>
+                    Storage::disk('s3')->url($img)
+                ),
             ], 200);
 
         } catch (\Exception $e) {
-            Log::error('Error en LugaresController@update: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['message' => 'Error al actualizar el lugar.'], 500);
+            Log::error('Error en update Lugar', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'message' => 'Error al actualizar el lugar',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
+
+
 
     public function destroy($id)
     {
