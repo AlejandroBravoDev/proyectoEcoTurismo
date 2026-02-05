@@ -38,6 +38,6 @@ class Hospedaje extends Model
     // ✅ CORREGIDO: Relación con comentarios (igual que Lugares)
     public function opiniones()
     {
-        return $this->hasMany(Comentarios::class, 'hospedaje_id')->latest();
+        return $this->hasMany(Comentarios::class, 'id')->latest();
     }
 }

@@ -173,6 +173,10 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
   padding: 20px;
   margin-bottom: 20px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow: hidden;
 }
 
 .cabeceraOpinion {
@@ -655,20 +659,11 @@
   }
 }
 
-
-
-
-
-
-
-
-
-
 /* Estilos Globales para la página */
 .pageBackground {
-    background-color: #f5f5f5;
-    min-height: calc(100vh - 150px);
-    padding-bottom: 50px;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 150px);
+  padding-bottom: 50px;
 }
 
 /* ----------------------------------- */
@@ -676,17 +671,17 @@
 /* ----------------------------------- */
 
 .backButton {
-    background: #666;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 20px auto 0 20px; 
-    width: fit-content;
-    display: block;
-    position: relative;
-    z-index: 10;
+  background: #666;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 20px auto 0 20px;
+  width: fit-content;
+  display: block;
+  position: relative;
+  z-index: 10;
 }
 
 /* ----------------------------------- */
@@ -694,24 +689,24 @@
 /* ----------------------------------- */
 
 .coverImage {
-    height: 200px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    transition: background-image 0.5s ease; 
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  transition: background-image 0.5s ease;
 }
 
 .changeCoverButton {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    z-index: 5;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  z-index: 5;
 }
 
 /* ----------------------------------- */
@@ -719,14 +714,14 @@
 /* ----------------------------------- */
 
 .profileCard {
-    background-color: white;
-    max-width: 900px;
-    /* 🚨 AJUSTE: Combina el movimiento vertical y el centrado */
-    margin: -80px auto 30px auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    position: relative;
-    padding: 0 30px 30px 30px; 
+  background-color: white;
+  max-width: 900px;
+  /* 🚨 AJUSTE: Combina el movimiento vertical y el centrado */
+  margin: -80px auto 30px auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  padding: 0 30px 30px 30px;
 }
 
 /* ----------------------------------- */
@@ -734,83 +729,83 @@
 /* ----------------------------------- */
 
 .profileHeader {
-    display: flex;
-    align-items: flex-end;
-    /* 🚨 AJUSTE: Reducción para subir el nombre de usuario */
-    padding-top: 70px;
-    margin-bottom: 10px;
-    position: relative;
+  display: flex;
+  align-items: flex-end;
+  /* 🚨 AJUSTE: Reducción para subir el nombre de usuario */
+  padding-top: 70px;
+  margin-bottom: 10px;
+  position: relative;
 }
 
 .avatarWrapper {
-    position: absolute;
-    top: -65px;
-    margin-top: 120px;
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    border: 5px solid white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    z-index: 2;
+  position: absolute;
+  top: -65px;
+  margin-top: 120px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 5px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 2;
 }
 
 .profileAvatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .changeAvatarOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 2rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 2rem;
 }
 
 .avatarWrapper:hover .changeAvatarOverlay {
-    opacity: 1;
+  opacity: 1;
 }
 
 .nameAndId {
-    margin-left: 140px;
+  margin-left: 140px;
 }
 
 .profileName {
-    margin: 0;
-    margin-left: 30px;
-    font-size: 1.8rem;
-    color: #333;
+  margin: 0;
+  margin-left: 30px;
+  font-size: 1.8rem;
+  color: #333;
 }
 
 .profileUsername {
-    color: #666;
-    margin-top: 2px;
-    margin-left: 30px;
-    font-size: 1rem;
+  color: #666;
+  margin-top: 2px;
+  margin-left: 30px;
+  font-size: 1rem;
 }
 
 .editButtonHeader {
-    background-color: #4b8236;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: normal;
-    transition: background-color 0.3s;
-    margin-left: auto;
+  background-color: #4b8236;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: normal;
+  transition: background-color 0.3s;
+  margin-left: auto;
 }
 
 /* ----------------------------------- */
@@ -818,37 +813,37 @@
 /* ----------------------------------- */
 
 .navStats {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    padding: 15px 0;
-    margin-top: 15px;
-    margin-left: 140px;
-    border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 15px 0;
+  margin-top: 15px;
+  margin-left: 140px;
+  border-bottom: 1px solid #eee;
 }
 
 .statItem {
-    text-align: left;
-    display: flex;
-    gap: 5px;
+  text-align: left;
+  display: flex;
+  gap: 5px;
 }
 
 .statNumber {
-    font-weight: bold;
-    font-size: 1rem;
-    color: #333;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
 }
 
 .statLabel {
-    color: #666;
-    font-size: 1rem;
+  color: #666;
+  font-size: 1rem;
 }
 
 .divider {
-    border: 0;
-    height: 1px;
-    background-color: #eee;
-    margin: 20px 0;
+  border: 0;
+  height: 1px;
+  background-color: #eee;
+  margin: 20px 0;
 }
 
 /* ----------------------------------- */
@@ -856,41 +851,41 @@
 /* ----------------------------------- */
 
 .editTitle {
-    text-align: left;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    color: #333;
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
 }
 
 .formGroup {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .formLabel {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 5px;
-    color: #555;
+  display: block;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #555;
 }
 
 .formInput {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: white;
-    transition: border-color 0.3s;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: white;
+  transition: border-color 0.3s;
 }
 
 .formInput:focus {
-    border-color: #4b8236;
-    outline: none;
+  border-color: #4b8236;
+  outline: none;
 }
 
 .formInput:disabled {
-    background-color: #f8f8f8;
-    color: #888;
+  background-color: #f8f8f8;
+  color: #888;
 }
 
 /* ----------------------------------- */
@@ -898,44 +893,49 @@
 /* ----------------------------------- */
 
 .actionButtons {
-    display: flex;
-    justify-content: flex-start;
-    gap: 15px;
-    margin-top: 30px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  margin-top: 30px;
 }
 
-.saveButton, .cancelButton, .editButton, .deleteButton {
-    padding: 10px 25px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+.saveButton,
+.cancelButton,
+.editButton,
+.deleteButton {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
-.saveButton, .editButton {
-    background-color: #4b8236; 
-    color: white;
+.saveButton,
+.editButton {
+  background-color: #4b8236;
+  color: white;
 }
 
-.saveButton:hover, .editButton:hover {
-    background-color: #3a6829;
+.saveButton:hover,
+.editButton:hover {
+  background-color: #3a6829;
 }
 
 .cancelButton {
-    background-color: #95a5a6; 
-    color: white;
+  background-color: #95a5a6;
+  color: white;
 }
 
 .cancelButton:hover {
-    background-color: #7f8c8d;
+  background-color: #7f8c8d;
 }
 
 .deleteButton {
-    background-color: #e74c3c; 
-    color: white;
+  background-color: #e74c3c;
+  color: white;
 }
 
 .deleteButton:hover {
-    background-color: #c0392b;
+  background-color: #c0392b;
 }

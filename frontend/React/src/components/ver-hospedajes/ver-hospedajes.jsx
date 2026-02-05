@@ -42,7 +42,11 @@ const CommentActionsBlock = ({
     <div className={styles.commentActionsBlock}>
       <div className={styles.likeContainer}>
         <div className={styles.likeButton} onClick={handleLikeToggle}>
-          {isLiked ? <FaThumbsUp color="#666" /> : <FaRegThumbsUp color="#666" />}
+          {isLiked ? (
+            <FaThumbsUp color="#666" />
+          ) : (
+            <FaRegThumbsUp color="#666" />
+          )}
         </div>
         <span className={styles.likeCount}>{likes}</span>
       </div>
@@ -114,8 +118,8 @@ function VerHospedaje() {
   };
 
   const imageSources =
-    hospedaje?.todas_las_imagenes && hospedaje.todas_las_imagenes.length > 0
-      ? hospedaje.todas_las_imagenes
+    hospedaje?.imagenes && hospedaje.imagenes.length > 0
+      ? hospedaje.imagenes
       : defaultImageUrls;
 
   const totalSlides = imageSources.length;
@@ -229,23 +233,25 @@ function VerHospedaje() {
     const token = localStorage.getItem("token");
     setLoading(true);
     setError(null);
-    
+
     console.log("🔍 Cargando hospedaje con ID:", id); // DEBUG
-    
+
     try {
       const res = await axios.get(`${API}/api/hospedajes/${id}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      
+
       console.log("✅ Hospedaje cargado:", res.data); // DEBUG
-      
+
       setHospedaje(res.data);
       setOpinions(res.data.comentarios || []);
       setLoading(false);
     } catch (err) {
       console.error("❌ Error al cargar el hospedaje:", err);
       console.error("Detalles del error:", err.response?.data);
-      setError(`No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`);
+      setError(
+        `No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`
+      );
       setLoading(false);
     }
   };
@@ -371,8 +377,17 @@ function VerHospedaje() {
         <Header />
         <div className={styles.pageContainer}>
           <main className={styles.mainContent}>
-            <p style={{textAlign: "center", padding: "50px", fontSize: "1.2rem", color: "#e74c3c"}}>{error}</p>
-            <button 
+            <p
+              style={{
+                textAlign: "center",
+                padding: "50px",
+                fontSize: "1.2rem",
+                color: "#e74c3c",
+              }}
+            >
+              {error}
+            </p>
+            <button
               onClick={() => navigate("/hospedajes")}
               style={{
                 display: "block",
@@ -383,7 +398,7 @@ function VerHospedaje() {
                 border: "none",
                 borderRadius: "8px",
                 cursor: "pointer",
-                fontSize: "1rem"
+                fontSize: "1rem",
               }}
             >
               Volver a hospedajes
@@ -404,7 +419,9 @@ function VerHospedaje() {
             <h1>{hospedaje?.nombre || "Hospedaje"}</h1>
             <div className={styles.actionButtons}>
               <button
-                className={`${styles.btnFilled} ${isFavorite ? styles.active : ""}`}
+                className={`${styles.btnFilled} ${
+                  isFavorite ? styles.active : ""
+                }`}
                 onClick={handleFavoriteToggle}
               >
                 {isFavorite ? <FaHeart /> : <FaRegHeart />} Favoritas
@@ -447,7 +464,9 @@ function VerHospedaje() {
             <div
               className={styles.sliderTrack}
               style={{
-                transform: `translateX(-${currentSlide * (100 / totalSlides)}%)`,
+                transform: `translateX(-${
+                  currentSlide * (100 / totalSlides)
+                }%)`,
               }}
             >
               {imageSources.map((imgSrc, index) => (
@@ -457,7 +476,8 @@ function VerHospedaje() {
                     alt={`${hospedaje?.nombre} - ${index + 1}`}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = defaultImageUrls[index % defaultImageUrls.length];
+                      e.target.src =
+                        defaultImageUrls[index % defaultImageUrls.length];
                     }}
                   />
                 </div>
@@ -491,7 +511,9 @@ function VerHospedaje() {
 
           <div className={styles.mobileActionButtons}>
             <button
-              className={`${styles.btnFilled} ${isFavorite ? styles.active : ""}`}
+              className={`${styles.btnFilled} ${
+                isFavorite ? styles.active : ""
+              }`}
               onClick={handleFavoriteToggle}
             >
               {isFavorite ? <FaHeart /> : <FaRegHeart />} Favoritas
@@ -553,7 +575,10 @@ function VerHospedaje() {
             {selectedImage && (
               <div className={styles.imagePreview}>
                 <p>Imagen seleccionada: {selectedImage.name}</p>
-                <img src={URL.createObjectURL(selectedImage)} alt="Vista previa" />
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Vista previa"
+                />
               </div>
             )}
 
@@ -579,77 +604,85 @@ function VerHospedaje() {
                           color="#4b8236"
                           size={40}
                           onMouseEnter={() => setHover(ratingValue)}
-onMouseLeave={() => setHover(0)}
-/>
-</label>
-);
-})}
-<span className={styles.ratingText}>
-{calificacionComentarios()}
-</span>
-</div>
-</div>
-<button className={styles.btnFilled} onClick={handleSubmit}>
-Enviar opinión
-</button>
-</div>
-</section><section className={styles.opinionsSection}>
-        <h2>Opiniones</h2>
-        {opinions.length === 0 ? (
-          <p className={styles.noComments}>No hay comentarios aún.</p>
-        ) : (
-          opinions.map((op) => (
-            <div key={op.id} className={styles.opinionCard}>
-              <div className={styles.opinionContent}>
-                <div className={styles.opinionHeader}>
-                  <img
-                    src={op.user?.avatar || "https://via.placeholder.com/50"}
-                    alt={op.user?.name}
-                    className={styles.userAvatar}
-                  />
-                  <div className={styles.userInfo}>
-                    <h4>{op.user?.name || "Usuario Anónimo"}</h4>
-                    <div className={styles.opinionRating}>
-                      {[...Array(op.rating)].map((_, idx) => (
-                        <FaHeart key={idx} color="#4b8236" size={14} />
-                      ))}
-                      {[...Array(5 - op.rating)].map((_, idx) => (
-                        <FaRegHeart key={idx + op.rating} color="#999" size={14} />
-                      ))}
-                    </div>
-                  </div>
+                          onMouseLeave={() => setHover(0)}
+                        />
+                      </label>
+                    );
+                  })}
+                  <span className={styles.ratingText}>
+                    {calificacionComentarios()}
+                  </span>
                 </div>
-
-                <p className={styles.opinionCategoryDate}>
-                  {getDayAndMonth(op.created_at)} • {op.category}
-                </p>
-
-                <p className={styles.opinionText}>{op.contenido}</p>
-
-                {op.image_path && (
-                  <img
-                    src={op.image_url || `${API}/storage/${op.image_path}`}
-                    alt="Comentario"
-                    className={styles.opinionImage}
-                  />
-                )}
               </div>
-
-              <CommentActionsBlock
-                commentId={op.id}
-                isOwner={userId === op.usuario_id}
-                onDelete={deleteComment}
-                onReport={reportComment}
-                isMenuOpen={menuOpen === op.id}
-                setMenuOpen={setMenuOpen}
-              />
+              <button className={styles.btnFilled} onClick={handleSubmit}>
+                Enviar opinión
+              </button>
             </div>
-          ))
-        )}
-      </section>
-    </main>
-  </div>
-  <Footer />
-</>);
+          </section>
+          <section className={styles.opinionsSection}>
+            <h2>Opiniones</h2>
+            {opinions.length === 0 ? (
+              <p className={styles.noComments}>No hay comentarios aún.</p>
+            ) : (
+              opinions.map((op) => (
+                <div key={op.id} className={styles.opinionCard}>
+                  <div className={styles.opinionContent}>
+                    <div className={styles.opinionHeader}>
+                      <img
+                        src={
+                          op.user?.avatar || "https://via.placeholder.com/50"
+                        }
+                        alt={op.user?.name}
+                        className={styles.userAvatar}
+                      />
+                      <div className={styles.userInfo}>
+                        <h4>{op.user?.name || "Usuario Anónimo"}</h4>
+                        <div className={styles.opinionRating}>
+                          {[...Array(op.rating)].map((_, idx) => (
+                            <FaHeart key={idx} color="#4b8236" size={14} />
+                          ))}
+                          {[...Array(5 - op.rating)].map((_, idx) => (
+                            <FaRegHeart
+                              key={idx + op.rating}
+                              color="#999"
+                              size={14}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className={styles.opinionCategoryDate}>
+                      {getDayAndMonth(op.created_at)} • {op.category}
+                    </p>
+
+                    <p className={styles.opinionText}>{op.contenido}</p>
+
+                    {op.image_path && (
+                      <img
+                        src={op.image_url || `${API}/storage/${op.image_path}`}
+                        alt="Comentario"
+                        className={styles.opinionImage}
+                      />
+                    )}
+                  </div>
+
+                  <CommentActionsBlock
+                    commentId={op.id}
+                    isOwner={userId === op.usuario_id}
+                    onDelete={deleteComment}
+                    onReport={reportComment}
+                    isMenuOpen={menuOpen === op.id}
+                    setMenuOpen={setMenuOpen}
+                  />
+                </div>
+              ))
+            )}
+          </section>
+        </main>
+      </div>
+      <Footer />
+    </>
+  );
 }
 export default VerHospedaje;

@@ -50,7 +50,9 @@ function Cards({ hospedajes, user, onDelete }) {
               {user?.rol === "admin" ? (
                 <div className={styles.adminButtons}>
                   <button
-                    onClick={() => navigate(`/pages/hospedajes/${hospedaje.id}`)}
+                    onClick={() =>
+                      navigate(`/pages/hospedaje /${hospedaje.id}`)
+                    }
                     className={styles.editButton}
                   >
                     Editar
@@ -64,9 +66,7 @@ function Cards({ hospedajes, user, onDelete }) {
                 </div>
               ) : (
                 <Link to={`/hospedajes/${hospedaje.id}`}>
-                  <button className={styles.detailsButton}>
-                    Ver detalles
-                  </button>
+                  <button className={styles.detailsButton}>Ver detalles</button>
                 </Link>
               )}
             </div>

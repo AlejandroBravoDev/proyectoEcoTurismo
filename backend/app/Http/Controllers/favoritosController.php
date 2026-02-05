@@ -14,7 +14,7 @@ class FavoritosController extends Controller
         try {
             $request->validate([
                 'lugar_id' => 'nullable|exists:lugares,id',
-                'hospedaje_id' => 'nullable|exists:hospedajes,id', // ✅ AÑADIDO
+                'hospedaje_id' => 'nullable|exists:hospedajes,id',
             ]);
 
             // Verificar que al menos uno esté presente
@@ -44,10 +44,13 @@ class FavoritosController extends Controller
             $favorito = new Favorito();
             $favorito->usuario_id = Auth::id();
             $favorito->lugar_id = $request->lugar_id;
-            $favorito->hospedaje_id = $request->hospedaje_id; // ✅ AÑADIDO
+            $favorito->hospedaje_id = $request->hospedaje_id;
             $favorito->save();
 
-            return response()->json(['message' => 'Favorito añadido'], 201);
+            return response()->json([
+                'message' => 'Favorito añadido',
+                'favorito' => $favorito
+            ], 201);
 
         } catch (\Exception $e) {
             Log::error('Error al añadir favorito: ' . $e->getMessage());
@@ -55,15 +58,23 @@ class FavoritosController extends Controller
         }
     }
 
+    // ✅ MÉTODO DESTROY CORREGIDO
     public function destroy($id)
     {
         try {
+            // El $id puede ser lugar_id O hospedaje_id
             $favorito = Favorito::where('usuario_id', Auth::id())
                 ->where(function($query) use ($id) {
                     $query->where('lugar_id', $id)
-                          ->orWhere('hospedaje_id', $id); // ✅ AÑADIDO
+                          ->orWhere('hospedaje_id', $id);
                 })
-                ->firstOrFail();
+                ->first();
+            
+            if (!$favorito) {
+                return response()->json([
+                    'message' => 'Favorito no encontrado'
+                ], 404);
+            }
                 
             $favorito->delete();
             return response()->json(['message' => 'Favorito eliminado'], 200);
@@ -74,13 +85,14 @@ class FavoritosController extends Controller
         }
     }
 
+    // ✅ MÉTODO CHECK CORREGIDO
     public function check($id)
     {
         try {
             $isFavorite = Favorito::where('usuario_id', Auth::id())
                 ->where(function($query) use ($id) {
                     $query->where('lugar_id', $id)
-                          ->orWhere('hospedaje_id', $id); // ✅ AÑADIDO
+                          ->orWhere('hospedaje_id', $id);
                 })
                 ->exists();
                 
@@ -88,7 +100,7 @@ class FavoritosController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error al verificar favorito: ' . $e->getMessage());
-            return response()->json(['message' => 'Error'], 500);
+            return response()->json(['message' => 'Error al verificar favorito'], 500);
         }
     }
 }
