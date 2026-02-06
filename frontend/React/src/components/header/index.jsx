@@ -12,7 +12,7 @@ function Header() {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("usuario"));
-  console.log(user.nombre_completo);
+  console.log(user);
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -133,10 +133,10 @@ function Header() {
             ) : (
               <div className="w-full flex flex-row gap-100">
                 <ul className="h-10 w-70 flex flex-row items-center justify-around">
-                  <li>
+                  <li className="text-lg text-[#4A4A4A ]  relative after:content-[''] after:absolute after:w-0 after:h-[3px] after:-bottom-[5px] after:left-1/2 after:-translate-x-1/2 after:bg-[#20A217] after:transition-all after:duration-300 hover:after:w-full">
                     <Link to="/lugares">Lugares</Link>
                   </li>
-                  <li>
+                  <li className="text-lg text-[#4A4A4A ]  relative after:content-[''] after:absolute after:w-0 after:h-[3px] after:-bottom-[5px] after:left-1/2 after:-translate-x-1/2 after:bg-[#20A217] after:transition-all after:duration-300 hover:after:w-full">
                     <Link to="/hospedajes">Hospedajes</Link>
                   </li>
                 </ul>
