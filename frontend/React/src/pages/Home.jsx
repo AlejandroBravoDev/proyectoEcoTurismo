@@ -9,8 +9,8 @@ import HomeHospedajes from "../components/homeHospedajes/index";
 import styles from "../components/mapa/mapaOverlay.module.css";
 import axios from "axios";
 
-const LazyMapaRisaralda = React.lazy(() =>
-  import("../components/mapa/mapaRisaralda")
+const LazyMapaRisaralda = React.lazy(
+  () => import("../components/mapa/mapaRisaralda"),
 );
 
 const API_BASE = "http://localhost:8000";
@@ -75,7 +75,7 @@ function App() {
       (sitio) =>
         sitio.nombre.toLowerCase().includes(query) ||
         (sitio.info && sitio.info.toLowerCase().includes(query)) ||
-        sitio.ubicacionTexto.toLowerCase().includes(query)
+        sitio.ubicacionTexto.toLowerCase().includes(query),
     );
 
     if (foundPlace) {
@@ -84,7 +84,7 @@ function App() {
       setSearchTerm("");
     } else {
       setSearchError(
-        `No se encontró ningún lugar que coincida con "${searchTerm}".`
+        `No se encontró ningún lugar que coincida con "${searchTerm}".`,
       );
     }
   };
