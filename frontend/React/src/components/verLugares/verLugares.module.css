@@ -11,10 +11,9 @@
 }
 
 .mainContent {
-  max-width: 1200px;
   margin: auto;
-  padding: 2rem;
   overflow-x: hidden;
+  padding: 2em 9em 0 9em;
 }
 
 .titleSection {
@@ -199,6 +198,8 @@
 .infoSection {
   margin-bottom: 2rem;
   padding: 0 0 1rem 0;
+  display: flex;
+  gap: 5em;
 }
 
 .location {
@@ -218,6 +219,9 @@
 }
 .locationText {
   margin-top: -20px;
+  display: flex;
+  flex-direction: column;
+  width: 25em;
 }
 .locationText p {
   margin-top: -10px;

@@ -235,22 +235,18 @@ function VerHospedaje() {
     setLoading(true);
     setError(null);
 
-    console.log("🔍 Cargando hospedaje con ID:", id); // DEBUG
 
     try {
       const res = await axios.get(`${API}/api/hospedajes/${id}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-      console.log("✅ Hospedaje cargado:", res.data); // DEBUG
 
       setHospedaje(res.data);
       setOpinions(res.data.comentarios || []);
       
       setLoading(false);
     } catch (err) {
-      console.error("❌ Error al cargar el hospedaje:", err);
-      console.error("Detalles del error:", err.response?.data);
       setError(
         `No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`,
       );

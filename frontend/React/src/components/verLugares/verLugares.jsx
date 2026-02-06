@@ -201,11 +201,11 @@ function VerLugares() {
     } catch (err) {
       console.error(
         "Error al enviar comentario:",
-        err.response ? err.response.data : err.message
+        err.response ? err.response.data : err.message,
       );
       alert(
         "Error al enviar el comentario: " +
-          (err.response ? err.response.data.message : err.message)
+          (err.response ? err.response.data.message : err.message),
       );
     }
   };
@@ -226,7 +226,7 @@ function VerLugares() {
         await axios.post(
           `${API}/api/favoritos`,
           { lugar_id: id },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         setIsFavorite(true);
       }
@@ -252,7 +252,7 @@ function VerLugares() {
         err.response?.status === 404
           ? "El lugar no fue encontrado."
           : err.response?.data?.message ||
-              "No se pudo cargar el lugar. Intenta de nuevo."
+              "No se pudo cargar el lugar. Intenta de nuevo.",
       );
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
@@ -281,7 +281,7 @@ function VerLugares() {
 
     if (
       !window.confirm(
-        "¿Estás seguro de que quieres eliminar esta opinión? Esta acción es irreversible."
+        "¿Estás seguro de que quieres eliminar esta opinión? Esta acción es irreversible.",
       )
     ) {
       setMenuOpen(null);
@@ -320,7 +320,7 @@ function VerLugares() {
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       alert("Opinión denunciada con éxito.");
       setMenuOpen(null);
@@ -402,7 +402,7 @@ function VerLugares() {
   return (
     <>
       <Header />
-      <div className={styles.pageContainer}>
+      <div>
         <main className={styles.mainContent}>
           <section className={styles.titleSection}>
             <h1>{lugar?.nombre || "Lugar Ecoturístico"}</h1>
@@ -510,9 +510,10 @@ function VerLugares() {
           </div>
 
           <section className={styles.infoSection}>
-            <h3>Acerca de</h3>
-            <p>{lugar?.descripcion || "Descripción no disponible"}</p>
-
+            <div>
+              <h3>Acerca de</h3>
+              <p>{lugar?.descripcion || "Descripción no disponible"}</p>
+            </div>
             <div className={styles.location}>
               <FaMapMarkerAlt className={styles.locationIcon} />
               <div className={styles.locationText}>
@@ -525,14 +526,14 @@ function VerLugares() {
               </div>
             </div>
 
-            <h3>Cercano a</h3>
+            {/* <h3>Cercano a</h3>
             <p>
               {lugar?.hoteles_cercanos && lugar.hoteles_cercanos.length > 0
                 ? `Este lugar es cercano a: ${lugar.hoteles_cercanos.join(
                     ", "
                   )}.`
                 : "Este sitio no tiene hoteles cercanos."}
-            </p>
+            </p> */}
           </section>
 
           <section className={styles.reviewSection}>
