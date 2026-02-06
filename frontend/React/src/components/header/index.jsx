@@ -124,7 +124,7 @@ function Header() {
                     </Link>
                   </li>
                 </ul>
-                <Link to="/register">
+                <Link to="/registro">
                   <button className=" w-40 h-11 text-white bg-green-600 rounded-4xl">
                     Registrate
                   </button>
