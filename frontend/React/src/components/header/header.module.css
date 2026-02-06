@@ -6,7 +6,7 @@
   box-sizing: border-box;
   padding: 0 30px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   z-index: 99999;
 }
 .headerContainer {
@@ -16,7 +16,8 @@
 
 .containerLogo {
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  
 }
 .containerLogo h1 {
   font-weight: 800;
@@ -24,35 +25,35 @@
 }
 .containerLogo a {
   text-decoration: none;
-  color: #000;
   transition: all 0.3s ease-in-out;
 }
 .titleSpan {
-  color: #4b8236;
+  color: #20A217;
   font-weight: 800;
 }
 
 .containerLinks {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
 .navList {
   height: 80px;
   display: flex;
+  border: 1px solid black;
   list-style: none;
   padding: 0;
   margin: 0;
-  gap: 70px;
+  gap: 450px;
   justify-content: center;
   align-items: center;
 }
 .navList li:not(.profileLink) a {
   text-decoration: none;
   font-size: 20px;
-  font-weight: 500;
-  color: #000000;
+  font-weight: 400;
+  color: #4A4A4A;
   padding-bottom: 0;
   position: relative;
   display: inline-block;
@@ -83,6 +84,12 @@
 }
 .profileLink a {
   text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap:30px;
+  font-weight: 500;
 }
 
 .menuToggle {

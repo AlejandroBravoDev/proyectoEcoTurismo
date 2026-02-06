@@ -18,7 +18,7 @@ function SearchBar({ municipios, onSearchSubmit, onMunicipioChange, currentMunic
     <div className={styles.contentWrapper}>
       <div className={styles.searchContainer}>
         <h2>¿En dónde deseas hospedarte?</h2>
-        <p>¡Filtra los hospedajes más cercanos a los sitios Ecoturísticos!</p>
+        <p>¡Descubre los mejores lugares ecoturisticos de Risaralda!</p>
 
         <div className={styles.searchFilters}>
           <div className={styles.searchInput}>
@@ -39,7 +39,7 @@ function SearchBar({ municipios, onSearchSubmit, onMunicipioChange, currentMunic
             value={currentMunicipioId}
             onChange={(e) => onMunicipioChange(Number(e.target.value))}
           >
-            <option value={0}>Todos los municipios</option>
+            <option value={0}>Municipios</option>
             {municipios.map((municipio) => (
               <option key={municipio.id} value={municipio.id}>
                 {municipio.nombre}

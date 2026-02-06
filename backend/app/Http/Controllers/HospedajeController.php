@@ -126,8 +126,9 @@ class HospedajeController extends Controller
                 'coordenadas' => $hospedaje->coordenadas,
                 'municipio' => optional($hospedaje->municipio)->nombre,
                 'imagen_principal_url' => $imagenPrincipalUrl, // ✅ AWS
-                'imagenes' => $todasLasImagenesUrls,           // ✅ Galería
+                'todas_las_imagenes' => $todasLasImagenesUrls,           // ✅ Galería
                 'ubicacion' => $hospedaje->ubicacion,
+               
                 'tipo' => $hospedaje->tipo,
                 'contacto' => $hospedaje->contacto,
                 'isFavorite' => $isFavorite,

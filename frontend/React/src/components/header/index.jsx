@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import stylesHeader from "./header.module.css";
 import usuarioDemo from "../../assets/usuarioDemo.png";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 import axios from "axios";
 
 const LARAVEL_BASE_URL = "http://localhost:8000";
@@ -10,8 +11,8 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
   const navigate = useNavigate();
-  const user = localStorage.getItem("usuario");
-
+  const user = JSON.parse(localStorage.getItem("usuario"));
+  console.log(user.nombre_completo);
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -44,7 +45,7 @@ function Header() {
       } catch (err) {
         console.warn(
           "Fallo al cargar avatar del Header:",
-          err.response?.data || err.message || err
+          err.response?.data || err.message || err,
         );
         setAvatarUrl(usuarioDemo);
         if (err.response && err.response.status === 401) {
@@ -69,7 +70,8 @@ function Header() {
 
       <header className={stylesHeader.header}>
         <div className={stylesHeader.containerLogo}>
-          <Link to="/">
+          <Link to="/" className="w-full flex flex-row items-center gap-4">
+            <img src={logo} className="w-10" />
             <h1>
               <span className={stylesHeader.titleSpan}>ECO TURISMO</span>
               RISARALDA
@@ -103,36 +105,52 @@ function Header() {
             }`}
           >
             {!user ? (
-              <>
-                <ul className={stylesHeader.navList}>
-                  <li>
-                    <Link to="/login">Iniciar sesión</Link>
+              <div className="w-full flex flex-row gap-100">
+                <ul className="h-10 w-70 flex flex-row items-center justify-around">
+                  <li className="text-lg text-[#4A4A4A]">
+                    <Link
+                      to="/login"
+                      className="text-lg text-[#4A4A4A ]  relative after:content-[''] after:absolute after:w-0 after:h-[3px] after:-bottom-[5px] after:left-1/2 after:-translate-x-1/2 after:bg-[#20A217] after:transition-all after:duration-300 hover:after:w-full"
+                    >
+                      Lugares
+                    </Link>
                   </li>
-                  <li>
-                    <Link to="/registro">Registrarse</Link>
+                  <li className="text-lg text-[#4A4A4A]">
+                    <Link
+                      to="/login"
+                      className="text-lg text-[#4A4A4A ]  relative after:content-[''] after:absolute after:w-0 after:h-[3px] after:-bottom-[5px] after:left-1/2 after:-translate-x-1/2 after:bg-[#20A217] after:transition-all after:duration-300 hover:after:w-full"
+                    >
+                      Hospedajes
+                    </Link>
                   </li>
-            
                 </ul>
-              </>
+                <Link to="/register">
+                  <button className=" w-40 h-11 text-white bg-green-600 rounded-4xl">
+                    Registrate
+                  </button>
+                </Link>
+              </div>
             ) : (
-              <>
-                <ul className={stylesHeader.navList}>
+              <div className="w-full flex flex-row gap-100">
+                <ul className="h-10 w-70 flex flex-row items-center justify-around">
                   <li>
                     <Link to="/lugares">Lugares</Link>
                   </li>
                   <li>
                     <Link to="/hospedajes">Hospedajes</Link>
                   </li>
-                  <li className={stylesHeader.profileLink}>
-                    <Link to={profileLinkTarget}>
-                      <img src={currentAvatar} alt="Perfil de Usuario" />
-                    </Link>
-                  </li>
                 </ul>
-              </>
+                <div className={stylesHeader.profileLink}>
+                  <Link to={profileLinkTarget}>
+                    <img src={currentAvatar} alt="Perfil de Usuario" />
+                    <h1 className="text-black">{user.nombre_completo}</h1>
+                  </Link>
+                </div>
+              </div>
             )}
           </nav>
         </div>
+        {/* <div className="w-70 h-11 flex items-center justify-center"></div> */}
       </header>
     </div>
   );
