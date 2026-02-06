@@ -128,6 +128,7 @@ class HospedajeController extends Controller
                 'imagen_principal_url' => $imagenPrincipalUrl, // ✅ AWS
                 'todas_las_imagenes' => $todasLasImagenesUrls,           // ✅ Galería
                 'ubicacion' => $hospedaje->ubicacion,
+               
                 'tipo' => $hospedaje->tipo,
                 'contacto' => $hospedaje->contacto,
                 'isFavorite' => $isFavorite,

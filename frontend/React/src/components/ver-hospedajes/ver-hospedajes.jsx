@@ -90,7 +90,7 @@ const CommentActionsBlock = ({
 };
 
 function VerHospedaje() {
-  const { id } = useParams(); // ✅ OBTENER ID DE LA URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
@@ -186,6 +186,7 @@ function VerHospedaje() {
       const newCommentData = response.data.comentario;
       const newOpinion = {
         ...newCommentData,
+        rating: Number(rating),
         user: currentUser,
         usuario_id: currentUser.id,
       };
@@ -219,7 +220,7 @@ function VerHospedaje() {
         await axios.post(
           `${API}/api/favoritos`,
           { hospedaje_id: id },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         setIsFavorite(true);
       }
@@ -245,12 +246,13 @@ function VerHospedaje() {
 
       setHospedaje(res.data);
       setOpinions(res.data.comentarios || []);
+      
       setLoading(false);
     } catch (err) {
       console.error("❌ Error al cargar el hospedaje:", err);
       console.error("Detalles del error:", err.response?.data);
       setError(
-        `No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`
+        `No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`,
       );
       setLoading(false);
     }
@@ -309,7 +311,7 @@ function VerHospedaje() {
       await axios.post(
         `${API}/api/comentarios/${commentId}/report`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       alert("Opinión denunciada con éxito.");
       setMenuOpen(null);
