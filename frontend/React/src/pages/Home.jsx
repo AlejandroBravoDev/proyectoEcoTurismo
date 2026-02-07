@@ -158,7 +158,7 @@ function App() {
           </section>
         </div>
 
-        <section className="relative w-full h-[600px] overflow-hidden mb-24">
+        <section className="relative w-full h-[800px] overflow-hidden mb-24">
           <div className="absolute inset-0 z-0 animate-in fade-in duration-1000">
             <img
               src={fondoPrincipal3}
