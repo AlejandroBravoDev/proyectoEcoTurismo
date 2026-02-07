@@ -583,15 +583,16 @@ function VerLugares() {
                 </div>
               </div>
 
-              {selectedImage && (
-                <div className={styles.imagePreview}>
-                  <p>Imagen seleccionada: {selectedImage.name}</p>
-                  <img
-                    src={URL.createObjectURL(selectedImage)}
-                    alt="Vista previa"
-                  />
-                </div>
-              )}
+            {selectedImage && (
+              <div className={styles.imagePreview}>
+                <p>Imagen seleccionada: {selectedImage.name}</p>
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Vista previa"
+                  className="w-50 h-50 rounded-xl"
+                />
+              </div>
+            )}
 
               <div className={styles.ratingAndButton}>
                 <div className={styles.ratingGroup}>

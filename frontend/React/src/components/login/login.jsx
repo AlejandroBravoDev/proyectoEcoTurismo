@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./Login.module.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import img1 from "../../assets/img1.jpg";
 import img2 from "../../assets/img2.jpg";
 import img3 from "../../assets/img3.jpg";
@@ -56,7 +56,7 @@ function Login() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
-        prevIndex === totalImages - 1 ? 0 : prevIndex + 1
+        prevIndex === totalImages - 1 ? 0 : prevIndex + 1,
       );
     }, 4000);
 
@@ -110,6 +110,10 @@ function Login() {
           <a href="/registro" className={styles.loginLink}>
             Ir a registro
           </a>
+
+          <Link to="/">
+            <p className="text-gray-500">Volver al inicio</p>
+          </Link>
         </div>
       </div>
     </section>
