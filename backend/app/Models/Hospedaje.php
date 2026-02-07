@@ -34,10 +34,10 @@ class Hospedaje extends Model
     {
         return $this->belongsTo(Municipios::class, 'municipio_id');
     }
-
-    // ✅ CORREGIDO: Relación con comentarios (igual que Lugares)
-    public function opiniones()
+    
+     public function opiniones()
     {
-        return $this->hasMany(Comentarios::class, 'id')->latest();
+        return $this->hasMany(Comentarios::class, 'hospedaje_id')->latest();
     }
+
 }

@@ -14,7 +14,7 @@
 .mainContent {
   margin: auto;
   overflow-x: hidden;
-  padding: 2em 9em 0 9em;
+  padding: 2em 6em 0 6em;
 }
 
 .titleSection {
@@ -223,7 +223,7 @@
   margin-top: -20px;
   display: flex;
   flex-direction: column;
-  width: 25em;
+  width: 22em;
 }
 .locationText p {
   margin-top: -10px;
@@ -238,8 +238,8 @@
   /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); */
 }
 
-.leaflet_container{
-  height:55em;
+.leaflet_container {
+  height: 55em;
   width: 75em;
   border-radius: 20px;
 }
@@ -258,7 +258,6 @@
   margin-top: 1.5rem;
   margin-bottom: 1rem;
 }
-
 
 .reviewForm {
   display: flex;

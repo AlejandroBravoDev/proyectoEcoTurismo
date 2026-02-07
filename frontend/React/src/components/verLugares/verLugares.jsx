@@ -250,7 +250,8 @@ function VerLugares() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLugar(res.data);
-      setOpinions(res.data.comentarios || []);
+      setOpinions(res.data.comentarios);
+      console.log(res.data)
       setPosition(res.data.coordenadas.split(",").map(Number));
       setLoading(false);
     } catch (err) {

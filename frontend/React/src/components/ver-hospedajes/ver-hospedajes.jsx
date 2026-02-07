@@ -245,6 +245,7 @@ function VerHospedaje() {
       });
 
       setHospedaje(res.data);
+      console.log(res.data)
       setOpinions(res.data.comentarios || []);
       setPosition(res.data.coordenadas.split(",").map(Number));
       console.log(position);
