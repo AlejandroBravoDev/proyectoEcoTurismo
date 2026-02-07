@@ -14,6 +14,7 @@ function Registro() {
     nombre_completo: "",
     email: "",
     password: "",
+    password_confirmation: "",
   });
 
   const [mensaje, setMensaje] = useState("");
@@ -31,35 +32,51 @@ function Registro() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.password_confirmation) {
+      setMensaje("Las contraseñas no coinciden");
+      return;
+    }
+
     try {
       const res = await axios.post("/api/register", formData);
+
       const token = res.data.token;
       const usuario = res.data.usuario;
+
       localStorage.setItem("token", token);
       localStorage.setItem("usuario", JSON.stringify(usuario));
-      setMensaje("¡Registro exitoso! Iniciando sesión automáticamente.");
-      setFormData({ nombre_completo: "", email: "", password: "" });
+
+      setMensaje("¡Registro exitoso! Redirigiendo...");
+      setFormData({
+        nombre_completo: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+      });
+
       setTimeout(() => {
         navigate("/login");
       }, 1500);
     } catch (err) {
-      console.error("Error en registro:", err);
       let errorMsg = "No se pudo registrar. Verifica tus datos.";
+
       if (err.response?.data?.errors) {
-        const validationErrors = err.response.data.errors;
-        const firstErrorKey = Object.keys(validationErrors)[0];
-        errorMsg = validationErrors[firstErrorKey][0];
+        const errors = err.response.data.errors;
+        const firstKey = Object.keys(errors)[0];
+        errorMsg = errors[firstKey][0];
       } else if (err.response?.data?.message) {
         errorMsg = err.response.data.message;
       }
+
       setMensaje(errorMsg);
     }
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === totalImages - 1 ? 0 : prevIndex + 1
+      setCurrentIndex((prev) =>
+        prev === totalImages - 1 ? 0 : prev + 1
       );
     }, 4000);
 
@@ -71,6 +88,7 @@ function Registro() {
       <div className={styles.left}>
         <div className={styles.formBox}>
           <h2>Registro</h2>
+
           <form onSubmit={handleSubmit}>
             <label>Nombre</label>
             <input
@@ -99,6 +117,15 @@ function Registro() {
               required
             />
 
+            <label>Confirmar contraseña</label>
+            <input
+              type="password"
+              name="password_confirmation"
+              value={formData.password_confirmation}
+              onChange={handleChange}
+              required
+            />
+
             <button type="submit">Registrarse</button>
           </form>
 
@@ -120,7 +147,7 @@ function Registro() {
                 index === currentIndex ? styles.active : ""
               }`}
             >
-              <img src={imgSrc} alt={`Slider image ${index + 1}`} />
+              <img src={imgSrc} alt={`Slider ${index + 1}`} />
             </div>
           ))}
         </div>

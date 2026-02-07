@@ -30,7 +30,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/login", formData);
+      const res = await axios.post("http://localhost:8000/api/login",formData);      
       const token = res.data.token; // Corregido de access_token a token
       const usuario = res.data.usuario; // Obtener el objeto usuario
       localStorage.setItem("token", token);
@@ -110,6 +110,9 @@ function Login() {
           <a href="/registro" className={styles.loginLink}>
             Ir a registro
           </a>
+
+          <Link to="/forgot-password" className={styles.loginLink}>¿Olvidaste tu contraseña?</Link>
+
 
           <Link to="/">
             <p className="text-gray-500">Volver al inicio</p>
