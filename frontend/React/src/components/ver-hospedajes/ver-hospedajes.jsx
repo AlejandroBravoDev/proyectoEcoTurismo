@@ -7,6 +7,7 @@ import Footer from "../footer";
 import imgMeerkat from "../../assets/img4.jpg";
 import imgLion from "../../assets/img6.jpg";
 import imgParrot from "../../assets/img1.jpg";
+import Mapa from "../mapa/map";
 import {
   FaMapMarkerAlt,
   FaRegHeart,
@@ -106,6 +107,9 @@ function VerHospedaje() {
   const [menuOpen, setMenuOpen] = useState(null);
   const [userId, setUserId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [position, setPosition] = useState([
+    4.81415861127678, -75.71023222513418,
+  ]);
 
   const categories = ["Familia", "Amigos", "Trabajo", "Vacaciones", "Turista"];
 
@@ -235,16 +239,16 @@ function VerHospedaje() {
     setLoading(true);
     setError(null);
 
-
     try {
       const res = await axios.get(`${API}/api/hospedajes/${id}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-
       setHospedaje(res.data);
       setOpinions(res.data.comentarios || []);
-      
+      setPosition(res.data.coordenadas.split(",").map(Number));
+      console.log(position);
+
       setLoading(false);
     } catch (err) {
       setError(
@@ -519,8 +523,10 @@ function VerHospedaje() {
           </div>
 
           <section className={styles.infoSection}>
-            <h3>Acerca de</h3>
-            <p>{hospedaje?.descripcion || "Descripción no disponible"}</p>
+            <div>
+              <h3>Acerca de</h3>
+              <p>{hospedaje?.descripcion || "Descripción no disponible"}</p>
+            </div>
 
             <div className={styles.location}>
               <FaMapMarkerAlt className={styles.locationIcon} />
@@ -532,89 +538,93 @@ function VerHospedaje() {
           </section>
 
           <section className={styles.reviewSection}>
-            <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
-            <div className={styles.reviewFormContainer}>
-              <div className={styles.reviewForm}>
-                <textarea
-                  placeholder="Cuéntanos aquí"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  maxLength={5000}
-                />
-                <div className={styles.reviewActions}>
-                  <label htmlFor="imageUpload" className={styles.btnOutline}>
-                    <MdAddPhotoAlternate /> Adjunta una imagen
-                  </label>
-                  <input
-                    id="imageUpload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    style={{ display: "none" }}
+            <Mapa positions={position} />
+
+            <div className="w-130 rounded-2xl bg-white p-8">
+              <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
+              <div className={styles.reviewFormContainer}>
+                <div className={styles.reviewForm}>
+                  <textarea
+                    placeholder="Cuéntanos aquí"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    maxLength={5000}
                   />
-                  <div className={styles.categorySelectContainer}>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className={styles.categorySelect}
-                    >
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
-                    <FaChevronRight className={styles.categoryArrow} />
+                  <div className={styles.reviewActions}>
+                    <label htmlFor="imageUpload" className={styles.btnOutline}>
+                      <MdAddPhotoAlternate /> Adjunta una imagen
+                    </label>
+                    <input
+                      id="imageUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      style={{ display: "none" }}
+                    />
+                    <div className={styles.categorySelectContainer}>
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className={styles.categorySelect}
+                      >
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category}
+                          </option>
+                        ))}
+                      </select>
+                      <FaChevronRight className={styles.categoryArrow} />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {selectedImage && (
-              <div className={styles.imagePreview}>
-                <p>Imagen seleccionada: {selectedImage.name}</p>
-                <img
-                  src={URL.createObjectURL(selectedImage)}
-                  alt="Vista previa"
-                />
-              </div>
-            )}
-
-            <div className={styles.ratingAndButton}>
-              <div className={styles.ratingGroup}>
-                <h3>¿Cómo calificarías tu experiencia?</h3>
-                <div className={styles.heartRating}>
-                  {[...Array(5)].map((_, index) => {
-                    const ratingValue = index + 1;
-                    const isFilled = ratingValue <= (hover || rating);
-                    const Icon = isFilled ? FaHeart : FaRegHeart;
-                    return (
-                      <label key={index}>
-                        <input
-                          type="radio"
-                          name="rating"
-                          value={ratingValue}
-                          onClick={() => setRating(ratingValue)}
-                          style={{ display: "none" }}
-                        />
-                        <Icon
-                          className={styles.heartIcon}
-                          color="#4b8236"
-                          size={40}
-                          onMouseEnter={() => setHover(ratingValue)}
-                          onMouseLeave={() => setHover(0)}
-                        />
-                      </label>
-                    );
-                  })}
-                  <span className={styles.ratingText}>
-                    {calificacionComentarios()}
-                  </span>
+              {selectedImage && (
+                <div className={styles.imagePreview}>
+                  <p>Imagen seleccionada: {selectedImage.name}</p>
+                  <img
+                    src={URL.createObjectURL(selectedImage)}
+                    alt="Vista previa"
+                  />
                 </div>
+              )}
+
+              <div className={styles.ratingAndButton}>
+                <div className={styles.ratingGroup}>
+                  <h3>¿Cómo calificarías tu experiencia?</h3>
+                  <div className={styles.heartRating}>
+                    {[...Array(5)].map((_, index) => {
+                      const ratingValue = index + 1;
+                      const isFilled = ratingValue <= (hover || rating);
+                      const Icon = isFilled ? FaHeart : FaRegHeart;
+                      return (
+                        <label key={index}>
+                          <input
+                            type="radio"
+                            name="rating"
+                            value={ratingValue}
+                            onClick={() => setRating(ratingValue)}
+                            style={{ display: "none" }}
+                          />
+                          <Icon
+                            className={styles.heartIcon}
+                            color="#4b8236"
+                            size={40}
+                            onMouseEnter={() => setHover(ratingValue)}
+                            onMouseLeave={() => setHover(0)}
+                          />
+                        </label>
+                      );
+                    })}
+                    <span className={styles.ratingText}>
+                      {calificacionComentarios()}
+                    </span>
+                  </div>
+                </div>
+                <button className={styles.btnFilled} onClick={handleSubmit}>
+                  Enviar opinión
+                </button>
               </div>
-              <button className={styles.btnFilled} onClick={handleSubmit}>
-                Enviar opinión
-              </button>
             </div>
           </section>
           <section className={styles.opinionsSection}>
