@@ -51,14 +51,14 @@ function Header() {
         ></div>
       )}
 
-      <header className="w-full h-20 flex bg-slate-950 px-[30px] items-center justify-between md:justify-around box-border z-[99999] relative">
+      <header className="w-full h-20 flex bg-white px-[30px] items-center justify-between md:justify-around box-border z-[99999] relative">
         <div className="flex flex-row items-center z-[999999]">
           <Link
             to="/"
             className="flex flex-row items-center gap-4 no-underline transition-all duration-300"
           >
             <img src={logo} className="w-10" alt="Logo" />
-            <h1 className="font-extrabold text-lg md:text-2xl whitespace-nowrap text-white">
+            <h1 className="font-extrabold text-lg md:text-2xl whitespace-nowrap text-black">
               <span className="text-[#20A217]">ECO TURISMO</span>RISARALDA
             </h1>
           </Link>
@@ -87,14 +87,14 @@ function Header() {
           ${menuOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}
         `}
         >
-          <ul className="flex flex-col lg:flex-row items-center gap-10 lg:gap-[100px] list-none p-0 m-0 text-white">
+          <ul className="flex flex-col lg:flex-row items-center gap-10 lg:gap-[100px] list-none p-0 m-0 text-black">
             {["Lugares", "Hospedajes"].map((item) => (
-              <li key={item} className="relative group text-white">
+              <li key={item} className="relative group text-black">
                 <Link
                   to={`/${item.toLowerCase()}`}
                   className="text-lg font-normal no-underline relative inline-block
                   after:content-[''] after:absolute after:w-0 after:h-[3px] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 
-                  after:bg-[#20A217] after:transition-all after:duration-300 group-hover:after:w-full text-white"
+                  after:bg-[#20A217] after:transition-all after:duration-300 group-hover:after:w-full text-black"
                 >
                   {item}
                 </Link>
@@ -120,7 +120,7 @@ function Header() {
                     className="w-16 h-16 lg:w-[50px] lg:h-[50px] rounded-full object-cover border-2 border-green-600 shadow-sm"
                     alt="Perfil"
                   />
-                  <h1 className="text-white text-xl lg:text-base font-bold">
+                  <h1 className="text-black text-xl lg:text-base font-bold">
                     {user.nombre_completo}
                   </h1>
                 </Link>

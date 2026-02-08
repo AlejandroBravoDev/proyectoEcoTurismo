@@ -117,7 +117,7 @@ function App() {
                 <div
                   key={index}
                   style={{ animationDelay: `${(index + 1) * 200}ms` }}
-                  className="group bg-slate-950 rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-2xl transition-all w-full max-w-[360px] text-left animate-in fade-in slide-in-from-bottom-20 duration-1000 fill-mode-both"
+                  className="group bg-slate-950 rounded-2xl overflow-hidden shadow-sm border border-slate-100  hover:shadow-2xl transition-all w-full max-w-[360px] text-left animate-in fade-in slide-in-from-bottom-20 duration-1000 fill-mode-both"
                 >
                   <div className="relative h-72 overflow-hidden">
                     <img
@@ -135,15 +135,15 @@ function App() {
                       <Leaf className="w-3 h-3" /> {dest.tag}
                     </div>
                   </div>
-                  <div className="p-4 group-hover:bg-slate-900 transition-colors">
-                    <h3 className="text-xl font-bold mb-1 text-white">
+                  <div className="p-4  bg-white transition-colors">
+                    <h3 className="text-xl font-bold mb-1 text-black">
                       {dest.title}
                     </h3>
-                    <p className="text-slate-300 text-sm flex items-center gap-1 mb-4">
+                    <p className="text-black  text-sm flex items-center gap-1 mb-4">
                       <MapPin className="w-4 h-4" /> {dest.location}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-300 text-sm italic">
+                      <span className="text-black text-sm italic">
                         {dest.category}
                       </span>
                       <button className="text-[#20A217] font-semibold hover:cursor-pointer flex items-center gap-1 group/btn">
@@ -187,15 +187,15 @@ function App() {
         </section>
 
         <section className="w-full flex justify-center py-16 px-6">
-          <div className="max-w-7xl w-full bg-slate-950 rounded-[40px] p-8 md:p-16 flex flex-col lg:flex-row items-center justify-between gap-12 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-700">
+          <div className="max-w-7xl w-full bg-white rounded-[40px] p-8 md:p-16 flex flex-col lg:flex-row items-center justify-between gap-12 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-700">
             <div className="w-full lg:max-w-xl text-left animate-in slide-in-from-left-20 duration-1000 delay-300 fill-mode-both">
               <span className="inline-block bg-[#20A217]/20 text-[#20A217] text-xs font-bold px-4 py-2 rounded-full mb-6 border border-[#20A217]/30 animate-pulse">
                 Comunidad ECO TURISMORISARALDA
               </span>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight py-2">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-black leading-tight py-2">
                 Únete a nuestra comunidad
               </h2>
-              <p className="text-slate-400 text-lg mb-10 leading-relaxed">
+              <p className="text-black text-lg mb-10 leading-relaxed">
                 Obtén acceso a la información completa de el ecoturismo en
                 Risaralda, geolocalización y poder calificar tus lugares
                 favoritos.

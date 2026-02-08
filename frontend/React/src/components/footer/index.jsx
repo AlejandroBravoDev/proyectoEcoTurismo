@@ -2,7 +2,7 @@ import React from "react";
 
 function Footer() {
   return (
-    <footer className="bg-slate-950 text-white py-16 border-t border-white/5 w-full">
+    <footer className="bg-white text-black py-16 border-t border-white/5 w-full">
       <div className="w-full flex justify-center">
         <div className="w-full max-w-7xl px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-left pb-10">
@@ -14,7 +14,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Nosotros
                   </a>
@@ -22,7 +22,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Nuestros servicios
                   </a>
@@ -30,7 +30,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Política de privacidad
                   </a>
@@ -45,7 +45,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Ubicaciones
                   </a>
@@ -53,7 +53,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Preguntas
                   </a>
@@ -61,7 +61,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Contacto
                   </a>
@@ -69,7 +69,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Hospedajes
                   </a>
@@ -84,7 +84,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Sitios Ecoturísticos
                   </a>
@@ -92,7 +92,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Plataformas
                   </a>
@@ -100,7 +100,7 @@ function Footer() {
                 <li>
                   <a
                     href="#"
-                    className="text-slate-400 hover:text-[#20A217] transition-colors"
+                    className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Contenido
                   </a>
@@ -114,25 +114,25 @@ function Footer() {
               <div className="flex gap-4">
                 <a
                   href="#"
-                  className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-[#20A217] transition-all group"
+                  className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#20A217] hover:text-white transition-all group"
                 >
-                  <i className="fab fa-facebook-f group-hover:scale-110"></i>
+                  <i className="fab fa-facebook-f group-hover:scale-110 "></i>
                 </a>
                 <a
                   href="#"
-                  className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-[#20A217] transition-all group"
+                  className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#20A217] hover:text-white transition-all group"
                 >
                   <i className="fab fa-instagram group-hover:scale-110"></i>
                 </a>
                 <a
                   href="#"
-                  className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-[#20A217] transition-all group"
+                  className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#20A217] hover:text-white transition-all group"
                 >
                   <i className="fab fa-twitter group-hover:scale-110"></i>
                 </a>
                 <a
                   href="#"
-                  className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-[#20A217] transition-all group"
+                  className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#20A217] hover:text-white transition-all group"
                 >
                   <i className="fab fa-linkedin group-hover:scale-110"></i>
                 </a>

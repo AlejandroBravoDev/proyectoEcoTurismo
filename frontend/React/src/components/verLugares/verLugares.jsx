@@ -10,8 +10,8 @@ import imgParrot from "../../assets/img1.jpg";
 import Mapa from "../mapa/map.jsx";
 import {
   FaMapMarkerAlt,
-  FaRegHeart,
-  FaHeart,
+  FaRegStar,
+  FaStar,
   FaChevronLeft,
   FaChevronRight,
   FaEllipsisH,
@@ -251,7 +251,6 @@ function VerLugares() {
       });
       setLugar(res.data);
       setOpinions(res.data.comentarios);
-      console.log(res.data)
       setPosition(res.data.coordenadas.split(",").map(Number));
       setLoading(false);
     } catch (err) {
@@ -420,7 +419,7 @@ function VerLugares() {
                 }`}
                 onClick={handleFavoriteToggle}
               >
-                {isFavorite ? <FaHeart /> : <FaRegHeart />} Favoritas
+                {isFavorite ? <FaStar /> : <FaRegStar />} Favoritas
               </button>
             </div>
           </section>
@@ -512,7 +511,7 @@ function VerLugares() {
               }`}
               onClick={handleFavoriteToggle}
             >
-              {isFavorite ? <FaHeart /> : <FaRegHeart />} Favoritas
+              {isFavorite ? <FaStar /> : <FaRegStar />} Favoritas
             </button>
           </div>
 
@@ -532,15 +531,6 @@ function VerLugares() {
                 </p>
               </div>
             </div>
-
-            {/* <h3>Cercano a</h3>
-            <p>
-              {lugar?.hoteles_cercanos && lugar.hoteles_cercanos.length > 0
-                ? `Este lugar es cercano a: ${lugar.hoteles_cercanos.join(
-                    ", "
-                  )}.`
-                : "Este sitio no tiene hoteles cercanos."}
-            </p> */}
           </section>
 
           <section className={styles.reviewSection}>
@@ -602,7 +592,7 @@ function VerLugares() {
                     {[...Array(5)].map((_, index) => {
                       const ratingValue = index + 1;
                       const isFilled = ratingValue <= (hover || rating);
-                      const Icon = isFilled ? FaHeart : FaRegHeart;
+                      const Icon = isFilled ? FaStar : FaRegStar;
                       return (
                         <label key={index}>
                           <input
@@ -614,7 +604,7 @@ function VerLugares() {
                           />
                           <Icon
                             className={styles.heartIcon}
-                            color={isFilled ? "#4b8236" : "#4b8236"}
+                            color={isFilled ? "#ffde21" : "#ffde21"}
                             size={40}
                             onMouseEnter={() => setHover(ratingValue)}
                             onMouseLeave={() => setHover(0)}
@@ -654,10 +644,10 @@ function VerLugares() {
                         <h4>{op.user?.name || "Usuario Anónimo"}</h4>
                         <div className={styles.opinionRating}>
                           {[...Array(op.rating)].map((_, idx) => (
-                            <FaHeart key={idx} color="#4b8236" size={14} />
+                            <FaStar key={idx} color="#4b8236" size={14} />
                           ))}
                           {[...Array(5 - op.rating)].map((_, idx) => (
-                            <FaRegHeart
+                            <FaRegStar
                               key={idx + op.rating}
                               color="#999"
                               size={14}

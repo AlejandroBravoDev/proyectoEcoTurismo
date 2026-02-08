@@ -10,8 +10,8 @@ import imgParrot from "../../assets/img1.jpg";
 import Mapa from "../mapa/map";
 import {
   FaMapMarkerAlt,
-  FaRegHeart,
-  FaHeart,
+  FaRegStar,
+  FaStar,
   FaChevronLeft,
   FaChevronRight,
   FaEllipsisH,
@@ -427,7 +427,7 @@ function VerHospedaje() {
                 }`}
                 onClick={handleFavoriteToggle}
               >
-                {isFavorite ? <FaHeart /> : <FaRegHeart />} Favoritas
+                {isFavorite ? <FaStar /> : <FaRegStar />} Favoritas
               </button>
             </div>
           </section>
@@ -519,7 +519,7 @@ function VerHospedaje() {
               }`}
               onClick={handleFavoriteToggle}
             >
-              {isFavorite ? <FaHeart /> : <FaRegHeart />} Favoritas
+              {isFavorite ? <FaStar /> : <FaRegStar />} Favoritas
             </button>
           </div>
 
@@ -597,7 +597,7 @@ function VerHospedaje() {
                     {[...Array(5)].map((_, index) => {
                       const ratingValue = index + 1;
                       const isFilled = ratingValue <= (hover || rating);
-                      const Icon = isFilled ? FaHeart : FaRegHeart;
+                      const Icon = isFilled ? FaStar : FaRegStar;
                       return (
                         <label key={index}>
                           <input
@@ -609,7 +609,7 @@ function VerHospedaje() {
                           />
                           <Icon
                             className={styles.heartIcon}
-                            color="#4b8236"
+                            color="#ffde21"
                             size={40}
                             onMouseEnter={() => setHover(ratingValue)}
                             onMouseLeave={() => setHover(0)}
@@ -648,10 +648,10 @@ function VerHospedaje() {
                         <h4>{op.user?.name || "Usuario Anónimo"}</h4>
                         <div className={styles.opinionRating}>
                           {[...Array(op.rating)].map((_, idx) => (
-                            <FaHeart key={idx} color="#4b8236" size={14} />
+                            <FaStar key={idx} color="#4b8236" size={14} />
                           ))}
                           {[...Array(5 - op.rating)].map((_, idx) => (
-                            <FaRegHeart
+                            <FaRegStar
                               key={idx + op.rating}
                               color="#999"
                               size={14}
