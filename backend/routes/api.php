@@ -11,7 +11,9 @@ use App\Http\Controllers\favoritosController;
 use App\Http\Controllers\ComentariosController;
 use App\Http\Controllers\PerfilController;
 
+
 /* Apis públicas */
+
 Route::get('/lugares', [LugaresController::class, 'index']);
 Route::get('/lugares/{id}', [LugaresController::class, 'show']);
 Route::get('/hospedajes', [HospedajeController::class, 'index']);
@@ -23,6 +25,7 @@ Route::get('/comentarios', [ComentariosController::class, 'index']);
 // Rutas de usuarios sin auth para probar
 Route::get('/usuarios', [UsuarioController::class, 'index']);
 Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
+Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']); 
 Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
 
@@ -46,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comentarios', [ComentariosController::class, 'store']);
     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
     
-    // ✅ RUTAS DE FAVORITOS ACTUALIZADAS
+    //Rutas de favoritos
     Route::post('/favoritos', [favoritosController::class, 'store']);
     Route::delete('/favoritos/{id}', [favoritosController::class, 'destroy']);
     Route::get('/favoritos/check/{id}', [favoritosController::class, 'check']); // Cambiado de lugarId a id
@@ -55,7 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //lugares
     Route::post('/lugares', [LugaresController::class, 'store']);
-    Route::put('/lugares/{id}', [LugaresController::class, 'update']); // 🛑 Se utiliza PUT
+    Route::put('/lugares/{id}', [LugaresController::class, 'update']); // Se utiliza PUT
     Route::delete('/lugares/{id}', [LugaresController::class, 'destroy']);
 
     //hospedajes
