@@ -298,35 +298,34 @@ function PerfilUsuario() {
   );
 
   const TarjetaItemFavorito = ({ favorito }) => {
-  const item = favorito?.lugar || favorito?.hospedaje;
-  
-  if (!item) return null;
-  
-  return (
-    <div className={styles.tarjetaItemFavorito}>
-      <img
-        src={item?.imagen_url || bannerFondo}
-        alt={item?.nombre || "Favorito"}
-        className={styles.imagenItemFavorito}
-      />
+    const item = favorito?.lugar || favorito?.hospedaje;
 
-      <div className={styles.detallesItemFavorito}>
-        <h4>{item?.nombre || "Nombre no disponible"}</h4>
+    if (!item) return null;
 
-        <p className={styles.descripcionLugarFavorito}>
-          {item?.descripcion || "Descripción no disponible."}
-        </p>
+    return (
+      <div className={styles.tarjetaItemFavorito}>
+        <img
+          src={item?.imagen_url || bannerFondo}
+          alt={item?.nombre || "Favorito"}
+          className={styles.imagenItemFavorito}
+        />
+
+        <div className={styles.detallesItemFavorito}>
+          <h4>{item?.nombre || "Nombre no disponible"}</h4>
+
+          <p className={styles.descripcionLugarFavorito}>
+            {item?.descripcion || "Descripción no disponible."}
+          </p>
+        </div>
+
+        <FaHeart
+          className={styles.iconoCorazonFavorito}
+          onClick={() => handleRemoveFavorite(item.id)}
+          title="Quitar de Favoritos"
+        />
       </div>
-
-      <FaHeart
-        className={styles.iconoCorazonFavorito}
-        onClick={() => handleRemoveFavorite(item.id)}
-        title="Quitar de Favoritos"
-      />
-    </div>
-  );
-};
-
+    );
+  };
 
   const renderizarContenidoPerfil = () => {
     switch (pestanaActiva) {

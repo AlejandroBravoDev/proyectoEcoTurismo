@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import fondoPrincipal from "../assets/portadaProyecto.jpg";
 import fondoPrincipal2 from "../assets/portadaProyecto2.jpg";
 import fondoPrincipal3 from "../assets/portadaProyecto3.jpg";
@@ -22,32 +23,57 @@ import Footer from "../components/footer";
 import ScrollToTop from "../components/ScrollToTop";
 
 function App() {
-  const destinations = [
-    {
-      title: "Laguna del Otún",
-      location: "PNN Los Nevados, Risaralda",
-      rating: "4.9",
-      tag: "Cultural",
-      category: "Senderismo de Páramo",
-      img: destacados1,
-    },
-    {
-      title: "Valle del Cocora",
-      location: "Salento (Cerca de Risaralda)",
-      rating: "4.8",
-      tag: "Cultural",
-      category: "Bosque de Niebla",
-      img: destacados2,
-    },
-    {
-      title: "Marsella",
-      location: "Municipio Verde, Risaralda",
-      rating: "4.7",
-      tag: "Cultural",
-      category: "Café Sostenible",
-      img: destacados3,
-    },
-  ];
+  const [destinations, setDestinations] = useState([]);
+
+  useEffect(() => {
+    const fetchTopDestinations = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/lugares");
+        const lugares = response.data;
+
+        const procesados = lugares.map((lugar) => {
+          const comentarios = lugar.comentarios || [];
+
+          // Cálculo del promedio funcional asegurando tipos numéricos
+          const suma = comentarios.reduce(
+            (acc, c) => acc + (parseFloat(c.rating) || 0),
+            0,
+          );
+
+          const promedioNum =
+            comentarios.length > 0 ? suma / comentarios.length : 0;
+
+          // Obtener categoría del primer comentario (familia, amigos, etc.)
+          const catComentario =
+            comentarios.length > 0
+              ? comentarios[0].category || "General"
+              : "General";
+
+          return {
+            id: lugar.id,
+            title: lugar.nombre,
+            location: lugar.ubicacion || "Risaralda",
+            rating: promedioNum.toFixed(1), // Formato para mostrar: "4.5"
+            score: promedioNum, // Valor numérico real para ordenar
+            tag: "Destacado",
+            category: catComentario,
+            img: lugar.imagen_url || destacados4,
+            description: lugar.descripcion || "Sin descripción disponible.",
+          };
+        });
+
+        // Ordenar por calificación de mayor a menor y tomar los 3 mejores
+        // Usamos 'score' porque es numérico (4.8 > 4.5)
+        const top3 = procesados.sort((a, b) => b.score - a.score).slice(0, 3);
+
+        setDestinations(top3);
+      } catch (error) {
+        console.error("Error cargando destinos destacados:", error);
+      }
+    };
+
+    fetchTopDestinations();
+  }, []);
 
   return (
     <div className="relative">
@@ -115,7 +141,7 @@ function App() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center pt-5">
               {destinations.map((dest, index) => (
                 <div
-                  key={index}
+                  key={dest.id || index}
                   style={{ animationDelay: `${(index + 1) * 200}ms` }}
                   className="group bg-slate-950 rounded-2xl overflow-hidden shadow-sm border border-slate-100  hover:shadow-2xl transition-all w-full max-w-[360px] text-left animate-in fade-in slide-in-from-bottom-20 duration-1000 fill-mode-both"
                 >
@@ -127,7 +153,7 @@ function App() {
                     />
                     <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/70 backdrop-blur px-3 py-1 rounded-full flex items-center gap-1 scale-90 group-hover:scale-100 transition-transform">
                       <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                      <span className="text-sm font-bold text-white">
+                      <span className="text-sm font-bold text-slate-900 dark:text-white">
                         {dest.rating}
                       </span>
                     </div>
@@ -139,17 +165,20 @@ function App() {
                     <h3 className="text-xl font-bold mb-1 text-black">
                       {dest.title}
                     </h3>
-                    <p className="text-black  text-sm flex items-center gap-1 mb-4">
+                    <p className="text-black  text-sm flex items-center gap-1 mb-3">
                       <MapPin className="w-4 h-4" /> {dest.location}
                     </p>
+
                     <div className="flex items-center justify-between">
-                      <span className="text-black text-sm italic">
-                        {dest.category}
+                      <span className="text-black text-xs font-semibold bg-slate-100 px-2 py-1 rounded">
+                        Categoría: {dest.category}
                       </span>
-                      <button className="text-[#20A217] font-semibold hover:cursor-pointer flex items-center gap-1 group/btn">
-                        Explorar
-                        <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                      </button>
+                      <Link to={`/lugar/${dest.id}`}>
+                        <button className="text-[#20A217] font-semibold hover:cursor-pointer flex items-center gap-1 group/btn">
+                          Explorar
+                          <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
