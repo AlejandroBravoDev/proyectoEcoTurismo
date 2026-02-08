@@ -56,7 +56,7 @@ function PerfilUsuario() {
     } catch (err) {
       console.error(
         "Error al cargar el perfil:",
-        err.response?.data || err.message || err
+        err.response?.data || err.message || err,
       );
       setError("No se pudo cargar el perfil. Por favor, inicie sesión.");
       setCargando(false);
@@ -116,7 +116,7 @@ function PerfilUsuario() {
     } catch (err) {
       console.error(
         "Error al actualizar perfil:",
-        err.response?.data || err.message || err
+        err.response?.data || err.message || err,
       );
       let errorMsg = "Error al actualizar. Revisa los datos.";
       if (err.response?.data?.message) {
@@ -145,7 +145,7 @@ function PerfilUsuario() {
         });
       } catch (error) {
         console.warn(
-          "Advertencia: No se pudo revocar el token en el servidor. Limpiando localmente."
+          "Advertencia: No se pudo revocar el token en el servidor. Limpiando localmente.",
         );
       }
     }
@@ -180,7 +180,7 @@ function PerfilUsuario() {
     } catch (err) {
       console.error(
         "Error al eliminar opinión:",
-        err.response?.data || err.message || err
+        err.response?.data || err.message || err,
       );
       alert("Error al eliminar la opinión.");
     }
@@ -204,7 +204,7 @@ function PerfilUsuario() {
       setUsuario((prevUsuario) => ({
         ...prevUsuario,
         favoritos: prevUsuario.favoritos.filter(
-          (fav) => fav.lugar.id !== lugarId
+          (fav) => fav.lugar.id !== lugarId,
         ),
       }));
 
@@ -212,7 +212,7 @@ function PerfilUsuario() {
     } catch (err) {
       console.error(
         "Error al eliminar favorito:",
-        err.response?.data || err.message || err
+        err.response?.data || err.message || err,
       );
       alert("Error al eliminar el lugar de favoritos.");
     }
@@ -297,27 +297,36 @@ function PerfilUsuario() {
     </div>
   );
 
-  const TarjetaItemFavorito = ({ favorito }) => (
+  const TarjetaItemFavorito = ({ favorito }) => {
+  const item = favorito?.lugar || favorito?.hospedaje;
+  
+  if (!item) return null;
+  
+  return (
     <div className={styles.tarjetaItemFavorito}>
       <img
-        src={favorito.lugar.imagen_url || bannerFondo}
-        alt={favorito.lugar.nombre}
+        src={item?.imagen_url || bannerFondo}
+        alt={item?.nombre || "Favorito"}
         className={styles.imagenItemFavorito}
       />
+
       <div className={styles.detallesItemFavorito}>
-        <h4>{favorito.lugar.nombre}</h4>
+        <h4>{item?.nombre || "Nombre no disponible"}</h4>
 
         <p className={styles.descripcionLugarFavorito}>
-          {favorito.lugar.descripcion || "Descripción no disponible."}
+          {item?.descripcion || "Descripción no disponible."}
         </p>
       </div>
+
       <FaHeart
         className={styles.iconoCorazonFavorito}
-        onClick={() => handleRemoveFavorite(favorito.lugar.id)}
+        onClick={() => handleRemoveFavorite(item.id)}
         title="Quitar de Favoritos"
       />
     </div>
   );
+};
+
 
   const renderizarContenidoPerfil = () => {
     switch (pestanaActiva) {

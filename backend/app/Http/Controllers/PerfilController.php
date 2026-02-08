@@ -26,6 +26,8 @@ class PerfilController extends Controller
             $usuario->load([
                 'comentarios.lugar',
                 'favoritos.lugar',
+                'comentarios.hospedaje',
+                'favoritos.hospedaje'
             ]);
 
             $comentariosFormateados = $usuario->comentarios->map(function ($comentario) {
@@ -53,6 +55,7 @@ class PerfilController extends Controller
                 return [
                     'id' => $favorito->id,
                     'created_at' => optional($favorito->created_at)->diffForHumans(),
+
                     'lugar' => $favorito->lugar ? [
                         'id' => $favorito->lugar->id,
                         'nombre' => $favorito->lugar->nombre,
@@ -60,9 +63,16 @@ class PerfilController extends Controller
                         'direccion' => $favorito->lugar->direccion,
                         'imagen_url' => $favorito->lugar->imagen_url ?? null,
                     ] : null,
+
+                    'hospedaje' => $favorito->hospedaje ? [
+                        'id' => $favorito->hospedaje->id,
+                        'nombre' => $favorito->hospedaje->nombre,
+                        'descripcion' => $favorito->hospedaje->descripcion,
+                        'direccion' => $favorito->hospedaje->direccion,
+                        'imagen_url' => $favorito->hospedaje->imagen_url ?? null,
+                    ] : null,
                 ];
             });
-
             $userData = $usuario->toArray();
             $userData['comentarios'] = $comentariosFormateados;
             $userData['favoritos'] = $favoritosFormateados;

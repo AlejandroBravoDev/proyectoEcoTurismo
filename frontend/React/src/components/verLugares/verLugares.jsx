@@ -8,6 +8,7 @@ import imgMeerkat from "../../assets/img4.jpg";
 import imgLion from "../../assets/img6.jpg";
 import imgParrot from "../../assets/img1.jpg";
 import Mapa from "../mapa/map.jsx";
+import ScrollToTop from "../ScrollToTop.jsx";
 import {
   FaMapMarkerAlt,
   FaRegStar,
@@ -407,6 +408,7 @@ function VerLugares() {
 
   return (
     <>
+      <ScrollToTop/>
       <Header />
       <div>
         <main className={styles.mainContent}>

@@ -28,7 +28,6 @@ class Comentarios extends Model
         return $this->belongsTo(Lugares::class, 'lugar_id');
     }
     
-    // ✅ AÑADIDO: Relación con hospedajes
     public function hospedaje()
     {
         return $this->belongsTo(Hospedaje::class, 'hospedaje_id');

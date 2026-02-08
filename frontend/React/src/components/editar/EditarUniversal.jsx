@@ -30,15 +30,14 @@ function Editar() {
     usuario: `http://localhost:8000/api/usuario/${id}`,
   };
 
-  console.log(tipo)
+  
   const endpoint = endpoints[tipo];
 
   //useEffect para traer los datos de la DB con axios
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(tipo);
-        console.log(endpoint);
+       
         const response = await axios.get(endpoint);
         setData(response.data);
 
@@ -46,7 +45,6 @@ function Editar() {
         setNombre(response.data.nombre || "");
         setDescripcion(response.data.descripcion || "");
         setImagenesExistentes(response.data.todas_las_imagenes || []);
-        console.log(response.data.todas_las_imagenes);
         setImagenesNuevas([]);
       } catch (error) {
         console.error("Error al cargar los datos:", error);

@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Comentario;
+use App\Models\Comentarios;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use App\Notifications\ResetPasswordNotification;
+use App\Models\Favorito; 
 
 class Usuario extends Authenticatable implements CanResetPassword
 {
@@ -52,8 +53,13 @@ class Usuario extends Authenticatable implements CanResetPassword
         return $this->rol === 'admin';
     }
 
+     public function favoritos()
+    {
+        return $this->hasMany(Favorito::class, 'usuario_id'); 
+    }
+
     public function comentarios()
     {
-        return $this->hasMany(Comentario::class, 'usuario_id');
+        return $this->hasMany(Comentarios::class, 'usuario_id');
     }
 }

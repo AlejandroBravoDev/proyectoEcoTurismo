@@ -8,6 +8,7 @@ import imgMeerkat from "../../assets/img4.jpg";
 import imgLion from "../../assets/img6.jpg";
 import imgParrot from "../../assets/img1.jpg";
 import Mapa from "../mapa/map";
+import ScrollToTop from "../ScrollToTop";
 import {
   FaMapMarkerAlt,
   FaRegStar,
@@ -245,10 +246,8 @@ function VerHospedaje() {
       });
 
       setHospedaje(res.data);
-      console.log(res.data)
       setOpinions(res.data.comentarios || []);
       setPosition(res.data.coordenadas.split(",").map(Number));
-      console.log(position);
 
       setLoading(false);
     } catch (err) {
@@ -415,6 +414,7 @@ function VerHospedaje() {
 
   return (
     <>
+      <ScrollToTop/>
       <Header />
       <div className={styles.pageContainer}>
         <main className={styles.mainContent}>
