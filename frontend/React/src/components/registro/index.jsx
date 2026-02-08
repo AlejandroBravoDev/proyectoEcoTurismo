@@ -18,20 +18,75 @@ function Registro() {
   });
 
   const [mensaje, setMensaje] = useState("");
+  const [emailError, setEmailError] = useState("");
   const sliderImages = [img1, img2, img3, img4, img5, img6];
   const totalImages = sliderImages.length;
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
+  // 🛡️ Validación de email mejorada
+  const validateEmail = (email) => {
+    // Bloquear doble arroba
+    if (email.includes("@@")) {
+      return "El correo no puede contener @@";
+    }
+
+    // Bloquear puntos consecutivos
+    if (email.includes("..")) {
+      return "El correo no puede contener puntos consecutivos (..)";
+    }
+
+    // Bloquear @. o .@
+    if (email.includes("@.") || email.includes(".@")) {
+      return "Formato de correo inválido";
+    }
+
+    // Validar extensiones mal escritas
+    const invalidExtensions = [
+      ".comm", ".coom", ".gmial", ".gmai", ".hotmial", 
+      ".outlok", ".yahooo", ".gmil", ".hotmai", ".con"
+    ];
+    
+    for (const ext of invalidExtensions) {
+      if (email.toLowerCase().endsWith(ext)) {
+        return "Extensión de correo mal escrita. Usa .com, .net, .org";
+      }
+    }
+
+    // Validar formato general
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.(com|net|org|edu|gov|co|mx|es|ar|cl|pe|ve)$/;
+    if (!emailRegex.test(email)) {
+      return "Formato de correo incorrecto. Usa extensiones válidas como .com, .net, .org";
+    }
+
+    return "";
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    // Validar email en tiempo real
+    if (name === "email") {
+      const error = validateEmail(value);
+      setEmailError(error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMensaje("");
+
+    // Validar email antes de enviar
+    const emailValidation = validateEmail(formData.email);
+    if (emailValidation) {
+      setMensaje(emailValidation);
+      return;
+    }
 
     if (formData.password !== formData.password_confirmation) {
       setMensaje("Las contraseñas no coinciden");
@@ -106,7 +161,11 @@ function Registro() {
               value={formData.email}
               onChange={handleChange}
               required
+              className={emailError ? styles.inputError : ""}
             />
+            {emailError && (
+              <p className={styles.errorText}>{emailError}</p>
+            )}
 
             <label>Contraseña</label>
             <input
@@ -126,7 +185,9 @@ function Registro() {
               required
             />
 
-            <button type="submit">Registrarse</button>
+            <button type="submit" disabled={emailError}>
+              Registrarse
+            </button>
           </form>
 
           {mensaje && <p className={styles.mensaje}>{mensaje}</p>}

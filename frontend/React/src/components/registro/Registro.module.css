@@ -113,3 +113,24 @@
   height: 100%;
   object-fit: cover;
 }
+
+
+/* Agrega estas clases al final de tu archivo CSS */
+
+.inputError {
+  border: 2px solid #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #9ca3af !important;
+}
