@@ -33,8 +33,6 @@ function App() {
 
         const procesados = lugares.map((lugar) => {
           const comentarios = lugar.comentarios || [];
-
-          // Cálculo del promedio funcional asegurando tipos numéricos
           const suma = comentarios.reduce(
             (acc, c) => acc + (parseFloat(c.rating) || 0),
             0,
@@ -43,7 +41,6 @@ function App() {
           const promedioNum =
             comentarios.length > 0 ? suma / comentarios.length : 0;
 
-          // Obtener categoría del primer comentario (familia, amigos, etc.)
           const catComentario =
             comentarios.length > 0
               ? comentarios[0].category || "General"
@@ -53,8 +50,8 @@ function App() {
             id: lugar.id,
             title: lugar.nombre,
             location: lugar.ubicacion || "Risaralda",
-            rating: promedioNum.toFixed(1), // Formato para mostrar: "4.5"
-            score: promedioNum, // Valor numérico real para ordenar
+            rating: promedioNum.toFixed(1),
+            score: promedioNum,
             tag: "Destacado",
             category: catComentario,
             img: lugar.imagen_url || destacados4,
@@ -62,8 +59,6 @@ function App() {
           };
         });
 
-        // Ordenar por calificación de mayor a menor y tomar los 3 mejores
-        // Usamos 'score' porque es numérico (4.8 > 4.5)
         const top3 = procesados.sort((a, b) => b.score - a.score).slice(0, 3);
 
         setDestinations(top3);
@@ -158,7 +153,7 @@ function App() {
                       </span>
                     </div>
                     <div className="absolute bottom-4 left-4 bg-[#20A217] text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 animate-bounce-slow">
-                      <Leaf className="w-3 h-3" /> {dest.tag}
+                      <Leaf className="w-3 h-3" /> {dest.category}
                     </div>
                   </div>
                   <div className="p-4  bg-white transition-colors">
@@ -169,10 +164,7 @@ function App() {
                       <MapPin className="w-4 h-4" /> {dest.location}
                     </p>
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-black text-xs font-semibold bg-slate-100 px-2 py-1 rounded">
-                        Categoría: {dest.category}
-                      </span>
+                    <div className="flex items-center justify-between pt-2">
                       <Link to={`/lugar/${dest.id}`}>
                         <button className="text-[#20A217] font-semibold hover:cursor-pointer flex items-center gap-1 group/btn">
                           Explorar
