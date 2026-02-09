@@ -15,8 +15,8 @@ class ComentariosController extends Controller
     {
         $request->validate([
             'lugar_id' => 'nullable|exists:lugares,id',
-            'hospedaje_id' => 'nullable|exists:hospedajes,id', // ✅ AÑADIDO
-            'contenido' => 'required|string|max:5000', // ✅ Límite aumentado
+            'hospedaje_id' => 'nullable|exists:hospedajes,id', 
+            'contenido' => 'required|string|max:5000', 
             'rating' => 'required|integer|min:1|max:5',
             'category' => 'required|string',
             'image' => 'nullable|image|max:2048',
@@ -34,7 +34,7 @@ class ComentariosController extends Controller
             $comentario = Comentarios::create([
                 'usuario_id' => auth()->id(),
                 'lugar_id' => $request->lugar_id,
-                'hospedaje_id' => $request->hospedaje_id, // ✅ AÑADIDO
+                'hospedaje_id' => $request->hospedaje_id, 
                 'contenido' => $request->contenido,
                 'rating' => $request->rating,
                 'category' => $request->category,
@@ -57,7 +57,7 @@ class ComentariosController extends Controller
                 'updated_at' => $comentario->updated_at->toDateTimeString(),
                 'usuario_id' => $comentario->usuario_id,
                 'lugar_id' => $comentario->lugar_id,
-                'hospedaje_id' => $comentario->hospedaje_id, // ✅ AÑADIDO
+                'hospedaje_id' => $comentario->hospedaje_id, 
                 'user' => [
                     'id' => $comentario->usuario->id,
                     'name' => $comentario->usuario->nombre_completo,

@@ -9,7 +9,7 @@ function PerfilUser() {
   useAuthRedirect();
   return (
     <div className="nueva-interfaz-page">
-      <ScrollToTop/>
+      <ScrollToTop />
       <Header />
 
       <PerfilUsuario />
