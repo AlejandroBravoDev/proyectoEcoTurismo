@@ -9,6 +9,7 @@ import imgLion from "../../assets/img6.jpg";
 import imgParrot from "../../assets/img1.jpg";
 import Mapa from "../mapa/map.jsx";
 import ScrollToTop from "../ScrollToTop.jsx";
+import Filter from "../../utils/profanity.js";
 import {
   FaMapMarkerAlt,
   FaRegStar,
@@ -20,7 +21,6 @@ import {
   FaRegThumbsUp,
 } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
 const API = "http://localhost:8000";
 const defaultImageUrls = [imgMeerkat, imgLion, imgParrot];
@@ -110,7 +110,6 @@ function VerLugares() {
   const [position, setPosition] = useState([
     4.81415861127678, -75.71023222513418,
   ]);
-
   const categories = ["Familia", "Amigos", "Trabajo", "Vacaciones", "Turista"];
 
   const calificacionComentarios = () => {
@@ -164,6 +163,10 @@ function VerLugares() {
       return;
     }
 
+    if (Filter.check(comment)) {
+      alert("¡Tú comentario tiene lenguaje inapropiado!");
+      return;
+    }
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
@@ -408,7 +411,7 @@ function VerLugares() {
 
   return (
     <>
-      <ScrollToTop/>
+      <ScrollToTop />
       <Header />
       <div>
         <main className={styles.mainContent}>
@@ -518,8 +521,8 @@ function VerLugares() {
           </div>
 
           <section className={styles.infoSection}>
-            <div>
-              <h3>Acerca de</h3>
+            <div className="w-full sm:w-[65%]">
+              <h3 className="font-bold font-xl">Acerca de</h3>
               <p>{lugar?.descripcion || "Descripción no disponible"}</p>
             </div>
             <div className={styles.location}>
@@ -537,7 +540,7 @@ function VerLugares() {
 
           <section className={styles.reviewSection}>
             <Mapa positions={position} />
-            <div className="w-130 rounded-2xl bg-white p-8">
+            <div className="w-full sm:w-full  md:w-[35%]  rounded-2xl bg-white p-8 ">
               <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
               <div className={styles.reviewFormContainer}>
                 <div className={styles.reviewForm}>
@@ -576,16 +579,16 @@ function VerLugares() {
                 </div>
               </div>
 
-            {selectedImage && (
-              <div className={styles.imagePreview}>
-                <p>Imagen seleccionada: {selectedImage.name}</p>
-                <img
-                  src={URL.createObjectURL(selectedImage)}
-                  alt="Vista previa"
-                  className="w-50 h-50 rounded-xl"
-                />
-              </div>
-            )}
+              {selectedImage && (
+                <div className={styles.imagePreview}>
+                  <p>Imagen seleccionada: {selectedImage.name}</p>
+                  <img
+                    src={URL.createObjectURL(selectedImage)}
+                    alt="Vista previa"
+                    className="w-50 h-50 rounded-xl"
+                  />
+                </div>
+              )}
 
               <div className={styles.ratingAndButton}>
                 <div className={styles.ratingGroup}>
@@ -614,10 +617,10 @@ function VerLugares() {
                         </label>
                       );
                     })}
-                    <span className={styles.ratingText}>
-                      {calificacionComentarios()}
-                    </span>
                   </div>
+                  <span className={styles.ratingText}>
+                    {calificacionComentarios()}
+                  </span>
                 </div>
                 <button className={styles.btnFilled} onClick={handleSubmit}>
                   Enviar opinión

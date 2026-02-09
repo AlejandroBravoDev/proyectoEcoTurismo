@@ -9,6 +9,7 @@ import imgLion from "../../assets/img6.jpg";
 import imgParrot from "../../assets/img1.jpg";
 import Mapa from "../mapa/map";
 import ScrollToTop from "../ScrollToTop";
+import Filter from "../../utils/profanity";
 import {
   FaMapMarkerAlt,
   FaRegStar,
@@ -157,6 +158,11 @@ function VerHospedaje() {
   const handleSubmit = async () => {
     if (!comment || comment.trim() === "") {
       alert("El comentario no puede estar vacío.");
+      return;
+    }
+
+    if (Filter.check(comment)) {
+      alert("¡Tú comentario tiene lenguaje inapropiado!");
       return;
     }
 
@@ -414,7 +420,7 @@ function VerHospedaje() {
 
   return (
     <>
-      <ScrollToTop/>
+      <ScrollToTop />
       <Header />
       <div className={styles.pageContainer}>
         <main className={styles.mainContent}>
@@ -524,7 +530,7 @@ function VerHospedaje() {
           </div>
 
           <section className={styles.infoSection}>
-            <div>
+            <div className="w-full sm:w-[65%]">
               <h3>Acerca de</h3>
               <p>{hospedaje?.descripcion || "Descripción no disponible"}</p>
             </div>
@@ -541,7 +547,7 @@ function VerHospedaje() {
           <section className={styles.reviewSection}>
             <Mapa positions={position} />
 
-            <div className="w-130 rounded-2xl bg-white p-8">
+            <div className="w-full sm:w-full  md:w-[35%]  rounded-2xl bg-white p-8 ">
               <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
               <div className={styles.reviewFormContainer}>
                 <div className={styles.reviewForm}>
@@ -622,10 +628,10 @@ function VerHospedaje() {
                     </span>
                   </div>
                 </div>
-                <button className={styles.btnFilled} onClick={handleSubmit}>
-                  Enviar opinión
-                </button>
               </div>
+              <button className={styles.btnFilled} onClick={handleSubmit}>
+                Enviar opinión
+              </button>
             </div>
           </section>
           <section className={styles.opinionsSection}>
