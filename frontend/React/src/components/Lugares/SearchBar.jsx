@@ -7,52 +7,36 @@ function SearchBar({
   onMunicipioChange,
   currentMunicipioId,
 }) {
-
   const [searchText, setSearchText] = useState("");
 
   const handleInputChange = (e) => {
     setSearchText(e.target.value);
-  };
-
-  const handleSearchClick = () => {
-    onSearchSubmit(searchText);
-  };
-
-  const handleMunicipioSelect = (e) => {
-    const id = e.target.value === "" ? null : parseInt(e.target.value);
-    onMunicipioChange(id);
+    onSearchSubmit(e.target.value);
   };
 
   return (
     <div className={SearchBarStyles.searchContainer}>
-      <h2>¿A donde deseas ir?</h2>
-      <p>Descubre los mejores lugares ecoturisticos de Risaralda</p>
-
+      <h2>¿A dónde deseas ir?</h2>
+      <p>Descubre los mejores lugares ecoturísticos de Risaralda</p>
       <div className={SearchBarStyles.searchFilters}>
         <div className={SearchBarStyles.searchInput}>
           <input
             type="text"
-            placeholder="Buscar por nombre o descripción"
+            placeholder="Buscar por nombre..."
             value={searchText}
             onChange={handleInputChange}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") handleSearchClick();
-            }}
           />
-          <button onClick={handleSearchClick}>
-            <i className="fas fa-search"></i>
-          </button>
         </div>
         <select
           className={SearchBarStyles.municipioSelect}
-          onChange={handleMunicipioSelect}
-          value={currentMunicipioId === null ? "" : currentMunicipioId}
+          value={currentMunicipioId || ""}
+          onChange={(e) => onMunicipioChange(e.target.value)}
         >
-          <option value="">Municipios</option>
-          {Array.isArray(municipios.data) &&
-            municipios.data.map((municipio) => (
-              <option key={municipio.id} value={municipio.id}>
-                {municipio.nombre}
+          <option value="">Todos los Municipios</option>
+          {Array.isArray(municipios?.data) &&
+            municipios.data.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nombre}
               </option>
             ))}
         </select>

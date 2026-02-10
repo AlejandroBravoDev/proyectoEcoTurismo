@@ -1,4 +1,3 @@
-//se importan dependencias, componentes y apoyo
 import React from "react";
 import useAuthRedirect from "../hooks/useAuthRedirect";
 import useLugares from "../hooks/useLugares";
@@ -11,53 +10,28 @@ import styles from "../components/Lugares/lugares.module.css";
 import fondoLugares from "../assets/img7.jpg";
 import ScrollToTop from "../components/ScrollToTop";
 
-//funcion de lugares que obtiene todo lo que necesita para mostrar la información
 function Lugares() {
-  //hook para que si el usuario no está logeado lo redireccione a el log in
   useAuthRedirect();
-
-  //trae la información del hook que la tiene y la convierte en variables locales
   const {
     lugares,
     municipios,
     loading,
     error,
-    searchQuery,
+    setSearchQuery,
+    setSelectedMunicipioId,
     selectedMunicipioId,
     showModal,
     setShowModal,
     setLugarAEliminar,
-    setSearchQuery,
-    setSelectedMunicipioId,
     eliminar,
   } = useLugares();
 
-  //se obtiene la información de el usuario que está navegando
   const storedUser = JSON.parse(localStorage.getItem("usuario"));
-
-  // Función para abrir el modal de eliminación
-  const handleOpenDeleteModal = (id) => {
-    setLugarAEliminar(id);
-    setShowModal(true);
-  };
-
-  // Función para cancelar la eliminación
-  const handleCancelDelete = () => {
-    setShowModal(false);
-    setLugarAEliminar(null); // Limpiar el ID del lugar
-  };
-
-  // Función para confirmar la eliminación
-  const handleConfirmDelete = async () => {
-    await eliminar();
-    // El modal se cierra automáticamente en la función eliminar del hook
-  };
 
   return (
     <>
       <ScrollToTop />
       <Header />
-
       <div className={styles.mainContainer}>
         <div
           className={styles.heroSection}
@@ -71,26 +45,28 @@ function Lugares() {
           />
         </div>
 
-        {loading && <p>Cargando...</p>}
-        {error && <p>{error}</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
-        {!loading && !error && (
-          <Cards
-            user={storedUser}
-            lugares={lugares}
-            onDelete={handleOpenDeleteModal}
-          />
+        <Cards
+          user={storedUser}
+          lugares={lugares}
+          onDelete={(id) => {
+            setLugarAEliminar(id);
+            setShowModal(true);
+          }}
+        />
+
+        {!loading && lugares.length === 0 && (
+          <p className="text-center py-10">No se encontraron resultados.</p>
         )}
       </div>
 
       {showModal && (
         <AvisoEliminar
-          message="¿Seguro que deseas eliminar este lugar?"
-          onConfirm={handleConfirmDelete}
-          onCancel={handleCancelDelete}
+          onConfirm={eliminar}
+          onCancel={() => setShowModal(false)}
         />
       )}
-
       <Footer />
     </>
   );

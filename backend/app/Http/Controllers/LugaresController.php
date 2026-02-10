@@ -24,43 +24,47 @@ class LugaresController extends Controller
     }
 
     public function index(Request $request)
-    {
-        try {
-            $query = Lugares::with(['municipio', 'opiniones']);
-            if ($request->has('municipio_id') && $request->municipio_id != 0) {
-                $query->where('municipio_id', $request->municipio_id);
-            }
-            $lugares = $query->get();
+{
+    try {
+        $query = Lugares::with(['municipio', 'opiniones']);
 
-            $lugaresData = $lugares->map(function ($lugar) {
-                $imagenesPaths = $lugar->imagenes ?? [];
-                
-                $comentarios = $lugar->opiniones->map(function ($op) {
-                    return [
-                        'rating' => $op->rating,
-                        'category' => $op->category ?? 'General'
-                    ];
-                });
-
-                return [
-                    'id' => $lugar->id,
-                    'nombre' => $lugar->nombre,
-                    'descripcion' => $lugar->descripcion,
-                    'coordenadas' => $lugar->coordenadas,
-                    'municipio' => optional($lugar->municipio)->nombre,
-                    'imagen_url' => $this->getImagenPrincipalUrl($imagenesPaths),
-                    'ubicacion' => $lugar->ubicacion,
-                    'comentarios' => $comentarios,
-                ];
-            });
-
-            return response()->json($lugaresData, 200);
-        } catch (\Exception $e) {
-            Log::error('Error en LugaresController@index: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['message' => 'Error interno del servidor al obtener la lista de lugares.'], 500);
+        // Filtro por Municipio
+        if ($request->has('municipio_id') && !empty($request->municipio_id)) {
+            $query->where('municipio_id', $request->municipio_id);
         }
-    }
 
+        // Filtro por Nombre o Descripción
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nombre', 'LIKE', "%{$search}%")
+                  ->orWhere('descripcion', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $lugares = $query->get();
+
+        $lugaresData = $lugares->map(function ($lugar) {
+            return [
+                'id' => $lugar->id,
+                'nombre' => $lugar->nombre,
+                'descripcion' => $lugar->descripcion,
+                'municipio' => optional($lugar->municipio)->nombre,
+                'municipio_id' => $lugar->municipio_id,
+                'imagen_url' => $this->getImagenPrincipalUrl($lugar->imagenes ?? []),
+                'ubicacion' => $lugar->ubicacion,
+                'comentarios' => $lugar->opiniones->map(fn($op) => [
+                    'rating' => $op->rating,
+                    'category' => $op->category ?? 'General'
+                ]),
+            ];
+        });
+
+        return response()->json($lugaresData, 200);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error en el servidor'], 500);
+    }
+}
     public function show($id)
     {
         try {
