@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\Storage;
 
 class LugaresController extends Controller
 {
-    /**
-     * Helper para obtener la URL completa de la primera imagen.
-     * @param array|null $imagenes
-     * @return string|null
-     */
     private function getImagenPrincipalUrl($imagenes)
     {
         if (empty($imagenes) || !is_array($imagenes)) {
@@ -21,39 +16,41 @@ class LugaresController extends Controller
 
         $relativePath = $imagenes[0];
 
-        // Se usa 's3' (o 'public' si así está configurado en tu proyecto). 
-        // Asumiendo que S3 está configurado para almacenar las rutas relativas.
-        // Si la ruta ya es una URL completa (como en el caso de tests), la devuelve, si no, genera la URL.
         if (filter_var($relativePath, FILTER_VALIDATE_URL)) {
             return $relativePath;
         }
         
-        // Generar la URL completa de S3 (o el disco configurado)
         return Storage::disk('s3')->url($relativePath);
     }
 
     public function index(Request $request)
     {
         try {
-            $query = Lugares::with(['municipio']);
+            $query = Lugares::with(['municipio', 'opiniones']);
             if ($request->has('municipio_id') && $request->municipio_id != 0) {
                 $query->where('municipio_id', $request->municipio_id);
             }
             $lugares = $query->get();
 
             $lugaresData = $lugares->map(function ($lugar) {
-                // Obtener solo las rutas relativas (si se usa un Accessor en el modelo, se puede simplificar)
                 $imagenesPaths = $lugar->imagenes ?? [];
                 
+                $comentarios = $lugar->opiniones->map(function ($op) {
+                    return [
+                        'rating' => $op->rating,
+                        'category' => $op->category ?? 'General'
+                    ];
+                });
+
                 return [
                     'id' => $lugar->id,
                     'nombre' => $lugar->nombre,
                     'descripcion' => $lugar->descripcion,
                     'coordenadas' => $lugar->coordenadas,
                     'municipio' => optional($lugar->municipio)->nombre,
-                    // Generar la URL completa de S3 para la imagen principal
                     'imagen_url' => $this->getImagenPrincipalUrl($imagenesPaths),
                     'ubicacion' => $lugar->ubicacion,
+                    'comentarios' => $comentarios,
                 ];
             });
 
@@ -68,9 +65,7 @@ class LugaresController extends Controller
     {
         try {
             $lugar = Lugares::with(['municipio', 'opiniones.usuario'])->findOrFail($id);
-            $imagenesPaths = $lugar->imagenes ?? []; // Rutas relativas guardadas
-            
-            // Generar URLs completas para todas las imágenes
+            $imagenesPaths = $lugar->imagenes ?? []; 
             $todasLasImagenesUrls = collect($imagenesPaths)->map(function ($path) {
                  return filter_var($path, FILTER_VALIDATE_URL) ? $path : Storage::disk('s3')->url($path);
             })->toArray();
@@ -81,9 +76,7 @@ class LugaresController extends Controller
                 'descripcion' => $lugar->descripcion,
                 'coordenadas' => $lugar->coordenadas,
                 'municipio' => optional($lugar->municipio)->nombre,
-                // Generar la URL de la imagen principal
                 'imagen_principal_url' => $this->getImagenPrincipalUrl($imagenesPaths),
-                // Devolver el array con las URLs completas para el carrusel/galería
                 'todas_las_imagenes' => $todasLasImagenesUrls,
                 'ubicacion' => $lugar->ubicacion,
                 'hoteles_cercanos' => $lugar->hoteles_cercanos,
@@ -94,7 +87,6 @@ class LugaresController extends Controller
                         'rating' => $comentario->rating,
                         'category' => $comentario->category,
                         'image_path' => $comentario->image_path,
-                        // Asumiendo que 'image_path' del comentario es la ruta relativa
                         'image_url' => $comentario->image_path ? Storage::disk('s3')->url($comentario->image_path) : null,
                         'created_at' => $comentario->created_at->toDateTimeString(),
                         'updated_at' => $comentario->updated_at->toDateTimeString(),
@@ -103,7 +95,6 @@ class LugaresController extends Controller
                         'user' => [
                             'id' => optional($comentario->usuario)->id,
                             'name' => optional($comentario->usuario)->nombre_completo,
-                            // Asumiendo un Accessor 'avatar_url' en el modelo Usuario
                             'avatar' => optional($comentario->usuario)->avatar_url,
                         ]
                     ];
@@ -115,76 +106,53 @@ class LugaresController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         try {
             $lugar = Lugares::findOrFail($id);
 
-            // 1. Validación (se agregó la regla para la imagen)
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'descripcion' => 'required|string',
-                'municipio_id' => 'sometimes|exists:municipios,id', // Se asume que estos campos pueden actualizarse
-                'ubicacion' => 'nullable|string',
-                'coordenadas' => 'nullable|string',
-                'imagen_principal' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096', // La nueva imagen
+                'imagenes_existentes' => 'nullable|string',
+                'imagenes_nuevas.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             ]);
 
-            $data = $request->only(['nombre', 'descripcion', 'municipio_id', 'ubicacion', 'coordenadas']);
-            $imagenesGuardadas = $lugar->imagenes ?? []; // Array con rutas relativas existentes
+            $imagenesFinales = [];
 
-            // 2. Procesar la nueva imagen si se sube
-            if ($request->hasFile('imagen_principal')) {
-                $imagen = $request->file('imagen_principal');
-                $folder = 'lugares'; 
-                $disk = 's3'; // Usar el disco S3
-
-                // Si ya había una imagen principal, la eliminamos de S3 antes de subir la nueva
-                if (!empty($imagenesGuardadas)) {
-                    // La primera ruta en el array es la imagen principal
-                    $oldImagePath = $imagenesGuardadas[0]; 
-                    
-                    // Solo intentar borrar si no es una URL completa
-                    if (!filter_var($oldImagePath, FILTER_VALIDATE_URL)) {
-                        Storage::disk($disk)->delete($oldImagePath);
-                    }
-                    
-                    // Quitar la antigua imagen principal del array
-                    array_shift($imagenesGuardadas); 
-                }
-
-                // Subir la nueva imagen
-                $path = $imagen->store($folder, $disk);
-                
-                // Añadir la nueva ruta al inicio del array
-                array_unshift($imagenesGuardadas, $path);
+            if ($request->filled('imagenes_existentes')) {
+                $imagenesFinales = json_decode($request->imagenes_existentes, true) ?? [];
             }
-            
-            $data['imagenes'] = $imagenesGuardadas;
 
-            // 3. Actualizar el lugar
-            $lugar->update($data);
+            if ($request->hasFile('imagenes_nuevas')) {
+                foreach ($request->file('imagenes_nuevas') as $imagen) {
+                    $path = $imagen->store('lugares', 's3');
+                    $imagenesFinales[] = $path;
+                }
+            }
+            $imagenesFinales = array_slice($imagenesFinales, 0, 3);
+            $lugar->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'imagenes' => $imagenesFinales,
+            ]);
 
-            // 4. Devolver la respuesta con la URL de la imagen principal actualizada
-            $lugar->refresh(); // Asegurar que el modelo tenga los últimos datos, incluyendo 'updated_at'
-            $imagenesPaths = $lugar->imagenes ?? [];
-            
             return response()->json([
                 'message' => 'Lugar actualizado correctamente',
-                'lugar' => [
-                    'id' => $lugar->id,
-                    'nombre' => $lugar->nombre,
-                    'descripcion' => $lugar->descripcion,
-                    'imagen_principal_url' => $this->getImagenPrincipalUrl($imagenesPaths),
-                    'todas_las_imagenes' => collect($imagenesPaths)->map(function ($path) {
-                         return filter_var($path, FILTER_VALIDATE_URL) ? $path : Storage::disk('s3')->url($path);
-                    })->toArray(),
-                ],
+                'imagenes' => collect($imagenesFinales)->map(fn ($img) =>
+                    Storage::disk('s3')->url($img)
+                ),
             ], 200);
 
         } catch (\Exception $e) {
-            Log::error('Error en LugaresController@update: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['message' => 'Error al actualizar el lugar.'], 500);
+            Log::error('Error en update Lugar', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'message' => 'Error al actualizar el lugar',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -192,21 +160,16 @@ class LugaresController extends Controller
     {
         try {
             $lugar = Lugares::findOrFail($id);
-
-            // 1. Eliminar imágenes asociadas de S3
             $imagenesPaths = $lugar->imagenes ?? [];
             if (!empty($imagenesPaths)) {
                 $disk = 's3';
                 foreach ($imagenesPaths as $path) {
-                    // Solo intenta eliminar si no parece una URL completa
                     if (!filter_var($path, FILTER_VALIDATE_URL)) {
                         Storage::disk($disk)->delete($path);
                     }
                 }
                 Log::info('Imágenes eliminadas de S3 para el lugar ID: ' . $lugar->id);
             }
-
-            // 2. Eliminar el registro
             $lugar->delete();
             
             return response()->json(['message' => 'Lugar eliminado correctamente'], 200);
@@ -218,75 +181,73 @@ class LugaresController extends Controller
     }
 
     public function store(Request $request)
-    {
-        try {
-            Log::info('Datos recibidos en store:', $request->all());
+{
+    try {
+        Log::info('Datos recibidos en store', $request->all());
 
-            // Validación
-            $validated = $request->validate([
-                'nombre' => 'required|string|max:255',
-                'descripcion' => 'required|string',
-                'municipio_id' => 'required|exists:municipios,id',
-                'ubicacion' => 'nullable|string',
-                'coordenadas' => 'nullable|string',
-                // CAMBIO: La validación ahora solo busca 'imagen_principal'
-                'imagen_principal' => 'required|image|mimes:jpg,jpeg,png,webp|max:4096' 
-            ]);
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'municipio_id' => 'required|exists:municipios,id',
+            'ubicacion' => 'nullable|string',
+            'coordenadas' => 'nullable|string',
 
-            Log::info('Validación pasada');
+            // 🔥 imágenes múltiples
+            'imagenes' => 'required|array|max:3',
+            'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096',
+        ]);
 
-            // Procesar la imagen
-            $imagenesGuardadas = [];
-            $disk = 's3'; // Usar el disco S3
+        $disk = 's3';
+        $imagenesGuardadas = [];
 
-            if ($request->hasFile('imagen_principal')) {
-                $imagen = $request->file('imagen_principal');
-                // Almacenar en la carpeta 'lugares'
-                $path = $imagen->store('lugares', $disk); 
-                $imagenesGuardadas[] = $path; // Guardar la ruta relativa
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('lugares', $disk);
+                $imagenesGuardadas[] = $path;
+
                 Log::info('Imagen guardada en S3: ' . $path);
             }
-
-            // Crear el lugar
-            $lugar = Lugares::create([
-                'nombre' => $request->nombre,
-                'descripcion' => $request->descripcion,
-                'coordenadas' => $request->coordenadas ?? null,
-                'municipio_id' => $request->municipio_id,
-                // Guardar el array de rutas relativas
-                'imagenes' => !empty($imagenesGuardadas) ? $imagenesGuardadas : null, 
-                'ubicacion' => $request->ubicacion ?? null,
-            ]);
-
-            Log::info('Lugar creado con ID: ' . $lugar->id);
-            $lugar->refresh();
-            $imagenesPaths = $lugar->imagenes ?? [];
-            
-            return response()->json([
-                'message' => 'Lugar creado correctamente',
-                'data' => [
-                    'id' => $lugar->id,
-                    'nombre' => $lugar->nombre,
-                    'descripcion' => $lugar->descripcion,
-                    'imagen_principal_url' => $this->getImagenPrincipalUrl($imagenesPaths),
-                ]
-            ], 201);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Error de validación:', $e->errors());
-            return response()->json([
-                'message' => 'Error de validación',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error('Error en LugaresController@store: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'request' => $request->all()
-            ]);
-            return response()->json([
-                'message' => 'Error al crear el lugar',
-                'error' => $e->getMessage()
-            ], 500);
         }
+
+        $lugar = Lugares::create([
+            'nombre' => $validated['nombre'],
+            'descripcion' => $validated['descripcion'],
+            'municipio_id' => $validated['municipio_id'],
+            'ubicacion' => $validated['ubicacion'] ?? null,
+            'coordenadas' => $validated['coordenadas'] ?? null,
+            'imagenes' => $imagenesGuardadas,
+        ]);
+
+        Log::info('Lugar creado con ID: ' . $lugar->id);
+
+        return response()->json([
+            'message' => 'Lugar creado correctamente',
+            'data' => [
+                'id' => $lugar->id,
+                'nombre' => $lugar->nombre,
+                'descripcion' => $lugar->descripcion,
+                'imagen_principal_url' => $this->getImagenPrincipalUrl($imagenesGuardadas),
+            ]
+        ], 201);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::error('Error de validación', $e->errors());
+        return response()->json([
+            'message' => 'Error de validación',
+            'errors' => $e->errors()
+        ], 422);
+
+    } catch (\Exception $e) {
+        Log::error('Error en LugaresController@store', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'message' => 'Error al crear el lugar',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 }

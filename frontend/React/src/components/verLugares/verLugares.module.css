@@ -5,16 +5,16 @@
   --rating-color: #4b8236;
   --gray-text: #666;
 }
+
 .pageContainer {
   padding: 0;
   background-color: var(--light-gray);
 }
 
 .mainContent {
-  max-width: 1200px;
   margin: auto;
-  padding: 2rem;
   overflow-x: hidden;
+  padding: 7em 7em 0 7em;
 }
 
 .titleSection {
@@ -144,6 +144,7 @@
 }
 
 .btnFilled {
+  width: 100%;
   background-color: var(--main-green);
   color: white;
   border: none;
@@ -152,6 +153,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   transition: background-color 0.3s;
   font-weight: bold;
@@ -199,6 +201,8 @@
 .infoSection {
   margin-bottom: 2rem;
   padding: 0 0 1rem 0;
+  display: flex;
+  gap: 2em;
 }
 
 .location {
@@ -209,6 +213,8 @@
   border-radius: 8px;
   background-color: white;
   margin-top: 20px;
+  width: 35%;
+
 }
 
 .locationIcon {
@@ -218,6 +224,9 @@
 }
 .locationText {
   margin-top: -20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 .locationText p {
   margin-top: -10px;
@@ -225,14 +234,21 @@
 
 .reviewSection {
   margin-top: 2rem;
-  padding: 2rem;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+  /* border-radius: 8px; */
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); */
+}
+
+.leaflet_container {
+  height: 60em;
+  width: 65%;
+  border-radius: 20px;
 }
 
 .reviewSection h2 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #333;
   margin-bottom: 1.5rem;
@@ -246,16 +262,13 @@
   margin-bottom: 1rem;
 }
 
-.reviewFormContainer {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1.5rem;
-}
-
 .reviewForm {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
   align-items: flex-start;
   margin-top: 1rem;
+  height: 18em;
 }
 
 .reviewForm textarea {
@@ -266,28 +279,30 @@
   resize: none;
   font-size: 1rem;
   align-self: stretch;
+  background-color: #efeeee72;
 }
 
 .reviewActions {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  width: 200px;
+  gap: 1rem;
+  width: 100%;
   flex-shrink: 0;
 }
 
 .reviewActions .btnOutline {
   width: 100%;
+  height: 4.5em;
   justify-content: center;
   font-size: 0.9rem;
   padding: 0.6rem 1rem;
-  border: 1px solid #ccc;
+  border: dashed #ccc 1px;
   color: #333;
-  background-color: #f9f9f9;
+  background-color: white;
 }
 
 .reviewActions .btnOutline:hover {
-  background-color: #eee;
+  background-color: #efeeee72;
   color: #333;
 }
 
@@ -298,6 +313,7 @@
 
 .categorySelect {
   width: 100%;
+  height: 3.5em;
   padding: 0.6rem 1rem;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -320,24 +336,25 @@
 .ratingAndButton {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 1.5rem;
+  flex-direction: column;
+  height: 16em;
 }
 
 .ratingGroup {
   display: flex;
   flex-direction: column;
+  gap: 1em;
 }
 
 .heartRating {
   display: flex;
-  gap: 0.3rem;
   align-items: center;
 }
 
 .heartIcon {
   cursor: pointer;
   transition: transform 0.2s;
+  height: 2em;
 }
 
 .ratingText {
@@ -605,8 +622,23 @@ h3 {
     font-size: 1rem;
   }
 
+  .infoSection{
+    flex-direction: column;
+  }
+
+  .location{
+    width: 100%;
+  }
+
+  .leaflet_container{
+    width: 100%;
+    height: 25em;
+  }
+
   .reviewSection {
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
   }
 
   .reviewForm {
@@ -625,14 +657,19 @@ h3 {
     flex-direction: row;
   }
 
+  .reviewSection h3{
+    font-size: 1rem;
+  }
+
   .ratingAndButton {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    width: 16em;
   }
 
   .reviewSection .btnFilled {
-    width: 100%;
+    width: 75%;
     max-width: none;
   }
 

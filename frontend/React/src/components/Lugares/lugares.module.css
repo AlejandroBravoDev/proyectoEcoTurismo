@@ -129,11 +129,10 @@ body {
   padding-right: 30px;
 }
 .cardsSection {
-  background-color: white;
+  background-color: #79797900;
   padding-bottom: 50px;
   padding-top: 50px;
   width: 100%;
-  position: relative;
   z-index: 3;
 }
 
@@ -173,7 +172,6 @@ body {
 .cardContent {
   padding: 15px;
   text-align: center;
-
   display: flex;
   flex-direction: column;
   flex-grow: 1;

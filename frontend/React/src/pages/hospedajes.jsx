@@ -8,6 +8,7 @@ import Cards from "../components/Hospedajes/Cards";
 import AvisoEliminar from "../components/adminActions/avisoEliminar";
 import styles from "../components/Hospedajes/Hospedajes.module.css";
 import fondoHospedajes from "../assets/img4.jpg";
+import ScrollToTop from "../components/ScrollToTop";
 
 function Hospedajes() {
   useAuthRedirect();
@@ -45,6 +46,7 @@ function Hospedajes() {
 
   return (
     <>
+      <ScrollToTop/>
       <Header />
 
       <div className={styles.mainContainer}>

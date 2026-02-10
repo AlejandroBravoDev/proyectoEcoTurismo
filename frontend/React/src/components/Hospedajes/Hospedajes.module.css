@@ -93,6 +93,7 @@ body {
   padding: 5px 9px;
   flex-grow: 1;
   background-color: white;
+  height: 2.5rem;
 }
 
 .searchInput input {

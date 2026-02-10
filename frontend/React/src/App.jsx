@@ -15,6 +15,9 @@ import Lugares from "./pages/Lugares.jsx";
 import VerLugares from "./pages/verLugares.jsx";
 import Editar from "./pages/AdminEditar.jsx";
 import AdminCrearPage from "./pages/AdminCrear";
+import ForgotPassword from "./components/login/ForgotPassword";
+import ResetPassword from './pages/ResetPassword';
+
 
 // ✅ IMPORTACIÓN CORRECTA DE HOSPEDAJES
 import HospedajesPage from "./pages/hospedajes.jsx";
@@ -28,6 +31,9 @@ function Rutas() {
       <Route path="/lugares/:id" element={<VerLugares />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+
       
       {/* ✅ RUTAS DE HOSPEDAJES CORREGIDAS */}
       <Route path="/hospedajes" element={<HospedajesPage />} />

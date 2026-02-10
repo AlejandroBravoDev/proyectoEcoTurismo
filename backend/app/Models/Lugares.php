@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Comentarios;
 use App\Models\Municipios;
+use App\Models\Usuario;
 
 class Lugares extends Model
 {
+    protected $table = 'lugares';
+
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -17,12 +21,69 @@ class Lugares extends Model
         'recomendaciones',
         'coordenadas',
         'imagenes',
+        'usuario_id',
     ];
 
     protected $casts = [
         'hoteles_cercanos' => 'array',
+        'recomendaciones' => 'array',
         'imagenes' => 'array',
     ];
+
+    /**
+     * Campos calculados que se envían al frontend
+     */
+    protected $appends = [
+        'rating_promedio',
+        'total_comentarios',
+        'imagen_principal_url',
+        'imagenes_url',
+    ];
+
+    /* =========================
+       ACCESSORS
+    ========================= */
+
+    public function getRatingPromedioAttribute()
+    {
+        $promedio = $this->opiniones()->avg('rating');
+        return $promedio ? round($promedio, 1) : 0;
+    }
+
+    public function getTotalComentariosAttribute()
+    {
+        return $this->opiniones()->count();
+    }
+
+    /**
+     * Devuelve la URL de la imagen principal (imagenes[0])
+     */
+    public function getImagenPrincipalUrlAttribute()
+    {
+        if (empty($this->imagenes)) {
+            return null;
+        }
+
+        return Storage::disk('s3')->url($this->imagenes[0]);
+    }
+
+    /**
+     * Devuelve todas las imágenes como URLs
+     */
+    public function getImagenesUrlAttribute()
+    {
+        if (empty($this->imagenes)) {
+            return [];
+        }
+
+        return collect($this->imagenes)->map(fn ($img) =>
+            Storage::disk('s3')->url($img)
+        )->toArray();
+    }
+
+    /* =========================
+       RELACIONES
+    ========================= */
 
     public function municipio()
     {
@@ -36,7 +97,6 @@ class Lugares extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'usuario_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
-
 }

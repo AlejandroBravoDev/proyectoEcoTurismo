@@ -7,10 +7,14 @@ import Footer from "../footer";
 import imgMeerkat from "../../assets/img4.jpg";
 import imgLion from "../../assets/img6.jpg";
 import imgParrot from "../../assets/img1.jpg";
+import Mapa from "../mapa/map";
+import ScrollToTop from "../ScrollToTop";
+import Filter from "../../utils/profanity";
+import useAuthRedirect from "../../hooks/useAuthRedirect";
 import {
   FaMapMarkerAlt,
-  FaRegHeart,
-  FaHeart,
+  FaRegStar,
+  FaStar,
   FaChevronLeft,
   FaChevronRight,
   FaEllipsisH,
@@ -90,7 +94,8 @@ const CommentActionsBlock = ({
 };
 
 function VerHospedaje() {
-  const { id } = useParams(); // ✅ OBTENER ID DE LA URL
+  useAuthRedirect()
+  const { id } = useParams();
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
@@ -106,6 +111,9 @@ function VerHospedaje() {
   const [menuOpen, setMenuOpen] = useState(null);
   const [userId, setUserId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [position, setPosition] = useState([
+    4.81415861127678, -75.71023222513418,
+  ]);
 
   const categories = ["Familia", "Amigos", "Trabajo", "Vacaciones", "Turista"];
 
@@ -155,6 +163,11 @@ function VerHospedaje() {
       return;
     }
 
+    if (Filter.check(comment)) {
+      alert("¡Tú comentario tiene lenguaje inapropiado!");
+      return;
+    }
+
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
@@ -186,6 +199,7 @@ function VerHospedaje() {
       const newCommentData = response.data.comentario;
       const newOpinion = {
         ...newCommentData,
+        rating: Number(rating),
         user: currentUser,
         usuario_id: currentUser.id,
       };
@@ -219,7 +233,7 @@ function VerHospedaje() {
         await axios.post(
           `${API}/api/favoritos`,
           { hospedaje_id: id },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         setIsFavorite(true);
       }
@@ -234,23 +248,19 @@ function VerHospedaje() {
     setLoading(true);
     setError(null);
 
-    console.log("🔍 Cargando hospedaje con ID:", id); // DEBUG
-
     try {
       const res = await axios.get(`${API}/api/hospedajes/${id}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-      console.log("✅ Hospedaje cargado:", res.data); // DEBUG
-
       setHospedaje(res.data);
       setOpinions(res.data.comentarios || []);
+      setPosition(res.data.coordenadas.split(",").map(Number));
+
       setLoading(false);
     } catch (err) {
-      console.error("❌ Error al cargar el hospedaje:", err);
-      console.error("Detalles del error:", err.response?.data);
       setError(
-        `No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`
+        `No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`,
       );
       setLoading(false);
     }
@@ -309,7 +319,7 @@ function VerHospedaje() {
       await axios.post(
         `${API}/api/comentarios/${commentId}/report`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       alert("Opinión denunciada con éxito.");
       setMenuOpen(null);
@@ -412,6 +422,7 @@ function VerHospedaje() {
 
   return (
     <>
+      <ScrollToTop />
       <Header />
       <div className={styles.pageContainer}>
         <main className={styles.mainContent}>
@@ -424,7 +435,7 @@ function VerHospedaje() {
                 }`}
                 onClick={handleFavoriteToggle}
               >
-                {isFavorite ? <FaHeart /> : <FaRegHeart />} Favoritas
+                {isFavorite ? <FaStar /> : <FaRegStar />} Favoritas
               </button>
             </div>
           </section>
@@ -516,13 +527,15 @@ function VerHospedaje() {
               }`}
               onClick={handleFavoriteToggle}
             >
-              {isFavorite ? <FaHeart /> : <FaRegHeart />} Favoritas
+              {isFavorite ? <FaStar /> : <FaRegStar />} Favoritas
             </button>
           </div>
 
           <section className={styles.infoSection}>
-            <h3>Acerca de</h3>
-            <p>{hospedaje?.descripcion || "Descripción no disponible"}</p>
+            <div className="w-full sm:w-[65%]">
+              <h3>Acerca de</h3>
+              <p>{hospedaje?.descripcion || "Descripción no disponible"}</p>
+            </div>
 
             <div className={styles.location}>
               <FaMapMarkerAlt className={styles.locationIcon} />
@@ -534,84 +547,88 @@ function VerHospedaje() {
           </section>
 
           <section className={styles.reviewSection}>
-            <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
-            <div className={styles.reviewFormContainer}>
-              <div className={styles.reviewForm}>
-                <textarea
-                  placeholder="Cuéntanos aquí"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  maxLength={5000}
-                />
-                <div className={styles.reviewActions}>
-                  <label htmlFor="imageUpload" className={styles.btnOutline}>
-                    <MdAddPhotoAlternate /> Adjunta una imagen
-                  </label>
-                  <input
-                    id="imageUpload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    style={{ display: "none" }}
+            <Mapa positions={position} />
+
+            <div className="w-full sm:w-full  md:w-[35%]  rounded-2xl bg-white p-8 ">
+              <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
+              <div className={styles.reviewFormContainer}>
+                <div className={styles.reviewForm}>
+                  <textarea
+                    placeholder="Cuéntanos aquí"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    maxLength={5000}
                   />
-                  <div className={styles.categorySelectContainer}>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className={styles.categorySelect}
-                    >
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
-                    <FaChevronRight className={styles.categoryArrow} />
+                  <div className={styles.reviewActions}>
+                    <label htmlFor="imageUpload" className={styles.btnOutline}>
+                      <MdAddPhotoAlternate /> Adjunta una imagen
+                    </label>
+                    <input
+                      id="imageUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      style={{ display: "none" }}
+                    />
+                    <div className={styles.categorySelectContainer}>
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className={styles.categorySelect}
+                      >
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category}
+                          </option>
+                        ))}
+                      </select>
+                      <FaChevronRight className={styles.categoryArrow} />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {selectedImage && (
-              <div className={styles.imagePreview}>
-                <p>Imagen seleccionada: {selectedImage.name}</p>
-                <img
-                  src={URL.createObjectURL(selectedImage)}
-                  alt="Vista previa"
-                />
-              </div>
-            )}
+              {selectedImage && (
+                <div className={styles.imagePreview}>
+                  <p>Imagen seleccionada: {selectedImage.name}</p>
+                  <img
+                    src={URL.createObjectURL(selectedImage)}
+                    alt="Vista previa"
+                  />
+                </div>
+              )}
 
-            <div className={styles.ratingAndButton}>
-              <div className={styles.ratingGroup}>
-                <h3>¿Cómo calificarías tu experiencia?</h3>
-                <div className={styles.heartRating}>
-                  {[...Array(5)].map((_, index) => {
-                    const ratingValue = index + 1;
-                    const isFilled = ratingValue <= (hover || rating);
-                    const Icon = isFilled ? FaHeart : FaRegHeart;
-                    return (
-                      <label key={index}>
-                        <input
-                          type="radio"
-                          name="rating"
-                          value={ratingValue}
-                          onClick={() => setRating(ratingValue)}
-                          style={{ display: "none" }}
-                        />
-                        <Icon
-                          className={styles.heartIcon}
-                          color="#4b8236"
-                          size={40}
-                          onMouseEnter={() => setHover(ratingValue)}
-                          onMouseLeave={() => setHover(0)}
-                        />
-                      </label>
-                    );
-                  })}
-                  <span className={styles.ratingText}>
-                    {calificacionComentarios()}
-                  </span>
+              <div className={styles.ratingAndButton}>
+                <div className={styles.ratingGroup}>
+                  <h3>¿Cómo calificarías tu experiencia?</h3>
+                  <div className={styles.heartRating}>
+                    {[...Array(5)].map((_, index) => {
+                      const ratingValue = index + 1;
+                      const isFilled = ratingValue <= (hover || rating);
+                      const Icon = isFilled ? FaStar : FaRegStar;
+                      return (
+                        <label key={index}>
+                          <input
+                            type="radio"
+                            name="rating"
+                            value={ratingValue}
+                            onClick={() => setRating(ratingValue)}
+                            style={{ display: "none" }}
+                          />
+                          <Icon
+                            className={styles.heartIcon}
+                            color="#ffde21"
+                            size={40}
+                            onMouseEnter={() => setHover(ratingValue)}
+                            onMouseLeave={() => setHover(0)}
+                          />
+                        </label>
+                      );
+                    })}
+                    <span className={styles.ratingText}>
+                      {calificacionComentarios()}
+                    </span>
+                  </div>
                 </div>
               </div>
               <button className={styles.btnFilled} onClick={handleSubmit}>
@@ -639,10 +656,10 @@ function VerHospedaje() {
                         <h4>{op.user?.name || "Usuario Anónimo"}</h4>
                         <div className={styles.opinionRating}>
                           {[...Array(op.rating)].map((_, idx) => (
-                            <FaHeart key={idx} color="#4b8236" size={14} />
+                            <FaStar key={idx} color="#4b8236" size={14} />
                           ))}
                           {[...Array(5 - op.rating)].map((_, idx) => (
-                            <FaRegHeart
+                            <FaRegStar
                               key={idx + op.rating}
                               color="#999"
                               size={14}

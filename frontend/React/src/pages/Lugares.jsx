@@ -9,6 +9,7 @@ import Cards from "../components/Lugares/Cards";
 import AvisoEliminar from "../components/adminActions/avisoEliminar";
 import styles from "../components/Lugares/lugares.module.css";
 import fondoLugares from "../assets/img7.jpg";
+import ScrollToTop from "../components/ScrollToTop";
 
 //funcion de lugares que obtiene todo lo que necesita para mostrar la información
 function Lugares() {
@@ -54,6 +55,7 @@ function Lugares() {
 
   return (
     <>
+      <ScrollToTop />
       <Header />
 
       <div className={styles.mainContainer}>

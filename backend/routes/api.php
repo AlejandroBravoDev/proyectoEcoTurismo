@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+use App\Models\Usuario;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HospedajeController;
 use App\Http\Controllers\LugaresController;
@@ -10,8 +13,12 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\favoritosController;
 use App\Http\Controllers\ComentariosController;
 use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\PasswordResetController;
 
-/* Apis públicas */
+/* =======================
+   APIS PÚBLICAS
+======================= */
+
 Route::get('/lugares', [LugaresController::class, 'index']);
 Route::get('/lugares/{id}', [LugaresController::class, 'show']);
 Route::get('/hospedajes', [HospedajeController::class, 'index']);
@@ -20,15 +27,22 @@ Route::get('/municipios', [MunicipioController::class, 'index']);
 Route::get('/favoritos', [favoritosController::class, 'index']);
 Route::get('/comentarios', [ComentariosController::class, 'index']);
 
-// Rutas de usuarios sin auth para probar
+// Usuarios (sin auth para pruebas)
 Route::get('/usuarios', [UsuarioController::class, 'index']);
 Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
-Route::put('/usuarios/{id}', [UsuarioController::class, 'update']); 
+Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
 
+// Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+/*RECUPERAR CONTRASEÑ*/
+
+Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
+/*RUTAS PROTEGIDAS */
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -37,35 +51,35 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json([
             'id' => $user->id,
             'nombre_completo' => $user->nombre_completo,
-            'avatar_url' => $user->avatar_url, 
+            'avatar_url' => $user->avatar_url,
         ]);
     });
-    
+
     Route::get('/perfil', [PerfilController::class, 'show']);
     Route::post('/perfil/update', [PerfilController::class, 'update']);
+
     Route::post('/comentarios', [ComentariosController::class, 'store']);
     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
-    
-    // ✅ RUTAS DE FAVORITOS ACTUALIZADAS
+
+    // Favoritos
     Route::post('/favoritos', [favoritosController::class, 'store']);
     Route::delete('/favoritos/{id}', [favoritosController::class, 'destroy']);
-    Route::get('/favoritos/check/{id}', [favoritosController::class, 'check']); // Cambiado de lugarId a id
-    
+    Route::get('/favoritos/check/{id}', [favoritosController::class, 'check']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    //lugares
+    // Lugares
     Route::post('/lugares', [LugaresController::class, 'store']);
-    Route::put('/lugares/{id}', [LugaresController::class, 'update']); // 🛑 Se utiliza PUT
+    Route::put('/lugares/{id}', [LugaresController::class, 'update']);
     Route::delete('/lugares/{id}', [LugaresController::class, 'destroy']);
 
-    //hospedajes
+    // Hospedajes
     Route::post('/hospedajes', [HospedajeController::class, 'store']);
     Route::put('/hospedajes/{id}', [HospedajeController::class, 'update']);
     Route::delete('/hospedajes/{id}', [HospedajeController::class, 'destroy']);
 
-    // Usuarios (si el admin puede crear usuarios)
+    // Usuarios (admin)
     Route::post('/usuario', [UsuarioController::class, 'store']);
     Route::put('/usuario/{id}', [UsuarioController::class, 'update']);
     Route::delete('/usuario/{id}', [UsuarioController::class, 'destroy']);
-
 });

@@ -7,9 +7,6 @@ function SearchBar({
   onMunicipioChange,
   currentMunicipioId,
 }) {
-  console.log("SearchBar → municipios:", municipios);
-  console.log("Es array?", Array.isArray(municipios));
-  console.log(municipios)
 
   const [searchText, setSearchText] = useState("");
 

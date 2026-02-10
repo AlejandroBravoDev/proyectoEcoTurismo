@@ -9,7 +9,7 @@ class Favorito extends Model
     protected $fillable = [
         'usuario_id',
         'lugar_id',
-        'hospedaje_id' // ✅ AÑADIDO
+        'hospedaje_id'
     ];
 
     public function usuario()
@@ -22,7 +22,7 @@ class Favorito extends Model
         return $this->belongsTo(Lugares::class, 'lugar_id');
     }
     
-    // ✅ AÑADIDO: Relación con hospedajes
+
     public function hospedaje()
     {
         return $this->belongsTo(Hospedaje::class, 'hospedaje_id');

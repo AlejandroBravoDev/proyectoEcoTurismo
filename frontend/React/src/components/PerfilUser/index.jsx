@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./PerfilUser.module.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 // IMAGENES POR DEFECTO
 import placeholderFotoUsuario from "../../assets/usuarioDemo.png";
 import bannerFondo from "../../assets/img4.jpg";
@@ -17,7 +18,6 @@ const API_BASE = "http://localhost:8000";
 
 function PerfilUsuario() {
   const [usuario, setUsuario] = useState(null);
-  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({});
   const [pestanaActiva, setPestanaActiva] = useState("opiniones");
@@ -51,15 +51,13 @@ function PerfilUsuario() {
         nombre_completo: userData.nombre_completo || "",
         email: userData.email || "",
       });
-      setCargando(false);
       setError(null);
     } catch (err) {
       console.error(
         "Error al cargar el perfil:",
-        err.response?.data || err.message || err
+        err.response?.data || err.message || err,
       );
       setError("No se pudo cargar el perfil. Por favor, inicie sesión.");
-      setCargando(false);
 
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
@@ -116,7 +114,7 @@ function PerfilUsuario() {
     } catch (err) {
       console.error(
         "Error al actualizar perfil:",
-        err.response?.data || err.message || err
+        err.response?.data || err.message || err,
       );
       let errorMsg = "Error al actualizar. Revisa los datos.";
       if (err.response?.data?.message) {
@@ -143,9 +141,11 @@ function PerfilUsuario() {
             Authorization: `Bearer ${token}`,
           },
         });
+
+
       } catch (error) {
         console.warn(
-          "Advertencia: No se pudo revocar el token en el servidor. Limpiando localmente."
+          "Advertencia: No se pudo revocar el token en el servidor. Limpiando localmente.",
         );
       }
     }
@@ -180,13 +180,12 @@ function PerfilUsuario() {
     } catch (err) {
       console.error(
         "Error al eliminar opinión:",
-        err.response?.data || err.message || err
+        err.response?.data || err.message || err,
       );
       alert("Error al eliminar la opinión.");
     }
   };
 
-  // --- NUEVA FUNCIÓN: ELIMINAR FAVORITO ---
   const handleRemoveFavorite = async (lugarId) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -204,7 +203,7 @@ function PerfilUsuario() {
       setUsuario((prevUsuario) => ({
         ...prevUsuario,
         favoritos: prevUsuario.favoritos.filter(
-          (fav) => fav.lugar.id !== lugarId
+          (fav) => fav.lugar.id !== lugarId,
         ),
       }));
 
@@ -212,36 +211,28 @@ function PerfilUsuario() {
     } catch (err) {
       console.error(
         "Error al eliminar favorito:",
-        err.response?.data || err.message || err
+        err.response?.data || err.message || err,
       );
       alert("Error al eliminar el lugar de favoritos.");
     }
   };
-  // ----------------------------------------
 
-  if (cargando) {
-    return <div className={styles.loading}>Cargando perfil...</div>;
-  }
+  const totalComentarios = usuario?.comentarios
+    ? usuario.comentarios.length
+    : 0;
+  const totalFavoritos = usuario?.favoritos ? usuario.favoritos.length : 0;
 
-  if (error) {
-    return <div className={styles.error}>{error}</div>;
-  }
-
-  const totalComentarios = usuario.comentarios ? usuario.comentarios.length : 0;
-  const totalFavoritos = usuario.favoritos ? usuario.favoritos.length : 0;
   const TarjetaOpinion = ({ comentario }) => (
     <div className={styles.tarjetaOpinion}>
       <div className={styles.cabeceraOpinion}>
         <div className={styles.bloqueInfoAutor}>
           <img
-            src={getImageUrl(usuario.avatar_url)}
+            src={getImageUrl(usuario?.avatar_url)}
             alt="Autor"
             className={styles.fotoPequenaAutor}
           />
           <div className={styles.metaOpinion}>
-            <h4>{usuario.nombre_completo}</h4>
-
-            {/* ESTRELLAS DEBAJO DEL NOMBRE */}
+            <h4>{usuario?.nombre_completo}</h4>
             <div className={styles.ratingStars}>
               {[...Array(5)].map((star, i) => (
                 <FaHeart
@@ -250,14 +241,13 @@ function PerfilUsuario() {
                 />
               ))}
             </div>
-
             <p className={styles.metaInfo}>
               {comentario.created_at} • {comentario.category}
             </p>
           </div>
         </div>
 
-        {usuario.id === comentario.usuario_id && (
+        {usuario?.id === comentario.usuario_id && (
           <div className={styles.accionesOpinion}>
             <button
               className={styles.botonEliminarOpinion}
@@ -297,29 +287,35 @@ function PerfilUsuario() {
     </div>
   );
 
-  const TarjetaItemFavorito = ({ favorito }) => (
-    <div className={styles.tarjetaItemFavorito}>
-      <img
-        src={favorito.lugar.imagen_url || bannerFondo}
-        alt={favorito.lugar.nombre}
-        className={styles.imagenItemFavorito}
-      />
-      <div className={styles.detallesItemFavorito}>
-        <h4>{favorito.lugar.nombre}</h4>
+  const TarjetaItemFavorito = ({ favorito }) => {
+    const item = favorito?.lugar || favorito?.hospedaje;
+    if (!item) return null;
 
-        <p className={styles.descripcionLugarFavorito}>
-          {favorito.lugar.descripcion || "Descripción no disponible."}
-        </p>
+    return (
+      <div className={styles.tarjetaItemFavorito}>
+        <img
+          src={item?.imagen_url || bannerFondo}
+          alt={item?.nombre || "Favorito"}
+          className={styles.imagenItemFavorito}
+        />
+        <div className={styles.detallesItemFavorito}>
+          <h4>{item?.nombre || "Nombre no disponible"}</h4>
+          <p className={styles.descripcionLugarFavorito}>
+            {item?.descripcion || "Descripción no disponible."}
+          </p>
+        </div>
+        <FaHeart
+          className={styles.iconoCorazonFavorito}
+          onClick={() => handleRemoveFavorite(item.id)}
+          title="Quitar de Favoritos"
+        />
       </div>
-      <FaHeart
-        className={styles.iconoCorazonFavorito}
-        onClick={() => handleRemoveFavorite(favorito.lugar.id)}
-        title="Quitar de Favoritos"
-      />
-    </div>
-  );
+    );
+  };
 
   const renderizarContenidoPerfil = () => {
+    if (!usuario) return null;
+
     switch (pestanaActiva) {
       case "opiniones":
         if (totalComentarios === 0) {
@@ -362,7 +358,7 @@ function PerfilUsuario() {
                 id="nombre_completo"
                 type="text"
                 name="nombre_completo"
-                value={formData.nombre_completo}
+                value={formData.nombre_completo || ""}
                 onChange={handleEditChange}
               />
               <label htmlFor="email">Correo</label>
@@ -370,10 +366,9 @@ function PerfilUsuario() {
                 id="email"
                 type="email"
                 name="email"
-                value={formData.email}
+                value={formData.email || ""}
                 onChange={handleEditChange}
               />
-
               <label htmlFor="profilePictureFile">Foto de perfil</label>
               <div className={styles.areaCargaArchivo}>
                 <span>
@@ -404,12 +399,11 @@ function PerfilUsuario() {
                   onChange={handleFileChange}
                 />
               </div>
-
               <label htmlFor="userId">ID</label>
               <input
                 id="userId"
                 type="text"
-                value={usuario.id}
+                value={usuario.id || ""}
                 readOnly
                 className={styles.campoSoloLectura}
               />
@@ -436,20 +430,22 @@ function PerfilUsuario() {
       <div
         className={styles.bannerSuperior}
         style={{
-          backgroundImage: `url(${getImageUrl(usuario.banner_url, true)})`,
+          backgroundImage: `url(${getImageUrl(usuario?.banner_url, true)})`,
         }}
       ></div>
       <div className={styles.contenedorPrincipalPerfil}>
         <div className={styles.contenidoCabeceraPerfil}>
           <img
-            src={getImageUrl(usuario.avatar_url)}
+            src={getImageUrl(usuario?.avatar_url)}
             alt="Perfil"
             className={styles.avatarPerfil}
           />
           <div className={styles.bloqueInfoUsuario}>
-            <h3>{usuario.nombre_completo}</h3>
-            <p className={styles.textoEmailUsuario}>{usuario.email}</p>
-            <span className={styles.idCuentaUsuario}>ID: {usuario.id}</span>
+            <h3>{usuario?.nombre_completo || "Usuario"}</h3>
+            <p className={styles.textoEmailUsuario}>{usuario?.email || ""}</p>
+            <span className={styles.idCuentaUsuario}>
+              ID: {usuario?.id || "..."}
+            </span>
           </div>
           <div className={styles.contenedorAcciones}>
             <button

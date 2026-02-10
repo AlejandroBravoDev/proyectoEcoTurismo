@@ -126,8 +126,30 @@ class HospedajeController extends Controller
                 'coordenadas' => $hospedaje->coordenadas,
                 'municipio' => optional($hospedaje->municipio)->nombre,
                 'imagen_principal_url' => $imagenPrincipalUrl, // ✅ AWS
-                'imagenes' => $todasLasImagenesUrls,           // ✅ Galería
+                'todas_las_imagenes' => $todasLasImagenesUrls,           // ✅ Galería
                 'ubicacion' => $hospedaje->ubicacion,
+                'coordenadas' => $hospedaje->coordenadas,
+                'comentarios' => $hospedaje->opiniones->map(function ($comentario) {
+                    return [
+                        'id' => $comentario->id,
+                        'contenido' => $comentario->contenido,
+                        'rating' => $comentario->rating,
+                        'category' => $comentario->category,
+                        'image_path' => $comentario->image_path,
+                        // Asumiendo que 'image_path' del comentario es la ruta relativa
+                        'image_url' => $comentario->image_path ? Storage::disk('s3')->url($comentario->image_path) : null,
+                        'created_at' => $comentario->created_at->toDateTimeString(),
+                        'updated_at' => $comentario->updated_at->toDateTimeString(),
+                        'usuario_id' => $comentario->usuario_id,
+                        'hospedaje_id' => $comentario->hospedaje_id,
+                        'user' => [
+                            'id' => optional($comentario->usuario)->id,
+                            'name' => optional($comentario->usuario)->nombre_completo,
+                            // Asumiendo un Accessor 'avatar_url' en el modelo Usuario
+                            'avatar' => optional($comentario->usuario)->avatar_url,
+                        ]
+                    ];
+                }),
                 'tipo' => $hospedaje->tipo,
                 'contacto' => $hospedaje->contacto,
                 'isFavorite' => $isFavorite,
