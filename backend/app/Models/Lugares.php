@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Comentarios;
 use App\Models\Municipios;
-use App\Models\Usuario; // Asegúrate de usar el modelo Usuario que definimos antes
+use App\Models\Usuario;
 
 class Lugares extends Model
 {
@@ -20,64 +21,80 @@ class Lugares extends Model
         'recomendaciones',
         'coordenadas',
         'imagenes',
-        'usuario_id', // Añadido por si guardas quién creó el lugar
+        'usuario_id',
     ];
 
     protected $casts = [
         'hoteles_cercanos' => 'array',
+        'recomendaciones' => 'array',
         'imagenes' => 'array',
     ];
 
     /**
-     * Appends: Estos campos no existen en la base de datos, 
-     * pero se calculan al vuelo y se envían al frontend.
+     * Campos calculados que se envían al frontend
      */
-    protected $appends = ['rating_promedio', 'total_comentarios'];
+    protected $appends = [
+        'rating_promedio',
+        'total_comentarios',
+        'imagen_principal_url',
+        'imagenes_url',
+    ];
 
-    // --- ACCESSORS PARA RATING ---
+    /* =========================
+       ACCESSORS
+    ========================= */
 
-    /**
-     * Calcula el promedio de estrellas basado en la tabla comentarios.
-     */
     public function getRatingPromedioAttribute()
     {
-        // Accede a la relación opiniones y saca el promedio de la columna 'rating'
         $promedio = $this->opiniones()->avg('rating');
-        
-        // Retorna el promedio redondeado a 1 decimal (ej: 4.5) o 0 si no hay votos
         return $promedio ? round($promedio, 1) : 0;
     }
 
-    /**
-     * Retorna el número total de comentarios.
-     */
     public function getTotalComentariosAttribute()
     {
         return $this->opiniones()->count();
     }
 
-    // --- RELACIONES ---
+    /**
+     * Devuelve la URL de la imagen principal (imagenes[0])
+     */
+    public function getImagenPrincipalUrlAttribute()
+    {
+        if (empty($this->imagenes)) {
+            return null;
+        }
+
+        return Storage::disk('s3')->url($this->imagenes[0]);
+    }
 
     /**
-     * Relación con el municipio al que pertenece el lugar.
+     * Devuelve todas las imágenes como URLs
      */
+    public function getImagenesUrlAttribute()
+    {
+        if (empty($this->imagenes)) {
+            return [];
+        }
+
+        return collect($this->imagenes)->map(fn ($img) =>
+            Storage::disk('s3')->url($img)
+        )->toArray();
+    }
+
+    /* =========================
+       RELACIONES
+    ========================= */
+
     public function municipio()
     {
         return $this->belongsTo(Municipios::class, 'municipio_id');
     }
 
-    /**
-     * Relación con los comentarios (opiniones).
-     * Nota: Mantenemos el nombre 'opiniones' pero apunta a 'Comentarios'.
-     */
     public function opiniones()
     {
         return $this->hasMany(Comentarios::class, 'lugar_id')->latest();
     }
 
-    /**
-     * Relación con el usuario que registró el lugar (si aplica).
-     */
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');

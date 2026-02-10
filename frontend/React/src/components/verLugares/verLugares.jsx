@@ -171,6 +171,7 @@ function VerLugares() {
       });
       setLugar(res.data);
       setOpinions(res.data.comentarios || []);
+      console.log(lugar)
       if (res.data.coordenadas) {
         setPosition(res.data.coordenadas.split(",").map(Number));
       }
