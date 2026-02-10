@@ -111,6 +111,7 @@ function VerHospedaje() {
   const [menuOpen, setMenuOpen] = useState(null);
   const [userId, setUserId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [imagenes, setImagenes] = useState([])
   const [position, setPosition] = useState([
     4.81415861127678, -75.71023222513418,
   ]);
@@ -256,6 +257,8 @@ function VerHospedaje() {
       setHospedaje(res.data);
       setOpinions(res.data.comentarios || []);
       setPosition(res.data.coordenadas.split(",").map(Number));
+      setImagenes(res.data.todas_las_imagenes)
+      console.log(imagenes[0])
 
       setLoading(false);
     } catch (err) {
@@ -443,7 +446,7 @@ function VerHospedaje() {
           <section className={styles.gallery}>
             <div className={styles.mainImage}>
               <img
-                src={imageSources[0]}
+                src={imagenes[0]}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -453,7 +456,7 @@ function VerHospedaje() {
             </div>
             <div className={styles.sideImages}>
               <img
-                src={imageSources[1] || defaultImageUrls[1]}
+                src={imagenes[1] || defaultImageUrls[1]}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -461,7 +464,7 @@ function VerHospedaje() {
                 }}
               />
               <img
-                src={imageSources[2] || defaultImageUrls[2]}
+                src={imagenes[2] || defaultImageUrls[2]}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
                   e.target.onerror = null;
