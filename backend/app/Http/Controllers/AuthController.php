@@ -12,18 +12,22 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => [
-                'required',
-                'email',
-                'regex:/^[^@]+@[^@]+\.[a-zA-Z]{2,3}$/'
-            ],
+            'email' => 'required|email',
             'password' => 'required|string',
         ], [
             'email.required' => 'El correo es obligatorio',
             'email.email' => 'Correo inválido',
-            'email.regex' => 'Formato de correo incorrecto',
             'password.required' => 'La contraseña es obligatoria',
         ]);
+
+        // Validación adicional de email
+        if (!$this->isValidEmail($request->email)) {
+            return response()->json([
+                'errors' => [
+                    'email' => ['El correo tiene un formato inválido o extensión mal escrita']
+                ]
+            ], 422);
+        }
 
         $usuario = Usuario::where(
             'email',
@@ -59,12 +63,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'nombre_completo' => 'required|string|max:100',
-            'email' => [
-                'required',
-                'email',
-                'unique:usuarios,email',
-                'regex:/^[^@]+@[^@]+\.[a-zA-Z]{2,3}$/'
-            ],
+            'email' => 'required|email|unique:usuarios,email',
             'password' => [
                 'required',
                 'string',
@@ -80,7 +79,6 @@ class AuthController extends Controller
             'email.required' => 'El correo es obligatorio',
             'email.email' => 'Correo inválido',
             'email.unique' => 'Este correo ya está registrado',
-            'email.regex' => 'Formato de correo incorrecto',
             'password.required' => 'La contraseña es obligatoria',
             'password.min' => 'Debe tener mínimo 8 caracteres',
             'password.max' => 'Máximo 12 caracteres',
@@ -89,10 +87,19 @@ class AuthController extends Controller
             'password.not_regex' => 'La contraseña no puede ser secuencial ni repetitiva',
         ]);
 
+        // Validación adicional personalizada de email
+        if (!$this->isValidEmail($request->email)) {
+            return response()->json([
+                'errors' => [
+                    'email' => ['El correo tiene un formato inválido o extensión mal escrita']
+                ]
+            ], 422);
+        }
+
         $usuario = Usuario::create([
             'nombre_completo' => $request->nombre_completo,
             'email' => strtolower($request->email),
-            'password' => $request->password, // ⚠️ SIN Hash::make
+            'password' => $request->password,
             'rol' => 'usuario',
         ]);
 
@@ -109,5 +116,44 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Sesión cerrada correctamente'
         ], 200);
+    }
+
+    // 🛡️ Validación personalizada de email
+    private function isValidEmail($email)
+    {
+        // Bloquear doble arroba
+        if (strpos($email, '@@') !== false) {
+            return false;
+        }
+
+        // Bloquear puntos consecutivos
+        if (strpos($email, '..') !== false) {
+            return false;
+        }
+
+        // Bloquear @. o .@
+        if (strpos($email, '@.') !== false || strpos($email, '.@') !== false) {
+            return false;
+        }
+
+        // Bloquear extensiones mal escritas
+        $invalidExtensions = [
+            '.comm', '.coom', '.gmial', '.gmai', '.hotmial',
+            '.outlok', '.yahooo', '.gmil', '.hotmai', '.con'
+        ];
+
+        foreach ($invalidExtensions as $ext) {
+            if (strtolower(substr($email, -strlen($ext))) === $ext) {
+                return false;
+            }
+        }
+
+        // Validar formato general
+        $pattern = '/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.(com|net|org|edu|gov|co|mx|es|ar|cl|pe|ve)$/';
+        if (!preg_match($pattern, $email)) {
+            return false;
+        }
+
+        return true;
     }
 }
