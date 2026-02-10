@@ -1,4 +1,3 @@
-//logica de lugares
 import { useEffect, useState } from "react";
 import {
   getLugares,
@@ -10,10 +9,10 @@ import { mapLugar } from "../utils/lugaresMapper";
 export default function useLugares() {
   const [lugares, setLugares] = useState([]);
   const [municipios, setMunicipios] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMunicipioId, setSelectedMunicipioId] = useState(1);
+  const [selectedMunicipioId, setSelectedMunicipioId] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [lugarAEliminar, setLugarAEliminar] = useState(null);
@@ -23,7 +22,10 @@ export default function useLugares() {
   }, []);
 
   useEffect(() => {
-    cargarLugares();
+    const delayDebounceFn = setTimeout(() => {
+      cargarLugares();
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, selectedMunicipioId]);
 
   const cargarLugares = async () => {
@@ -33,13 +35,15 @@ export default function useLugares() {
         search: searchQuery || undefined,
         municipio_id: selectedMunicipioId || undefined,
       });
-
-      const procesados = response.data.map(mapLugar);
-
+      const procesados = (response.data || []).map(mapLugar);
       setLugares(procesados);
+      setError(null);
     } catch (e) {
-      console.error("Error al cargar lugares:", e);
-      setError("No se pudieron cargar los lugares.");
+      setError(
+        e.response?.status === 429
+          ? "Demasiadas peticiones. Espera..."
+          : "Error al cargar",
+      );
     } finally {
       setLoading(false);
     }
@@ -50,31 +54,18 @@ export default function useLugares() {
       const response = await getMunicipios();
       setMunicipios(response.data);
     } catch (e) {
-      console.error("Error al cargar municipios:", e);
+      console.error(e);
     }
   };
 
-  
-
   const eliminar = async () => {
-    if (!lugarAEliminar) {
-      console.error("No hay lugar para eliminar");
-      return;
-    }
-
+    if (!lugarAEliminar) return;
     try {
-      console.log("Eliminando lugar con ID:", lugarAEliminar);
       await deleteLugar(lugarAEliminar);
-
-      // Actualizar la lista de lugares eliminando el que se borró
       setLugares((prev) => prev.filter((l) => l.id !== lugarAEliminar));
-
-      console.log("Lugar eliminado exitosamente");
-    } catch (error) {
-      console.error("Error al eliminar el lugar:", error);
-      setError("No se pudo eliminar el lugar. Por favor, intenta de nuevo.");
+    } catch (e) {
+      setError("No se pudo eliminar.");
     } finally {
-      // Cerrar modal y limpiar estado
       setShowModal(false);
       setLugarAEliminar(null);
     }
@@ -86,12 +77,12 @@ export default function useLugares() {
     loading,
     error,
     searchQuery,
+    setSearchQuery,
     selectedMunicipioId,
+    setSelectedMunicipioId,
     showModal,
     setShowModal,
     setLugarAEliminar,
-    setSearchQuery,
-    setSelectedMunicipioId,
     eliminar,
   };
 }
