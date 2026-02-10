@@ -132,7 +132,7 @@ function Editar() {
 
   return (
     <>
-      <div className="w-full h-full flex flex-row items-center justify-evenly py-10 bg-rgba(0,0,0,0.05)">
+      <div className="w-full h-full flex flex-row items-center justify-evenly py-40 bg-rgba(0,0,0,0.05) ">
         <form
           onSubmit={handleUpdate}
           className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-170 bg-gray-150 p-8 flex flex-col gap-5 bg-white"

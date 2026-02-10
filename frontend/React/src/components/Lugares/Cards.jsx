@@ -24,8 +24,8 @@ function Cards({ lugares, user, onDelete }) {
   };
 
   return (
-    <section className="py-20">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center pt-5 px-20">
+    <section className="py-20 flex justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center pt-5 px-20">
         {user?.rol === "admin" && (
           <Link
             to="/admin/crear/lugar"
@@ -39,6 +39,7 @@ function Cards({ lugares, user, onDelete }) {
           </Link>
         )}
 
+        {/* CARD */}
         {lugares.map((lugar) => (
           <div
             key={lugar.id}
@@ -83,7 +84,7 @@ function Cards({ lugares, user, onDelete }) {
                     Editar
                   </button>
                   <button
-                    onClick={(e) => handleDelete(e, lugar.id)}
+                    onClick={() => handleDelete(lugar.id)}
                     className="text-red-600 font-semibold hover:cursor-pointer flex items-center gap-1 group/btn"
                   >
                     Eliminar
@@ -91,10 +92,13 @@ function Cards({ lugares, user, onDelete }) {
                 </div>
               ) : (
                 <div className="flex items-center justify-between pt-2">
-                  <button className="text-[#20A217] font-semibold flex items-center gap-1 group/btn">
-                    Ver Detalles
-                    <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  
+                  <Link to={`/lugares/${lugar.id}`}>
+                    <button className="text-[#20A217] font-semibold hover:cursor-pointer flex items-center gap-1 group/btn">
+                      Ver Detalles
+                      <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </button>
+                  </Link>
                 </div>
               )}
             </div>

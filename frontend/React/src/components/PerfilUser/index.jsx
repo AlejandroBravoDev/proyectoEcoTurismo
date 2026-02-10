@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./PerfilUser.module.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 // IMAGENES POR DEFECTO
 import placeholderFotoUsuario from "../../assets/usuarioDemo.png";
 import bannerFondo from "../../assets/img4.jpg";
@@ -140,6 +141,8 @@ function PerfilUsuario() {
             Authorization: `Bearer ${token}`,
           },
         });
+
+
       } catch (error) {
         console.warn(
           "Advertencia: No se pudo revocar el token en el servidor. Limpiando localmente.",
