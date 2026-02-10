@@ -10,6 +10,7 @@ import imgParrot from "../../assets/img1.jpg";
 import Mapa from "../mapa/map";
 import ScrollToTop from "../ScrollToTop";
 import Filter from "../../utils/profanity";
+import useAuthRedirect from "../../hooks/useAuthRedirect";
 import {
   FaMapMarkerAlt,
   FaRegStar,
@@ -93,6 +94,7 @@ const CommentActionsBlock = ({
 };
 
 function VerHospedaje() {
+  useAuthRedirect()
   const { id } = useParams();
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);

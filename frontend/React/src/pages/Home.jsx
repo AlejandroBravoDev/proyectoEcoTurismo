@@ -138,7 +138,7 @@ function App() {
                 <div
                   key={dest.id || index}
                   style={{ animationDelay: `${(index + 1) * 200}ms` }}
-                  className="group bg-slate-950 rounded-2xl overflow-hidden shadow-sm border border-slate-100  hover:shadow-2xl transition-all w-full max-w-[360px] text-left animate-in fade-in slide-in-from-bottom-20 duration-1000 fill-mode-both"
+                  className="group bg-slate-950 rounded-2xl overflow-hidden shadow-sm border border-slate-100  hover:shadow-2xl transition-all w-[90%] max-w-[360px] text-left animate-in fade-in slide-in-from-bottom-20 duration-1000 fill-mode-both"
                 >
                   <div className="relative h-72 overflow-hidden">
                     <img
@@ -156,7 +156,7 @@ function App() {
                       <Leaf className="w-3 h-3" /> {dest.category}
                     </div>
                   </div>
-                  <div className="p-4  bg-white transition-colors">
+                  <div className="p-4 bg-white transition-colors">
                     <h3 className="text-xl font-bold mb-1 text-black">
                       {dest.title}
                     </h3>
@@ -165,7 +165,7 @@ function App() {
                     </p>
 
                     <div className="flex items-center justify-between pt-2">
-                      <Link to={`/lugar/${dest.id}`}>
+                      <Link to={`/lugares/${dest.id}`}>
                         <button className="text-[#20A217] font-semibold hover:cursor-pointer flex items-center gap-1 group/btn">
                           Explorar
                           <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />

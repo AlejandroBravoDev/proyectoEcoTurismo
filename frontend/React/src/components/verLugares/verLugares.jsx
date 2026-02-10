@@ -10,6 +10,7 @@ import imgParrot from "../../assets/img1.jpg";
 import Mapa from "../mapa/map.jsx";
 import ScrollToTop from "../ScrollToTop.jsx";
 import Filter from "../../utils/profanity.js";
+import Swal from "sweetalert2";
 import {
   FaMapMarkerAlt,
   FaRegStar,
@@ -201,12 +202,20 @@ function VerLugares() {
   // --- ACCIONES ---
   const handleSubmit = async () => {
     if (!comment || comment.trim() === "") {
-      alert("El comentario no puede estar vacío.");
+      Swal.fire({
+        title: "no se puede publicar tú comentario",
+        text: "El comentario está vacio",
+        icon: "error",
+      });
       return;
     }
 
     if (Filter.check(comment)) {
-      alert("¡Tú comentario tiene lenguaje inapropiado!");
+      Swal.fire({
+        title: "no se puede publicar tú comentario",
+        text: "Tú comentario tiene lenguaje inapropiado",
+        icon: "error",
+      });
       return;
     }
     const token = localStorage.getItem("token");
@@ -215,7 +224,11 @@ function VerLugares() {
       return;
     }
     if (rating === 0) {
-      alert("Por favor, selecciona una calificación.");
+      Swal.fire({
+        title: "no se puede publicar tú comentario",
+        text: "Tienes que darle una calificación al lugar",
+        icon: "error"
+      })
       return;
     }
 
@@ -444,114 +457,114 @@ function VerLugares() {
           </div>
         </section>
 
-          <section className={styles.infoSection}>
-            <div className="w-full sm:w-[65%]">
-              <h3 className="font-bold font-xl">Acerca de</h3>
-              <p>{lugar?.descripcion || "Descripción no disponible"}</p>
+        <section className={styles.infoSection}>
+          <div className="w-full sm:w-[65%]">
+            <h3 className="font-bold font-xl">Acerca de</h3>
+            <p>{lugar?.descripcion || "Descripción no disponible"}</p>
+          </div>
+          <div className={styles.location}>
+            <FaMapMarkerAlt className={styles.locationIcon} />
+            <div className={styles.locationText}>
+              <h3>Ubicado en</h3>
+              <p>
+                {lugar?.ubicacion
+                  ? lugar.ubicacion
+                  : "Aun no contamos con la ubicacion exacta de este sitio ecoturistico."}
+              </p>
             </div>
-            <div className={styles.location}>
-              <FaMapMarkerAlt className={styles.locationIcon} />
-              <div className={styles.locationText}>
-                <h3>Ubicado en</h3>
-                <p>
-                  {lugar?.ubicacion
-                    ? lugar.ubicacion
-                    : "Aun no contamos con la ubicacion exacta de este sitio ecoturistico."}
-                </p>
-              </div>
-            </div>
-          </section>
+          </div>
+        </section>
 
-          <section className={styles.reviewSection}>
-            <Mapa positions={position} />
-            <div className="w-full sm:w-full  md:w-[35%]  rounded-2xl bg-white p-8 ">
-              <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
-              <div className={styles.reviewFormContainer}>
-                <div className={styles.reviewForm}>
-                  <textarea
-                    placeholder="Cuentanos aquí"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    cols={20}
+        <section className={styles.reviewSection}>
+          <Mapa positions={position} />
+          <div className="w-full sm:w-full  md:w-[35%]  rounded-2xl bg-white p-8 ">
+            <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
+            <div className={styles.reviewFormContainer}>
+              <div className={styles.reviewForm}>
+                <textarea
+                  placeholder="Cuentanos aquí"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  cols={20}
+                />
+                <div className={styles.reviewActions}>
+                  <label htmlFor="imageUpload" className={styles.btnOutline}>
+                    <MdAddPhotoAlternate /> Adjunta una imagen
+                  </label>
+                  <input
+                    id="imageUpload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    style={{ display: "none" }}
                   />
-                  <div className={styles.reviewActions}>
-                    <label htmlFor="imageUpload" className={styles.btnOutline}>
-                      <MdAddPhotoAlternate /> Adjunta una imagen
-                    </label>
-                    <input
-                      id="imageUpload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      style={{ display: "none" }}
-                    />
-                    <div className={styles.categorySelectContainer}>
-                      <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className={styles.categorySelect}
-                      >
-                        {categories.map((category) => (
-                          <option key={category} value={category}>
-                            {category}
-                          </option>
-                        ))}
-                      </select>
-                      <FaChevronRight className={styles.categoryArrow} />
-                    </div>
+                  <div className={styles.categorySelectContainer}>
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className={styles.categorySelect}
+                    >
+                      {categories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                    <FaChevronRight className={styles.categoryArrow} />
                   </div>
                 </div>
               </div>
-
-              {selectedImage && (
-                <div className={styles.imagePreview}>
-                  <p>Imagen seleccionada: {selectedImage.name}</p>
-                  <img
-                    src={URL.createObjectURL(selectedImage)}
-                    alt="Vista previa"
-                    className="w-50 h-50 rounded-xl"
-                  />
-                </div>
-              )}
-
-              <div className={styles.ratingAndButton}>
-                <div className={styles.ratingGroup}>
-                  <h3>¿Cómo calificarías tu experiencia?</h3>
-                  <div className={styles.heartRating}>
-                    {[...Array(5)].map((_, index) => {
-                      const ratingValue = index + 1;
-                      const isFilled = ratingValue <= (hover || rating);
-                      const Icon = isFilled ? FaStar : FaRegStar;
-                      return (
-                        <label key={index}>
-                          <input
-                            type="radio"
-                            name="rating"
-                            value={ratingValue}
-                            onClick={() => setRating(ratingValue)}
-                            style={{ display: "none" }}
-                          />
-                          <Icon
-                            className={styles.heartIcon}
-                            color={isFilled ? "#ffde21" : "#ffde21"}
-                            size={40}
-                            onMouseEnter={() => setHover(ratingValue)}
-                            onMouseLeave={() => setHover(0)}
-                          />
-                        </label>
-                      );
-                    })}
-                  </div>
-                  <span className={styles.ratingText}>
-                    {calificacionComentarios()}
-                  </span>
-                </div>
-                <button className={styles.btnFilled} onClick={handleSubmit}>
-                  Enviar opinión
-                </button>
-              </div>
             </div>
-          </section>
+
+            {selectedImage && (
+              <div className={styles.imagePreview}>
+                <p>Imagen seleccionada: {selectedImage.name}</p>
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Vista previa"
+                  className="w-50 h-50 rounded-xl"
+                />
+              </div>
+            )}
+
+            <div className={styles.ratingAndButton}>
+              <div className={styles.ratingGroup}>
+                <h3>¿Cómo calificarías tu experiencia?</h3>
+                <div className={styles.heartRating}>
+                  {[...Array(5)].map((_, index) => {
+                    const ratingValue = index + 1;
+                    const isFilled = ratingValue <= (hover || rating);
+                    const Icon = isFilled ? FaStar : FaRegStar;
+                    return (
+                      <label key={index}>
+                        <input
+                          type="radio"
+                          name="rating"
+                          value={ratingValue}
+                          onClick={() => setRating(ratingValue)}
+                          style={{ display: "none" }}
+                        />
+                        <Icon
+                          className={styles.heartIcon}
+                          color={isFilled ? "#ffde21" : "#ffde21"}
+                          size={40}
+                          onMouseEnter={() => setHover(ratingValue)}
+                          onMouseLeave={() => setHover(0)}
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+                <span className={styles.ratingText}>
+                  {calificacionComentarios()}
+                </span>
+              </div>
+              <button className={styles.btnFilled} onClick={handleSubmit}>
+                Enviar opinión
+              </button>
+            </div>
+          </div>
+        </section>
 
         {/* LISTADO DE OPINIONES */}
         <section className={styles.opinionsSection}>

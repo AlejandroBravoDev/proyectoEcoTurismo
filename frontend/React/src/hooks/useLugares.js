@@ -5,6 +5,7 @@ import {
   getMunicipios,
   deleteLugar,
 } from "../services/lugaresServices";
+import { mapLugar } from "../utils/lugaresMapper";
 
 export default function useLugares() {
   const [lugares, setLugares] = useState([]);
@@ -32,7 +33,10 @@ export default function useLugares() {
         search: searchQuery || undefined,
         municipio_id: selectedMunicipioId || undefined,
       });
-      setLugares(response.data);
+
+      const procesados = response.data.map(mapLugar);
+
+      setLugares(procesados);
     } catch (e) {
       console.error("Error al cargar lugares:", e);
       setError("No se pudieron cargar los lugares.");
@@ -49,6 +53,8 @@ export default function useLugares() {
       console.error("Error al cargar municipios:", e);
     }
   };
+
+  
 
   const eliminar = async () => {
     if (!lugarAEliminar) {
