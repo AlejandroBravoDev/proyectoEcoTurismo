@@ -77,7 +77,7 @@ function Cards({ hospedajes, user, onDelete }) {
                 </div>
               ) : (
                 <div className="flex items-center justify-between pt-2">
-                  <Link to={`/lugares/${hospedaje.id}`}>
+                  <Link to={`/hospedajes/${hospedaje.id}`}>
                     <button className="text-[#20A217] font-semibold hover:cursor-pointer flex items-center gap-1 group/btn">
                       Ver Detalles
                       <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
