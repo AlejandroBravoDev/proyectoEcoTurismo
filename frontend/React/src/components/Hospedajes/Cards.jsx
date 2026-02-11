@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Hospedajes.module.css";
 import defaultImage from "../../assets/img4.jpg";
+import noImagen from "../../assets/noImage.jpg"
 import { ChevronRight, MapPin } from "lucide-react";
 
 function Cards({ hospedajes, user, onDelete }) {
@@ -11,7 +12,7 @@ function Cards({ hospedajes, user, onDelete }) {
     if (hospedaje.imagen_url) {
       return hospedaje.imagen_url;
     }
-    return defaultImage;
+    return noImagen;
   };
 
   const handleDelete = (hospedajeId) => {

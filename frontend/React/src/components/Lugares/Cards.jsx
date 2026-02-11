@@ -1,6 +1,7 @@
 import SearchBarStyles from "./lugares.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import defaultImage from "../../assets/img6.jpg";
+import noImagen from "../../assets/noImage.jpg"
 import { Star, Leaf, MapPin, ChevronRight } from "lucide-react";
 
 function Cards({ lugares, user, onDelete }) {
@@ -48,11 +49,11 @@ function Cards({ lugares, user, onDelete }) {
           >
             <div className="relative h-72 overflow-hidden">
               <img
-                src={getImageUrl(lugar)}
+                src={getImageUrl(lugar) || noImagen}
                 alt={lugar.nombre}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = defaultImage;
+                  e.target.src = noImagen;
                 }}
                 className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 text-white"
               />
