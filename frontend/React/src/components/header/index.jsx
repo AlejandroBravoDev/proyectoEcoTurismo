@@ -45,6 +45,12 @@ function Header() {
     ? "/perfil"
     : "/login";
 
+  const navItems = [
+    { name: "Lugares", path: "/lugares" },
+    { name: "Hospedajes", path: "/hospedajes" },
+    { name: "¿Qué ofrecemos?", path: "/ofrecemos" },
+  ];
+
   return (
     <div className="fixed top-0 w-full z-[99999]">
       {menuOpen && (
@@ -54,7 +60,7 @@ function Header() {
         ></div>
       )}
 
-      <header className="w-full h-20 flex bg-white px-[30px] items-center justify-between md:justify-around box-border z-[99999] relative">
+      <header className="w-full h-20 flex bg-white px-[30px] items-center justify-between md:justify-around box-border z-[99999] relative shadow-sm">
         <div className="flex flex-row items-center z-[999999]">
           <Link
             to="/"
@@ -67,6 +73,7 @@ function Header() {
           </Link>
         </div>
 
+        {/* Hamburguesa para móvil */}
         <div
           className="flex lg:hidden flex-col justify-between w-[30px] h-[25px] cursor-pointer z-[999999]"
           onClick={toggleMenu}
@@ -90,37 +97,39 @@ function Header() {
           ${menuOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}
         `}
         >
-          <ul className="flex flex-col lg:flex-row items-center gap-10 lg:gap-[100px] list-none p-0 m-0 text-black">
-            {["Lugares", "Hospedajes"].map((item) => (
-              <li key={item} className="relative group text-black">
+          <ul className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14 list-none p-0 m-0 text-black">
+            {navItems.map((item) => (
+              <li key={item.name} className="relative group text-black">
                 <Link
-                  to={`/${item.toLowerCase()}`}
+                  to={item.path}
+                  onClick={() => setMenuOpen(false)}
                   className="text-lg font-normal no-underline relative inline-block
                   after:content-[''] after:absolute after:w-0 after:h-[3px] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 
                   after:bg-[#20A217] after:transition-all after:duration-300 group-hover:after:w-full text-black"
                 >
-                  {item}
+                  {item.name}
                 </Link>
               </li>
             ))}
 
             {!user ? (
               <li className="mt-4 lg:mt-0">
-                <Link to="/registro">
+                <Link to="/registro" onClick={() => setMenuOpen(false)}>
                   <button className="w-40 h-11 text-white bg-green-600 rounded-full hover:bg-green-700 transition-colors font-bold shadow-md">
                     Regístrate
                   </button>
                 </Link>
               </li>
             ) : (
-              <li className="lg:ml-10">
+              <li className="lg:ml-5">
                 <Link
                   to={profileLinkTarget}
+                  onClick={() => setMenuOpen(false)}
                   className="flex flex-row items-center gap-3 no-underline font-medium"
                 >
                   <img
                     src={currentAvatar}
-                    className="w-16 h-16 lg:w-[50px] lg:h-[50px] rounded-full object-cover border-2 border-green-600 shadow-sm"
+                    className="w-16 h-16 lg:w-[45px] lg:h-[45px] rounded-full object-cover border-2 border-green-600 shadow-sm"
                     alt="Perfil"
                   />
                   <h1 className="text-black text-xl lg:text-base font-bold">

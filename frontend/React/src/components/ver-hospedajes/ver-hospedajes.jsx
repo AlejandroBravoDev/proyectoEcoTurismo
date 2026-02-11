@@ -21,6 +21,7 @@ import {
 } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import Swal from "sweetalert2";
+import noImagen from "../../assets/noImage.jpg"
 
 const API = "http://localhost:8000";
 const defaultImageUrls = [imgMeerkat, imgLion, imgParrot];
@@ -422,17 +423,17 @@ function VerHospedaje() {
           <section className={styles.gallery}>
             <div className={styles.mainImage}>
               <img
-                src={imagenes[0]}
+                src={imagenes[0] || noImagen}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = defaultImageUrls[0];
+                  e.target.src = noImagen;
                 }}
               />
             </div>
             <div className={styles.sideImages}>
               <img
-                src={imagenes[1] || defaultImageUrls[1]}
+                src={imagenes[1] || noImagen}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -440,7 +441,7 @@ function VerHospedaje() {
                 }}
               />
               <img
-                src={imagenes[2] || defaultImageUrls[2]}
+                src={imagenes[2] || noImagen}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
                   e.target.onerror = null;
