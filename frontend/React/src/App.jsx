@@ -17,25 +17,26 @@ import Editar from "./pages/AdminEditar.jsx";
 import AdminCrearPage from "./pages/AdminCrear";
 import ForgotPassword from "./components/login/ForgotPassword";
 import ResetPassword from './pages/ResetPassword';
+import FaqEcoturismoPage from "./pages/preguntasFrecuentes.jsx";
 
-
-// ✅ IMPORTACIÓN CORRECTA DE HOSPEDAJES
 import HospedajesPage from "./pages/hospedajes.jsx";
 
 function Rutas() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+
       <Route path="/perfil" element={<PerfilUser />} />
+
       <Route path="/lugares" element={<Lugares />} />
       <Route path="/lugares/:id" element={<VerLugares />} />
+
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
+
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
-      
-      {/* ✅ RUTAS DE HOSPEDAJES CORREGIDAS */}
       <Route path="/hospedajes" element={<HospedajesPage />} />
       <Route path="/hospedajes/:id" element={<VerHospedajes />} />
       
@@ -45,8 +46,11 @@ function Rutas() {
       <Route path="/admin/crear/:tipo" element={<AdminCrearPage />} />
       <Route path="/admin/crear" element={<AdminCrearPage />} />
       
-      {/* ruta dinámica para editar lugares, hospedajes o usuarios */}
+
       <Route path="/pages/:tipo/:id" element={<Editar />} />
+      <Route path="/preguntasFrecuentes" element={<FaqEcoturismoPage />} />
+
+
     </Routes>
   );
 }
