@@ -153,7 +153,7 @@ class PerfilController extends Controller
         } catch (\Exception $e) {
             Log::error('Error en update perfil: ' . $e->getMessage());
             return response()->json([
-                'message' => 'Error al actualizar: ' . $e->getMessage(),
+                'message' => 'Error al actualizar'
             ], 500);
         }
     }

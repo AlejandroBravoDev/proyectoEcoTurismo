@@ -18,10 +18,9 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaEllipsisH,
-  FaThumbsUp,
-  FaRegThumbsUp,
 } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
+import Swal from "sweetalert2";
 
 const API = "http://localhost:8000";
 const defaultImageUrls = [imgMeerkat, imgLion, imgParrot];
@@ -34,27 +33,8 @@ const CommentActionsBlock = ({
   isMenuOpen,
   setMenuOpen,
 }) => {
-  const [likes, setLikes] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
-
-  const handleLikeToggle = () => {
-    setIsLiked(!isLiked);
-    setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
-  };
-
   return (
     <div className={styles.commentActionsBlock}>
-      <div className={styles.likeContainer}>
-        <div className={styles.likeButton} onClick={handleLikeToggle}>
-          {isLiked ? (
-            <FaThumbsUp color="#666" />
-          ) : (
-            <FaRegThumbsUp color="#666" />
-          )}
-        </div>
-        <span className={styles.likeCount}>{likes}</span>
-      </div>
-
       <div className={styles.menuIcon}>
         <FaEllipsisH
           onClick={(e) => {
@@ -94,7 +74,7 @@ const CommentActionsBlock = ({
 };
 
 function VerHospedaje() {
-  useAuthRedirect()
+  useAuthRedirect();
   const { id } = useParams();
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);
@@ -111,7 +91,7 @@ function VerHospedaje() {
   const [menuOpen, setMenuOpen] = useState(null);
   const [userId, setUserId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [imagenes, setImagenes] = useState([])
+  const [imagenes, setImagenes] = useState([]);
   const [position, setPosition] = useState([
     4.81415861127678, -75.71023222513418,
   ]);
@@ -210,7 +190,6 @@ function VerHospedaje() {
       setRating(0);
       setSelectedImage(null);
       setSelectedCategory("Familia");
-      alert("Comentario publicado exitosamente");
     } catch (err) {
       console.error("Error al enviar comentario:", err);
       alert("Error al enviar el comentario.");
@@ -257,8 +236,7 @@ function VerHospedaje() {
       setHospedaje(res.data);
       setOpinions(res.data.comentarios || []);
       setPosition(res.data.coordenadas.split(",").map(Number));
-      setImagenes(res.data.todas_las_imagenes)
-      console.log(imagenes[0])
+      setImagenes(res.data.todas_las_imagenes);
 
       setLoading(false);
     } catch (err) {
@@ -286,11 +264,6 @@ function VerHospedaje() {
   const deleteComment = async (commentId) => {
     const token = localStorage.getItem("token");
 
-    if (!window.confirm("¿Estás seguro de eliminar esta opinión?")) {
-      setMenuOpen(null);
-      return;
-    }
-
     if (!token) {
       navigate("/login");
       return;
@@ -303,7 +276,10 @@ function VerHospedaje() {
 
       setOpinions(opinions.filter((op) => op.id !== commentId));
       setMenuOpen(null);
-      alert("Opinión eliminada con éxito.");
+      Swal.fire({
+        title: "Opinión eliminada con éxito",
+        icon: "success",
+      });
     } catch (err) {
       console.error("Error al eliminar comentario:", err);
       alert("Error al eliminar el comentario.");

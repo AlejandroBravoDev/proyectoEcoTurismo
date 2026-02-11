@@ -3,15 +3,16 @@ import usuarioDemo from "../../assets/usuarioDemo.png";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import axios from "axios";
+import { AlignVerticalJustifyEnd } from "lucide-react";
 
 const LARAVEL_BASE_URL = "http://localhost:8000";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const user = JSON.parse(localStorage.getItem("usuario"));
+  const toggleMenu = () => setMenuOpen(!menuOpen); 
+  const [user, setUser] = useState("") 
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   useEffect(() => {
     const fetchAvatar = async () => {
@@ -24,6 +25,8 @@ function Header() {
         const res = await axios.get(`${LARAVEL_BASE_URL}/api/perfil`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        setUser(res.data.usuario.nombre_completo)
         if (res.data?.usuario?.avatar_url) {
           setAvatarUrl(res.data.usuario.avatar_url);
         } else {
@@ -121,7 +124,7 @@ function Header() {
                     alt="Perfil"
                   />
                   <h1 className="text-black text-xl lg:text-base font-bold">
-                    {user.nombre_completo}
+                    {user}
                   </h1>
                 </Link>
               </li>

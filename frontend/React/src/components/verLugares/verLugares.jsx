@@ -18,8 +18,6 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaEllipsisH,
-  FaThumbsUp,
-  FaRegThumbsUp,
 } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
 
@@ -35,27 +33,8 @@ const CommentActionsBlock = ({
   isMenuOpen,
   setMenuOpen,
 }) => {
-  const [likes, setLikes] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
-
-  const handleLikeToggle = () => {
-    setIsLiked(!isLiked);
-    setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
-  };
-
   return (
     <div className={styles.commentActionsBlock}>
-      <div className={styles.likeContainer}>
-        <div className={styles.likeButton} onClick={handleLikeToggle}>
-          {isLiked ? (
-            <FaThumbsUp color="#666" />
-          ) : (
-            <FaRegThumbsUp color="#666" />
-          )}
-        </div>
-        <span className={styles.likeCount}>{likes}</span>
-      </div>
-
       <div className={styles.menuIcon}>
         <FaEllipsisH
           onClick={(e) => {
@@ -171,7 +150,6 @@ function VerLugares() {
       });
       setLugar(res.data);
       setOpinions(res.data.comentarios || []);
-      console.log(lugar)
       if (res.data.coordenadas) {
         setPosition(res.data.coordenadas.split(",").map(Number));
       }
@@ -228,8 +206,8 @@ function VerLugares() {
       Swal.fire({
         title: "no se puede publicar tú comentario",
         text: "Tienes que darle una calificación al lugar",
-        icon: "error"
-      })
+        icon: "error",
+      });
       return;
     }
 
@@ -260,7 +238,10 @@ function VerLugares() {
       setSelectedImage(null);
       setSelectedCategory("Familia");
     } catch (err) {
-      alert("Error al enviar el comentario.");
+      Swal.fire({
+        title: "Error al enviar el comentario.",
+        icon: "error",
+      });
     }
   };
 
@@ -287,14 +268,16 @@ function VerLugares() {
         setIsFavorite(true);
       }
     } catch (err) {
-      alert("Error al actualizar favoritos.");
+      Swal.fire({
+        title: "Error al actualizar favoritos.",
+        icon: "error",
+      });
     }
   };
 
   const deleteComment = async (commentId) => {
     const token = localStorage.getItem("token");
-    if (!window.confirm("¿Estás seguro de que quieres eliminar esta opinión?"))
-      return;
+
     if (!token) {
       navigate("/login");
       return;
@@ -306,7 +289,10 @@ function VerLugares() {
       });
       setOpinions(opinions.filter((op) => op.id !== commentId));
       setMenuOpen(null);
-      alert("Opinión eliminada.");
+      Swal.fire({
+        title: "Opinión eliminada.",
+        icon: "success",
+      });
     } catch (err) {
       alert("Error al eliminar.");
     }
@@ -326,7 +312,10 @@ function VerLugares() {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-      alert("Opinión denunciada.");
+      Swal.fire({
+        title: "Opinión denunciada.",
+        icon: "success",
+      });
       setMenuOpen(null);
     } catch (err) {
       alert("Error al denunciar.");
@@ -378,7 +367,6 @@ function VerLugares() {
 
   return (
     <>
-      <ScrollToTop />
       <ScrollToTop />
       <Header />
       <main className={styles.mainContent}>
@@ -547,7 +535,7 @@ function VerLugares() {
                         />
                         <Icon
                           className={styles.heartIcon}
-                          color={isFilled ? "#ffde21" : "#ffde21"}
+                          color="#ffde21"
                           size={40}
                           onMouseEnter={() => setHover(ratingValue)}
                           onMouseLeave={() => setHover(0)}

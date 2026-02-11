@@ -34,7 +34,7 @@ class UsuarioController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener usuarios: ' . $e->getMessage()
+                'message' => 'Error al obtener usuarios'
             ], 500);
         }
     }
@@ -106,7 +106,7 @@ class UsuarioController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar usuario: ' . $e->getMessage()
+                'message' => 'Error al actualizar usuario'
             ], 500);
         }
     }
@@ -132,7 +132,7 @@ class UsuarioController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar usuario: ' . $e->getMessage()
+                'message' => 'Error al eliminar usuario'
             ], 500);
         }
     }

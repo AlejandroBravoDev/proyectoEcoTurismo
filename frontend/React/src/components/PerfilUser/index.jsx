@@ -110,7 +110,10 @@ function PerfilUsuario() {
 
       setUsuario(res.data.usuario);
       setPestanaActiva("opiniones");
-      alert("Perfil actualizado con éxito!");
+      Swal.fire({
+        title: "Perfil actualizado con exito",
+        icon: "success",
+      });
     } catch (err) {
       console.error(
         "Error al actualizar perfil:",
@@ -123,7 +126,11 @@ function PerfilUsuario() {
         const firstErrorKey = Object.keys(err.response.data.errors)[0];
         errorMsg = err.response.data.errors[firstErrorKey][0];
       }
-      alert(errorMsg);
+      Swal.fire({
+        title: "Error",
+        text: errorMsg,
+        icon: "error",
+      });
     }
   };
 
@@ -141,8 +148,6 @@ function PerfilUsuario() {
             Authorization: `Bearer ${token}`,
           },
         });
-
-
       } catch (error) {
         console.warn(
           "Advertencia: No se pudo revocar el token en el servidor. Limpiando localmente.",
@@ -164,7 +169,6 @@ function PerfilUsuario() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("No autenticado. Por favor, inicie sesión.");
       navigate("/login");
       return;
     }
@@ -175,21 +179,26 @@ function PerfilUsuario() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("Opinión eliminada con éxito.");
+      Swal.fire({
+        title: "Opinión eliminada con éxito",
+        icon: "success"
+      })
       cargarPerfil();
     } catch (err) {
       console.error(
         "Error al eliminar opinión:",
         err.response?.data || err.message || err,
       );
-      alert("Error al eliminar la opinión.");
+      Swal.fire({
+        title: "Error al eliminar la opinión",
+        icon: "success"
+      })
     }
   };
 
   const handleRemoveFavorite = async (lugarId) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("No autenticado. Por favor, inicie sesión.");
       navigate("/login");
       return;
     }
@@ -207,13 +216,19 @@ function PerfilUsuario() {
         ),
       }));
 
-      alert("Lugar eliminado de favoritos.");
+      Swal.fire({
+        title: "Lugar eliminado de favoritos",
+        icon: "success"
+      })
     } catch (err) {
       console.error(
         "Error al eliminar favorito:",
         err.response?.data || err.message || err,
       );
-      alert("Error al eliminar el lugar de favoritos.");
+      Swal.fire({
+        title: "Error al eliminar el lugar de favoritos.",
+        icon: "success"
+      })
     }
   };
 

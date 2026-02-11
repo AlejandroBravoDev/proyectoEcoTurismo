@@ -118,7 +118,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // 🛡️ Validación personalizada de email
+    // Validación personalizada de email
     private function isValidEmail($email)
     {
         // Bloquear doble arroba
