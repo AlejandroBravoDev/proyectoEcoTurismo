@@ -16,7 +16,8 @@ import VerLugares from "./pages/verLugares.jsx";
 import Editar from "./pages/AdminEditar.jsx";
 import AdminCrearPage from "./pages/AdminCrear";
 import ForgotPassword from "./components/login/ForgotPassword";
-import ResetPassword from './pages/ResetPassword';
+import ResetPassword from "./pages/ResetPassword";
+import QueOfrecemosPage from "./pages/QueOfrecemosPage.jsx";
 import FaqEcoturismoPage from "./pages/preguntasFrecuentes.jsx";
 
 import HospedajesPage from "./pages/hospedajes.jsx";
@@ -29,6 +30,7 @@ function Rutas() {
       <Route path="/perfil" element={<PerfilUser />} />
 
       <Route path="/lugares" element={<Lugares />} />
+      <Route path="/ofrecemos" element={<QueOfrecemosPage />} />
       <Route path="/lugares/:id" element={<VerLugares />} />
 
       <Route path="/registro" element={<Registro />} />
@@ -36,16 +38,14 @@ function Rutas() {
 
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-
       <Route path="/hospedajes" element={<HospedajesPage />} />
       <Route path="/hospedajes/:id" element={<VerHospedajes />} />
-      
+
       <Route path="/admin" element={<Admin />} />
       <Route path="/adminUsuarios" element={<AdminUsers />} />
       <Route path="/admin/usuarios/:id" element={<EditarUsuario />} />
       <Route path="/admin/crear/:tipo" element={<AdminCrearPage />} />
       <Route path="/admin/crear" element={<AdminCrearPage />} />
-      
 
       <Route path="/pages/:tipo/:id" element={<Editar />} />
       <Route path="/preguntasFrecuentes" element={<FaqEcoturismoPage />} />
