@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import usuarioDemo from "../../assets/usuarioDemo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import axios from "axios";
-import { AlignVerticalJustifyEnd } from "lucide-react";
+import { HelpCircle, Phone, Info, LayoutGrid, LogIn } from "lucide-react";
 
 const LARAVEL_BASE_URL = "http://localhost:8000";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const toggleMenu = () => setMenuOpen(!menuOpen); 
-  const [user, setUser] = useState("") 
+  const [user, setUser] = useState("");
 
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+    document.body.style.overflow = !menuOpen ? "hidden" : "auto";
+  };
 
   useEffect(() => {
     const fetchAvatar = async () => {
@@ -25,13 +28,8 @@ function Header() {
         const res = await axios.get(`${LARAVEL_BASE_URL}/api/perfil`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        setUser(res.data.usuario.nombre_completo)
-        if (res.data?.usuario?.avatar_url) {
-          setAvatarUrl(res.data.usuario.avatar_url);
-        } else {
-          setAvatarUrl(usuarioDemo);
-        }
+        setUser(res.data.usuario.nombre_completo);
+        setAvatarUrl(res.data.usuario.avatar_url || usuarioDemo);
       } catch (err) {
         setAvatarUrl(usuarioDemo);
         if (err.response?.status === 401) localStorage.removeItem("token");
@@ -40,107 +38,209 @@ function Header() {
     fetchAvatar();
   }, []);
 
-  const currentAvatar = avatarUrl || usuarioDemo;
-  const profileLinkTarget = localStorage.getItem("token")
-    ? "/perfil"
-    : "/login";
-
   const navItems = [
     { name: "Lugares", path: "/lugares" },
     { name: "Hospedajes", path: "/hospedajes" },
-    { name: "¿Qué ofrecemos?", path: "/ofrecemos" },
+  ];
+
+  const subNavItems = [
+    {
+      name: "¿Qué ofrecemos?",
+      path: "/ofrecemos",
+      icon: <LayoutGrid size={18} />,
+    },
+    {
+      name: "Preguntas Frecuentes",
+      path: "/preguntasFrecuentes",
+      icon: <HelpCircle size={18} />,
+    },
+    { name: "Contacto", path: "/contacto", icon: <Phone size={18} /> },
+    { name: "Sobre nosotros", path: "/nosotros", icon: <Info size={18} /> },
   ];
 
   return (
-    <div className="fixed top-0 w-full z-[99999]">
-      {menuOpen && (
-        <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm lg:hidden z-[99998]"
-          onClick={toggleMenu}
-        ></div>
-      )}
-
-      <header className="w-full h-20 flex bg-white px-[30px] items-center justify-between md:justify-around box-border z-[99999] relative shadow-sm">
-        <div className="flex flex-row items-center z-[999999]">
-          <Link
-            to="/"
-            className="flex flex-row items-center gap-4 no-underline transition-all duration-300"
-          >
-            <img src={logo} className="w-10" alt="Logo" />
-            <h1 className="font-extrabold text-lg md:text-2xl whitespace-nowrap text-black">
-              <span className="text-[#20A217]">ECO TURISMO</span>RISARALDA
+    <div className="fixed top-0 w-full z-[99999] font-['Montserrat'] shadow-sm">
+      <header className="w-full h-20 flex bg-white px-6 md:px-12 items-center justify-between z-[99999] relative border-b border-gray-100">
+        <div className="flex items-center">
+          <Link to="/" className="flex items-center gap-3 no-underline">
+            <img src={logo} className="w-10 md:w-11" alt="Logo" />
+            <h1 className="font-black text-xl md:text-2xl tracking-tighter text-slate-800">
+              <span className="text-[#20A217]">ECO</span>TURISMO
+              <span className="font-light text-slate-400">RISARALDA</span>
             </h1>
           </Link>
         </div>
 
-        {/* Hamburguesa para móvil */}
-        <div
-          className="flex lg:hidden flex-col justify-between w-[30px] h-[25px] cursor-pointer z-[999999]"
-          onClick={toggleMenu}
-        >
-          <span
-            className={`block w-full h-[3px] bg-black rounded-full transition-all duration-300 origin-left ${menuOpen ? "rotate-45" : ""}`}
-          ></span>
-          <span
-            className={`block w-full h-[3px] bg-black rounded-full transition-all duration-300 ${menuOpen ? "opacity-0 -translate-x-5" : ""}`}
-          ></span>
-          <span
-            className={`block w-full h-[3px] bg-black rounded-full transition-all duration-300 origin-left ${menuOpen ? "-rotate-45" : ""}`}
-          ></span>
-        </div>
-
-        <nav
-          className={`
-          fixed lg:relative top-20 lg:top-0 left-0 w-full lg:w-auto h-[calc(100vh-80px)] lg:h-20
-          bg-[#f3f3f3] lg:bg-transparent flex flex-col lg:flex-row items-center justify-center lg:justify-between
-          transition-transform duration-400 ease-in-out z-[999998] lg:translate-x-0
-          ${menuOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}
-        `}
-        >
-          <ul className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14 list-none p-0 m-0 text-black">
+        <nav className="hidden lg:flex items-center gap-10">
+          <ul className="flex items-center gap-8 list-none m-0 p-0">
             {navItems.map((item) => (
-              <li key={item.name} className="relative group text-black">
+              <li key={item.name}>
                 <Link
                   to={item.path}
-                  onClick={() => setMenuOpen(false)}
-                  className="text-lg font-normal no-underline relative inline-block
-                  after:content-[''] after:absolute after:w-0 after:h-[3px] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 
-                  after:bg-[#20A217] after:transition-all after:duration-300 group-hover:after:w-full text-black"
+                  className="text-slate-600 font-bold hover:text-[#20A217] transition-colors text-sm uppercase tracking-widest no-underline"
                 >
                   {item.name}
                 </Link>
               </li>
             ))}
-
-            {!user ? (
-              <li className="mt-4 lg:mt-0">
-                <Link to="/registro" onClick={() => setMenuOpen(false)}>
-                  <button className="w-40 h-11 text-white bg-green-600 rounded-full hover:bg-green-700 transition-colors font-bold shadow-md">
-                    Regístrate
-                  </button>
-                </Link>
-              </li>
-            ) : (
-              <li className="lg:ml-5">
-                <Link
-                  to={profileLinkTarget}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex flex-row items-center gap-3 no-underline font-medium"
-                >
-                  <img
-                    src={currentAvatar}
-                    className="w-16 h-16 lg:w-[45px] lg:h-[45px] rounded-full object-cover border-2 border-green-600 shadow-sm"
-                    alt="Perfil"
-                  />
-                  <h1 className="text-black text-xl lg:text-base font-bold">
-                    {user}
-                  </h1>
-                </Link>
-              </li>
-            )}
           </ul>
+          <div className="h-6 w-[1px] bg-slate-200 mx-2"></div>
+          {!user ? (
+            <Link to="/registro">
+              <button className="px-6 py-2 bg-[#20A217] text-white rounded-full font-bold hover:bg-[#1a8212] transition-all shadow-md text-sm uppercase tracking-widest">
+                REGÍSTRATE
+              </button>
+            </Link>
+          ) : (
+            <Link
+              to="/perfil"
+              className="flex items-center gap-3 bg-slate-50 p-1 pr-4 rounded-full border border-slate-100 hover:bg-slate-100 transition-all no-underline"
+            >
+              <img
+                src={avatarUrl || usuarioDemo}
+                className="w-9 h-9 rounded-full object-cover border-2 border-[#20A217] shadow-sm"
+                alt="Perfil"
+              />
+              <span className="text-slate-800 font-bold text-xs uppercase tracking-tight">
+                {user.split(" ")[0]}
+              </span>
+            </Link>
+          )}
         </nav>
+
+        <button
+          className="lg:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 z-[100001] relative"
+          onClick={toggleMenu}
+        >
+          <span
+            className={`block w-6 h-0.5 bg-slate-800 rounded-full transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+          ></span>
+          <span
+            className={`block w-6 h-0.5 bg-slate-800 rounded-full transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}
+          ></span>
+          <span
+            className={`block w-6 h-0.5 bg-slate-800 rounded-full transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+          ></span>
+        </button>
       </header>
+      <div className="hidden lg:flex w-full bg-[#f8fcf8] border-b border-gray-100 py-2.5 justify-center">
+        <div className="flex gap-10">
+          {subNavItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className="flex items-center gap-2 text-[10px] uppercase tracking-[2.5px] font-bold text-slate-400 hover:text-[#20A217] transition-colors no-underline group"
+            >
+              <span className="text-[#20A217]/60 group-hover:text-[#20A217] transition-colors">
+                {item.icon}
+              </span>
+              {item.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+      <div
+        className={`fixed inset-0 z-[100000] lg:hidden transition-all duration-500 ${menuOpen ? "visible" : "invisible"}`}
+      >
+        <div
+          className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-500 ${menuOpen ? "opacity-100" : "opacity-0"}`}
+          onClick={toggleMenu}
+        ></div>
+
+        <aside
+          className={`absolute right-0 top-0 h-full w-[80%] max-w-[350px] bg-white transition-transform duration-500 ease-out flex flex-col ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+        >
+          <div className="p-10 border-b border-slate-50 flex items-center bg-slate-50/50">
+            {user ? (
+              <div className="flex items-center gap-5">
+                <img
+                  src={avatarUrl || usuarioDemo}
+                  className="w-16 h-16 rounded-full border-2 border-[#20A217] shadow-md object-cover"
+                  alt="Perfil"
+                />
+                <div>
+                  <p className="text-[10px] font-bold text-[#20A217] uppercase tracking-widest mb-1">
+                    Bienvenido
+                  </p>
+                  <p className="text-xl font-black text-slate-800 leading-tight">
+                    {user.split(" ")[0]}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center text-slate-400">
+                  <LogIn size={24} />
+                </div>
+                <p className="text-lg font-black text-slate-800">
+                  Menú Principal
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex-grow overflow-y-auto py-10 px-10">
+            <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[3px] mb-8">
+              Explorar
+            </p>
+            <ul className="list-none p-0 m-0 space-y-7">
+              {navItems.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    onClick={toggleMenu}
+                    className="text-3xl font-black text-slate-800 no-underline block hover:text-[#20A217] transition-colors"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-12 pt-12 border-t border-slate-50">
+              <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[3px] mb-8">
+                Ayuda y Contacto
+              </p>
+              <ul className="list-none p-0 m-0 space-y-8">
+                {subNavItems.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      to={item.path}
+                      onClick={toggleMenu}
+                      className="flex items-center gap-5 text-slate-600 font-bold text-base no-underline group"
+                    >
+                      <span className="text-[#20A217] opacity-60 group-hover:opacity-100 transition-opacity">
+                        {item.icon}
+                      </span>
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="p-10">
+            {" "}
+            {!user ? (
+              <Link
+                to="/registro"
+                onClick={toggleMenu}
+                className="no-underline"
+              >
+                <button className="w-full py-5 bg-[#20A217] text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-green-100 active:scale-95 transition-all">
+                  Crear Cuenta
+                </button>
+              </Link>
+            ) : (
+              <Link to="/perfil" onClick={toggleMenu} className="no-underline">
+                <button className="w-full py-5 border-2 border-slate-100 text-slate-800 rounded-2xl font-bold active:scale-95 transition-all uppercase tracking-widest text-sm">
+                  Mi Perfil
+                </button>
+              </Link>
+            )}
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
