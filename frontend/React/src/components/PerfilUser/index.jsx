@@ -7,12 +7,7 @@ import Swal from "sweetalert2";
 import placeholderFotoUsuario from "../../assets/usuarioDemo.png";
 import bannerFondo from "../../assets/img4.jpg";
 // ICONOS
-import {
-  FaHeart,
-  FaMapMarkerAlt,
-  FaThumbsUp,
-  FaTrashAlt,
-} from "react-icons/fa";
+import { FaHeart, FaMapMarkerAlt, FaStar, FaTrashAlt } from "react-icons/fa";
 
 const API_BASE = "http://localhost:8000";
 
@@ -181,8 +176,8 @@ function PerfilUsuario() {
       });
       Swal.fire({
         title: "Opinión eliminada con éxito",
-        icon: "success"
-      })
+        icon: "success",
+      });
       cargarPerfil();
     } catch (err) {
       console.error(
@@ -191,8 +186,8 @@ function PerfilUsuario() {
       );
       Swal.fire({
         title: "Error al eliminar la opinión",
-        icon: "success"
-      })
+        icon: "success",
+      });
     }
   };
 
@@ -218,8 +213,8 @@ function PerfilUsuario() {
 
       Swal.fire({
         title: "Lugar eliminado de favoritos",
-        icon: "success"
-      })
+        icon: "success",
+      });
     } catch (err) {
       console.error(
         "Error al eliminar favorito:",
@@ -227,8 +222,8 @@ function PerfilUsuario() {
       );
       Swal.fire({
         title: "Error al eliminar el lugar de favoritos.",
-        icon: "success"
-      })
+        icon: "success",
+      });
     }
   };
 
@@ -250,9 +245,9 @@ function PerfilUsuario() {
             <h4>{usuario?.nombre_completo}</h4>
             <div className={styles.ratingStars}>
               {[...Array(5)].map((star, i) => (
-                <FaHeart
+                <FaStar
                   key={i}
-                  color={i < comentario.rating ? "#4b8236" : "#e4e5e9"}
+                  color={i < comentario.rating ? "#facc15" : "#e4e5e9"}
                 />
               ))}
             </div>
@@ -269,7 +264,6 @@ function PerfilUsuario() {
               onClick={() => handleDeleteOpinion(comentario.id)}
             >
               <FaTrashAlt className={styles.iconoBasura} />
-              Eliminar
             </button>
           </div>
         )}

@@ -50,7 +50,7 @@
 }
 
 .botonEditarPerfil {
-  background-color: #4b8236;
+  background-color: #20a217;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -61,7 +61,7 @@
 }
 
 .botonEditarPerfil:hover {
-  background-color: #38612a;
+  background-color: #1a8313;
 }
 
 .botonCerrarSesion {
@@ -135,14 +135,16 @@
   font-weight: 600;
   color: #777;
   cursor: pointer;
-  transition: color 0.3s ease, border-bottom 0.3s ease;
+  transition:
+    color 0.3s ease,
+    border-bottom 0.3s ease;
   position: relative;
   margin-right: 10px;
 }
 
 .pestanaActiva {
-  color: #4b8236;
-  border-bottom: 3px solid #4b8236;
+  color: #20a217;
+  border-bottom: 3px solid #20a217;
 }
 
 .botonPestanaNavegacion span {
@@ -152,7 +154,7 @@
 }
 
 .pestanaActiva span {
-  color: #4b8236;
+  color: #20a217;
 }
 
 .areaContenidoPestana {
@@ -217,7 +219,7 @@
 .ratingStars {
   display: flex;
   gap: 3px;
-  color: #4b8236;
+  color: #20a217;
   font-size: 13px;
   margin: 3px 0 5px 0;
 }
@@ -287,7 +289,7 @@
 }
 
 .iconoLugarComentario {
-  color: #4b8236;
+  color: #20a217;
 }
 
 .nombreLugarComentario {
@@ -358,7 +360,7 @@
   top: 20px;
   right: 20px;
   font-size: 24px;
-  color: #4b8236;
+  color: #20a217;
   cursor: pointer;
 }
 
@@ -411,7 +413,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px dashed #4b8236;
+  border: 1px dashed #20a217;
   border-radius: 8px;
   padding: 15px;
   cursor: pointer;
@@ -419,7 +421,7 @@
   position: relative;
   overflow: hidden;
   font-weight: 500;
-  color: #4b8236;
+  color: #20a217;
   width: 100%;
   box-sizing: border-box;
 }
@@ -436,7 +438,7 @@
 
 .botonGuardarPerfil,
 .botonCancelarEdicion {
-  background-color: #4b8236;
+  background-color: #20a217;
   color: white;
   padding: 12px 25px;
   border: none;
@@ -453,7 +455,7 @@
 }
 
 .botonGuardarPerfil:hover {
-  background-color: #38612a;
+  background-color: #1a8313;
 }
 
 .botonCancelarEdicion {
@@ -659,16 +661,11 @@
   }
 }
 
-/* Estilos Globales para la página */
 .pageBackground {
   background-color: #f5f5f5;
   min-height: calc(100vh - 150px);
   padding-bottom: 50px;
 }
-
-/* ----------------------------------- */
-/* BOTÓN VOLVER (Admin) */
-/* ----------------------------------- */
 
 .backButton {
   background: #666;
@@ -683,10 +680,6 @@
   position: relative;
   z-index: 10;
 }
-
-/* ----------------------------------- */
-/* BANNER / PORTADA */
-/* ----------------------------------- */
 
 .coverImage {
   height: 200px;
@@ -709,14 +702,9 @@
   z-index: 5;
 }
 
-/* ----------------------------------- */
-/* TARJETA FLOTANTE (PROFILE CARD) - 🚨 AJUSTADO */
-/* ----------------------------------- */
-
 .profileCard {
   background-color: white;
   max-width: 900px;
-  /* 🚨 AJUSTE: Combina el movimiento vertical y el centrado */
   margin: -80px auto 30px auto;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -724,14 +712,9 @@
   padding: 0 30px 30px 30px;
 }
 
-/* ----------------------------------- */
-/* AVATAR Y ENCABEZADO - 🚨 AJUSTADO */
-/* ----------------------------------- */
-
 .profileHeader {
   display: flex;
   align-items: flex-end;
-  /* 🚨 AJUSTE: Reducción para subir el nombre de usuario */
   padding-top: 70px;
   margin-bottom: 10px;
   position: relative;
@@ -797,7 +780,7 @@
 }
 
 .editButtonHeader {
-  background-color: #4b8236;
+  background-color: #20a217;
   color: white;
   border: none;
   padding: 8px 20px;
@@ -807,10 +790,6 @@
   transition: background-color 0.3s;
   margin-left: auto;
 }
-
-/* ----------------------------------- */
-/* NAV STATS (Opiniones, Favoritos) */
-/* ----------------------------------- */
 
 .navStats {
   display: flex;
@@ -846,10 +825,6 @@
   margin: 20px 0;
 }
 
-/* ----------------------------------- */
-/* SECCIÓN DE EDICIÓN (FORMULARIO) */
-/* ----------------------------------- */
-
 .editTitle {
   text-align: left;
   margin-bottom: 20px;
@@ -879,7 +854,7 @@
 }
 
 .formInput:focus {
-  border-color: #4b8236;
+  border-color: #20a217;
   outline: none;
 }
 
@@ -887,10 +862,6 @@
   background-color: #f8f8f8;
   color: #888;
 }
-
-/* ----------------------------------- */
-/* BOTONES INFERIORES */
-/* ----------------------------------- */
 
 .actionButtons {
   display: flex;
@@ -913,13 +884,13 @@
 
 .saveButton,
 .editButton {
-  background-color: #4b8236;
+  background-color: #20a217;
   color: white;
 }
 
 .saveButton:hover,
 .editButton:hover {
-  background-color: #3a6829;
+  background-color: #1a8313;
 }
 
 .cancelButton {
