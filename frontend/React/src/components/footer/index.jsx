@@ -1,115 +1,105 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 function Footer() {
   return (
     <footer className="bg-white text-black py-16 border-t border-white/5 w-full">
       <div className="w-full flex justify-center">
         <div className="w-full max-w-7xl px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-left pb-10">
+            
+            {/* EMPRESA */}
             <div className="flex flex-col gap-6">
               <h4 className="text-xl font-bold tracking-wider">
                 <span className="text-[#20A217]">ECO</span>TURISMO
               </h4>
               <ul className="flex flex-col gap-3">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/ofrecemos"
                     className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Nosotros
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/ofrecemos"
                     className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Nuestros servicios
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/politicas"
                     className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Política de privacidad
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
+
+            {/* AYUDA */}
             <div className="flex flex-col gap-6">
               <h4 className="text-lg font-semibold border-b border-[#20A217] w-fit pb-1">
                 Ayuda
               </h4>
               <ul className="flex flex-col gap-3">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/preguntasFrecuentes"
                     className="text-black hover:text-[#20A217] transition-colors"
                   >
-                    Ubicaciones
-                  </a>
+                    Preguntas frecuentes
+                  </Link>
                 </li>
-                <Link to="/preguntasFrecuentes">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-black hover:text-[#20A217] transition-colors"
-                    >
-                      Preguntas frecuentes
-                    </a>
-                  </li>
-                </Link>
-
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/contacto"
                     className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Contacto
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/hospedajes"
                     className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Hospedajes
-                  </a>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/lugares"
+                    className="text-black hover:text-[#20A217] transition-colors"
+                  >
+                    Lugares
+                  </Link>
                 </li>
               </ul>
             </div>
+
+            {/* TIENDA */}
             <div className="flex flex-col gap-6">
               <h4 className="text-lg font-semibold border-b border-[#20A217] w-fit pb-1">
                 Tienda
               </h4>
               <ul className="flex flex-col gap-3">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/lugares"
                     className="text-black hover:text-[#20A217] transition-colors"
                   >
                     Sitios Ecoturísticos
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-black hover:text-[#20A217] transition-colors"
-                  >
-                    Plataformas
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-black hover:text-[#20A217] transition-colors"
-                  >
-                    Contenido
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
+
+            {/* REDES */}
             <div className="flex flex-col gap-6">
               <h4 className="text-lg font-semibold border-b border-[#20A217] w-fit pb-1">
                 Síguenos
@@ -119,7 +109,7 @@ function Footer() {
                   href="#"
                   className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#20A217] hover:text-white transition-all group"
                 >
-                  <i className="fab fa-facebook-f group-hover:scale-110 "></i>
+                  <i className="fab fa-facebook-f group-hover:scale-110"></i>
                 </a>
                 <a
                   href="#"
@@ -141,6 +131,7 @@ function Footer() {
                 </a>
               </div>
             </div>
+
           </div>
 
           <div className="mt-16 pt-8 border-t border-white/5 text-center text-slate-500 text-sm w-full">
