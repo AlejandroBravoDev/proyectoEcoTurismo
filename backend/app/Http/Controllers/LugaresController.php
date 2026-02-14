@@ -185,73 +185,71 @@ class LugaresController extends Controller
     }
 
     public function store(Request $request)
-{
-    try {
-        Log::info('Datos recibidos en store', $request->all());
+    {
+        try {
+            Log::info('Datos recibidos en store', $request->all());
 
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'required|string',
-            'municipio_id' => 'required|exists:municipios,id',
-            'ubicacion' => 'nullable|string',
-            'coordenadas' => 'nullable|string',
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'required|string',
+                'municipio_id' => 'required|exists:municipios,id',
+                'ubicacion' => 'nullable|string',
+                'coordenadas' => 'nullable|string',
+                'imagenes' => 'required|array|max:3',
+                'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096',
+            ]);
 
-            // 🔥 imágenes múltiples
-            'imagenes' => 'required|array|max:3',
-            'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096',
-        ]);
+            $disk = 's3';
+            $imagenesGuardadas = [];
 
-        $disk = 's3';
-        $imagenesGuardadas = [];
+            if ($request->hasFile('imagenes')) {
+                foreach ($request->file('imagenes') as $imagen) {
+                    $path = $imagen->store('lugares', $disk);
+                    $imagenesGuardadas[] = $path;
 
-        if ($request->hasFile('imagenes')) {
-            foreach ($request->file('imagenes') as $imagen) {
-                $path = $imagen->store('lugares', $disk);
-                $imagenesGuardadas[] = $path;
-
-                Log::info('Imagen guardada en S3: ' . $path);
+                    Log::info('Imagen guardada en S3: ' . $path);
+                }
             }
+
+            $lugar = Lugares::create([
+                'nombre' => $validated['nombre'],
+                'descripcion' => $validated['descripcion'],
+                'municipio_id' => $validated['municipio_id'],
+                'ubicacion' => $validated['ubicacion'] ?? null,
+                'coordenadas' => $validated['coordenadas'] ?? null,
+                'imagenes' => $imagenesGuardadas,
+            ]);
+
+            Log::info('Lugar creado con ID: ' . $lugar->id);
+
+            return response()->json([
+                'message' => 'Lugar creado correctamente',
+                'data' => [
+                    'id' => $lugar->id,
+                    'nombre' => $lugar->nombre,
+                    'descripcion' => $lugar->descripcion,
+                    'imagen_principal_url' => $this->getImagenPrincipalUrl($imagenesGuardadas),
+                ]
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Error de validación', $e->errors());
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('Error en LugaresController@store', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Error al crear el lugar',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $lugar = Lugares::create([
-            'nombre' => $validated['nombre'],
-            'descripcion' => $validated['descripcion'],
-            'municipio_id' => $validated['municipio_id'],
-            'ubicacion' => $validated['ubicacion'] ?? null,
-            'coordenadas' => $validated['coordenadas'] ?? null,
-            'imagenes' => $imagenesGuardadas,
-        ]);
-
-        Log::info('Lugar creado con ID: ' . $lugar->id);
-
-        return response()->json([
-            'message' => 'Lugar creado correctamente',
-            'data' => [
-                'id' => $lugar->id,
-                'nombre' => $lugar->nombre,
-                'descripcion' => $lugar->descripcion,
-                'imagen_principal_url' => $this->getImagenPrincipalUrl($imagenesGuardadas),
-            ]
-        ], 201);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        Log::error('Error de validación', $e->errors());
-        return response()->json([
-            'message' => 'Error de validación',
-            'errors' => $e->errors()
-        ], 422);
-
-    } catch (\Exception $e) {
-        Log::error('Error en LugaresController@store', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-
-        return response()->json([
-            'message' => 'Error al crear el lugar',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 
 }

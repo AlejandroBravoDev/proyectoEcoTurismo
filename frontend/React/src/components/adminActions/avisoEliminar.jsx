@@ -33,7 +33,7 @@ function ConfirmarEliminar({ message, onConfirm, onCancel }) {
             ></path>
           </g>
         </svg>
-        <p className="text-center text-lg font-medium">{message}</p>
+        <p className="text-center text-lg font-medium">¿Estás seguro de que deseas eliminar esto?</p>
 
         <div className="flex gap-10 mt-6">
           <button

@@ -1,9 +1,8 @@
 import SearchBarStyles from "./lugares.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import defaultImage from "../../assets/img6.jpg";
-import noImagen from "../../assets/noImage.jpg"
+import noImagen from "../../assets/noImage.jpg";
 import { Star, Leaf, MapPin, ChevronRight } from "lucide-react";
-
 function Cards({ lugares, user, onDelete }) {
   const navigate = useNavigate();
 
@@ -44,7 +43,6 @@ function Cards({ lugares, user, onDelete }) {
         {lugares.map((lugar) => (
           <div
             key={lugar.id}
-            onClick={() => navigate(`/lugares/${lugar.id}`)}
             className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl transition-all w-[90%] max-w-[360px] text-left animate-in fade-in slide-in-from-bottom-20 duration-1000 fill-mode-both"
           >
             <div className="relative h-72 overflow-hidden">
@@ -85,7 +83,10 @@ function Cards({ lugares, user, onDelete }) {
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(lugar.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(e, lugar.id);
+                    }}
                     className="text-red-600 font-semibold hover:cursor-pointer flex items-center gap-1 group/btn"
                   >
                     Eliminar
@@ -93,7 +94,6 @@ function Cards({ lugares, user, onDelete }) {
                 </div>
               ) : (
                 <div className="flex items-center justify-between pt-2">
-                  
                   <Link to={`/lugares/${lugar.id}`}>
                     <button className="text-[#20A217] font-semibold hover:cursor-pointer flex items-center gap-1 group/btn">
                       Ver Detalles
