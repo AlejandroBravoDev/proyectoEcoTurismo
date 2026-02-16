@@ -3,18 +3,24 @@ import styles from "./PerfilUser.module.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-// IMAGENES POR DEFECTO
 import placeholderFotoUsuario from "../../assets/usuarioDemo.png";
 import bannerFondo from "../../assets/img4.jpg";
-// ICONOS
 import { FaHeart, FaMapMarkerAlt, FaStar, FaTrashAlt } from "react-icons/fa";
 
 const API_BASE = "http://localhost:8000";
 
 function PerfilUsuario() {
-  const [usuario, setUsuario] = useState(null);
+  const [usuario, setUsuario] = useState(() => {
+    const cached = localStorage.getItem("usuario_perfil_cache");
+    return cached ? JSON.parse(cached) : null;
+  });
+
   const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    nombre_completo: usuario?.nombre_completo || "",
+    email: usuario?.email || "",
+  });
+
   const [pestanaActiva, setPestanaActiva] = useState("opiniones");
 
   const navigate = useNavigate();
@@ -41,6 +47,7 @@ function PerfilUsuario() {
 
       const userData = res.data.usuario;
       setUsuario(userData);
+      localStorage.setItem("usuario_perfil_cache", JSON.stringify(userData));
 
       setFormData({
         nombre_completo: userData.nombre_completo || "",
@@ -56,7 +63,7 @@ function PerfilUsuario() {
 
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
-        localStorage.removeItem("usuario");
+        localStorage.removeItem("usuario_perfil_cache");
         navigate("/login");
       }
     }
@@ -103,7 +110,10 @@ function PerfilUsuario() {
         },
       });
 
-      setUsuario(res.data.usuario);
+      const updatedUser = res.data.usuario;
+      setUsuario(updatedUser);
+      localStorage.setItem("usuario_perfil_cache", JSON.stringify(updatedUser));
+
       setPestanaActiva("opiniones");
       Swal.fire({
         title: "Perfil actualizado con exito",
@@ -151,7 +161,7 @@ function PerfilUsuario() {
     }
 
     localStorage.removeItem("token");
-    localStorage.removeItem("usuario");
+    localStorage.removeItem("usuario_perfil_cache");
     navigate("/login");
   };
 
@@ -186,7 +196,7 @@ function PerfilUsuario() {
       );
       Swal.fire({
         title: "Error al eliminar la opinión",
-        icon: "success",
+        icon: "error",
       });
     }
   };
@@ -204,12 +214,20 @@ function PerfilUsuario() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setUsuario((prevUsuario) => ({
-        ...prevUsuario,
-        favoritos: prevUsuario.favoritos.filter(
-          (fav) => fav.lugar.id !== lugarId,
-        ),
-      }));
+
+      setUsuario((prevUsuario) => {
+        const nuevoUsuario = {
+          ...prevUsuario,
+          favoritos: prevUsuario.favoritos.filter(
+            (fav) => fav.lugar.id !== lugarId,
+          ),
+        };
+        localStorage.setItem(
+          "usuario_perfil_cache",
+          JSON.stringify(nuevoUsuario),
+        );
+        return nuevoUsuario;
+      });
 
       Swal.fire({
         title: "Lugar eliminado de favoritos",
@@ -222,7 +240,7 @@ function PerfilUsuario() {
       );
       Swal.fire({
         title: "Error al eliminar el lugar de favoritos.",
-        icon: "success",
+        icon: "error",
       });
     }
   };
@@ -275,6 +293,7 @@ function PerfilUsuario() {
           src={comentario.image_url}
           alt="Foto del comentario"
           className={styles.imagenOpinion}
+          loading="lazy"
         />
       )}
       {comentario.lugar && (
@@ -306,6 +325,7 @@ function PerfilUsuario() {
           src={item?.imagen_url || bannerFondo}
           alt={item?.nombre || "Favorito"}
           className={styles.imagenItemFavorito}
+          loading="lazy"
         />
         <div className={styles.detallesItemFavorito}>
           <h4>{item?.nombre || "Nombre no disponible"}</h4>
@@ -323,7 +343,8 @@ function PerfilUsuario() {
   };
 
   const renderizarContenidoPerfil = () => {
-    if (!usuario) return null;
+    if (!usuario)
+      return <p className={styles.mensajeVacio}>Cargando datos...</p>;
 
     switch (pestanaActiva) {
       case "opiniones":

@@ -24,8 +24,6 @@ import { MdAddPhotoAlternate } from "react-icons/md";
 
 const API = "http://localhost:8000";
 const defaultImageUrls = [imgMeerkat, imgLion, imgParrot];
-
-// --- BLOQUE DE ACCIONES DE COMENTARIO ---
 const CommentActionsBlock = ({
   commentId,
   isOwner,
@@ -74,12 +72,9 @@ const CommentActionsBlock = ({
   );
 };
 
-// --- COMPONENTE PRINCIPAL ---
 function VerLugares() {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  // ESTADOS
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
@@ -87,8 +82,6 @@ function VerLugares() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [lugar, setLugar] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("Familia");
   const [menuOpen, setMenuOpen] = useState(null);
@@ -97,9 +90,9 @@ function VerLugares() {
   const [position, setPosition] = useState([
     4.81415861127678, -75.71023222513418,
   ]);
+
   const categories = ["Familia", "Amigos", "Trabajo", "Vacaciones", "Turista"];
 
-  // --- LÓGICA DE CALIFICACIÓN ---
   const calificacionComentarios = () => {
     if (rating === 5) return "Excelente";
     if (rating === 4) return "Buena";
@@ -109,7 +102,6 @@ function VerLugares() {
     return "Selecciona una nota";
   };
 
-  // --- IMÁGENES ---
   const imageSources =
     lugar?.todas_las_imagenes && lugar.todas_las_imagenes.length > 0
       ? lugar.todas_las_imagenes
@@ -125,7 +117,6 @@ function VerLugares() {
     setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
   };
 
-  // --- FETCH DATA ---
   const fetchCurrentUser = async (token) => {
     try {
       const res = await axios.get(`${API}/api/user`, {
@@ -138,30 +129,28 @@ function VerLugares() {
       });
       setUserId(res.data.id);
     } catch (err) {
-      console.error("Error al cargar el usuario logueado:", err);
+      console.error("Error al cargar usuario:", err);
     }
   };
 
   const fetchLugar = async () => {
     const token = localStorage.getItem("token");
-    setLoading(true);
     try {
       const res = await axios.get(`${API}/api/lugares/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
+
       setLugar(res.data);
       setOpinions(res.data.comentarios || []);
-      if (res.data.coordenadas) {
-        setPosition(res.data.coordenadas.split(",").map(Number));
+
+      if (res.data.coordenadas && typeof res.data.coordenadas === "string") {
+        const coords = res.data.coordenadas.split(",").map(Number);
+        if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+          setPosition(coords);
+        }
       }
-      setLoading(false);
     } catch (err) {
-      setError(
-        err.response?.status === 404
-          ? "El lugar no fue encontrado."
-          : "No se pudo cargar el lugar.",
-      );
-      setLoading(false);
+      console.error("Error al cargar lugar:", err);
     }
   };
 
@@ -179,7 +168,6 @@ function VerLugares() {
     }
   };
 
-  // --- ACCIONES ---
   const handleSubmit = async () => {
     if (!comment || comment.trim() === "") {
       Swal.fire({
@@ -189,7 +177,6 @@ function VerLugares() {
       });
       return;
     }
-
     if (Filter.check(comment)) {
       Swal.fire({
         title: "no se puede publicar tú comentario",
@@ -232,17 +219,13 @@ function VerLugares() {
         user: currentUser,
         usuario_id: currentUser.id,
       };
-
       setOpinions([newOpinion, ...opinions]);
       setComment("");
       setRating(0);
       setSelectedImage(null);
       setSelectedCategory("Familia");
     } catch (err) {
-      Swal.fire({
-        title: "Error al enviar el comentario.",
-        icon: "error",
-      });
+      Swal.fire({ title: "Error al enviar el comentario.", icon: "error" });
     }
   };
 
@@ -262,38 +245,28 @@ function VerLugares() {
         await axios.post(
           `${API}/api/favoritos`,
           { lugar_id: id },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         setIsFavorite(true);
       }
     } catch (err) {
-      Swal.fire({
-        title: "Error al actualizar favoritos.",
-        icon: "error",
-      });
+      Swal.fire({ title: "Error al actualizar favoritos.", icon: "error" });
     }
   };
 
   const deleteComment = async (commentId) => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       navigate("/login");
       return;
     }
-
     try {
       await axios.delete(`${API}/api/comentarios/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOpinions(opinions.filter((op) => op.id !== commentId));
       setMenuOpen(null);
-      Swal.fire({
-        title: "Opinión eliminada.",
-        icon: "success",
-      });
+      Swal.fire({ title: "Opinión eliminada.", icon: "success" });
     } catch (err) {
       alert("Error al eliminar.");
     }
@@ -309,14 +282,9 @@ function VerLugares() {
       await axios.post(
         `${API}/api/comentarios/${commentId}/report`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      Swal.fire({
-        title: "Opinión denunciada.",
-        icon: "success",
-      });
+      Swal.fire({ title: "Opinión denunciada.", icon: "success" });
       setMenuOpen(null);
     } catch (err) {
       alert("Error al denunciar.");
@@ -324,13 +292,14 @@ function VerLugares() {
   };
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadData = () => {
       const token = localStorage.getItem("token");
-      if (token) await fetchCurrentUser(token);
-      await fetchLugar();
-      await checkFavorite();
+      fetchLugar();
+      checkFavorite();
+      if (token) fetchCurrentUser(token);
     };
     loadData();
+
     const handleClickOutside = () => setMenuOpen(null);
     window.addEventListener("click", handleClickOutside);
     return () => window.removeEventListener("click", handleClickOutside);
@@ -355,24 +324,13 @@ function VerLugares() {
     return UpperDate.charAt(0).toUpperCase() + UpperDate.slice(1);
   };
 
-  if (loading)
-    return (
-      <>
-        <Header />
-        <main className={styles.mainContent}>
-          <p className={styles.textWait}>Cargando sitio...</p>
-        </main>
-        <Footer />
-      </>
-    );
-
   return (
     <>
       <ScrollToTop />
       <Header />
       <main className={styles.mainContent}>
         <section className={styles.titleSection}>
-          <h1>{lugar?.nombre || "Lugar Ecoturístico"}</h1>
+          <h1>{lugar?.nombre || "Explora este destino"}</h1>
           <div className={styles.actionButtons}>
             <button
               className={`${styles.btnFilled} ${isFavorite ? styles.active : ""}`}
@@ -383,7 +341,6 @@ function VerLugares() {
           </div>
         </section>
 
-        {/* GALERÍA DESKTOP */}
         <section className={styles.gallery}>
           <div className={styles.mainImage}>
             <img
@@ -406,7 +363,6 @@ function VerLugares() {
           </div>
         </section>
 
-        {/* SLIDER MÓVIL */}
         <section className={styles.mobileSlider}>
           <div
             className={styles.sliderTrack}
@@ -450,24 +406,22 @@ function VerLugares() {
         <section className={styles.infoSection}>
           <div className="w-full sm:w-[65%]">
             <h3 className="font-bold font-xl">Acerca de</h3>
-            <p>{lugar?.descripcion || "Descripción no disponible"}</p>
+            <p>{lugar?.descripcion || "Cargando detalles del lugar..."}</p>
           </div>
           <div className={styles.location}>
             <FaMapMarkerAlt className={styles.locationIcon} />
             <div className={styles.locationText}>
               <h3>Ubicado en</h3>
-              <p>
-                {lugar?.ubicacion
-                  ? lugar.ubicacion
-                  : "Aun no contamos con la ubicacion exacta de este sitio ecoturistico."}
-              </p>
+              <p>{lugar?.ubicacion || "Ubicación en proceso..."}</p>
             </div>
           </div>
         </section>
 
         <section className={styles.reviewSection}>
-          <Mapa positions={position} />
-          <div className="w-full sm:w-full  md:w-[35%]  rounded-2xl bg-white p-8 ">
+          {/* MAPA RE-RENDERIZADO SOLO CUANDO CAMBIA POSITION */}
+          <Mapa key={`${position[0]}-${position[1]}`} positions={position} />
+
+          <div className="w-full sm:w-full md:w-[35%] rounded-2xl bg-white p-8 ">
             <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
             <div className={styles.reviewFormContainer}>
               <div className={styles.reviewForm}>
@@ -556,7 +510,6 @@ function VerLugares() {
           </div>
         </section>
 
-        {/* LISTADO DE OPINIONES */}
         <section className={styles.opinionsSection}>
           <h2>Opiniones</h2>
           {opinions.length === 0 ? (

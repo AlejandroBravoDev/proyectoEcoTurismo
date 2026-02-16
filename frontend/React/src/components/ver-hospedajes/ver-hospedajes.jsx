@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./VerHospedaje.module.css";
@@ -21,58 +21,52 @@ import {
 } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import Swal from "sweetalert2";
-import noImagen from "../../assets/noImage.jpg"
+import noImagen from "../../assets/noImage.jpg";
 
 const API = "http://localhost:8000";
 const defaultImageUrls = [imgMeerkat, imgLion, imgParrot];
 
-const CommentActionsBlock = ({
-  commentId,
-  isOwner,
-  onDelete,
-  onReport,
-  isMenuOpen,
-  setMenuOpen,
-}) => {
-  return (
-    <div className={styles.commentActionsBlock}>
-      <div className={styles.menuIcon}>
-        <FaEllipsisH
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen(isMenuOpen ? null : commentId);
-          }}
-        />
-
-        {isMenuOpen && (
-          <div className={styles.sideOptionsMenu}>
-            {isOwner ? (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(commentId);
-                }}
-                className={`${styles.sideOptionItem} ${styles.delete}`}
-              >
-                Eliminar opinión
-              </button>
-            ) : (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onReport(commentId);
-                }}
-                className={`${styles.sideOptionItem} ${styles.report}`}
-              >
-                Denunciar opinión
-              </button>
-            )}
-          </div>
-        )}
+const CommentActionsBlock = React.memo(
+  ({ commentId, isOwner, onDelete, onReport, isMenuOpen, setMenuOpen }) => {
+    return (
+      <div className={styles.commentActionsBlock}>
+        <div className={styles.menuIcon}>
+          <FaEllipsisH
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen(isMenuOpen ? null : commentId);
+            }}
+          />
+          {isMenuOpen && (
+            <div className={styles.sideOptionsMenu}>
+              {isOwner ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(commentId);
+                  }}
+                  className={`${styles.sideOptionItem} ${styles.delete}`}
+                >
+                  Eliminar opinión
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onReport(commentId);
+                  }}
+                  className={`${styles.sideOptionItem} ${styles.report}`}
+                >
+                  Denunciar opinión
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  },
+);
 
 function VerHospedaje() {
   useAuthRedirect();
@@ -97,7 +91,10 @@ function VerHospedaje() {
     4.81415861127678, -75.71023222513418,
   ]);
 
-  const categories = ["Familia", "Amigos", "Trabajo", "Vacaciones", "Turista"];
+  const categories = useMemo(
+    () => ["Familia", "Amigos", "Trabajo", "Vacaciones", "Turista"],
+    [],
+  );
 
   const calificacionComentarios = () => {
     if (rating === 5) return "Excelente";
@@ -107,27 +104,29 @@ function VerHospedaje() {
     return "Muy mala";
   };
 
-  const imageSources =
-    hospedaje?.imagenes && hospedaje.imagenes.length > 0
-      ? hospedaje.imagenes
-      : defaultImageUrls;
+  const imageSources = useMemo(
+    () =>
+      hospedaje?.imagenes && hospedaje.imagenes.length > 0
+        ? hospedaje.imagenes
+        : defaultImageUrls,
+    [hospedaje],
+  );
 
   const totalSlides = imageSources.length;
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
-  };
+  }, [totalSlides]);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
-  };
+  }, [totalSlides]);
 
-  const fetchCurrentUser = async (token) => {
+  const fetchCurrentUser = useCallback(async (token) => {
     try {
       const res = await axios.get(`${API}/api/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setCurrentUser({
         id: res.data.id,
         name: res.data.nombre_completo,
@@ -137,25 +136,57 @@ function VerHospedaje() {
     } catch (err) {
       console.error("Error al cargar el usuario:", err);
     }
-  };
+  }, []);
+
+  const fetchHospedaje = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    setLoading(true);
+    try {
+      const res = await axios.get(`${API}/api/hospedajes/${id}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      setHospedaje(res.data);
+      setOpinions(res.data.comentarios || []);
+      setPosition(res.data.coordenadas.split(",").map(Number));
+      setImagenes(res.data.todas_las_imagenes);
+      setError(null);
+    } catch (err) {
+      setError(
+        `No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`,
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  const checkFavorite = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const response = await axios.get(`${API}/api/favoritos/check/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setIsFavorite(response.data.isFavorite);
+      } catch (err) {
+        console.error("Error al verificar favorito:", err);
+      }
+    }
+  }, [id]);
 
   const handleSubmit = async () => {
     if (!comment || comment.trim() === "") {
       alert("El comentario no puede estar vacío.");
       return;
     }
-
     if (Filter.check(comment)) {
       alert("¡Tú comentario tiene lenguaje inapropiado!");
       return;
     }
-
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
     }
-
     if (rating === 0) {
       alert("Por favor, selecciona una calificación.");
       return;
@@ -178,9 +209,8 @@ function VerHospedaje() {
         },
       });
 
-      const newCommentData = response.data.comentario;
       const newOpinion = {
-        ...newCommentData,
+        ...response.data.comentario,
         rating: Number(rating),
         user: currentUser,
         usuario_id: currentUser.id,
@@ -203,7 +233,6 @@ function VerHospedaje() {
       navigate("/login");
       return;
     }
-
     try {
       if (isFavorite) {
         await axios.delete(`${API}/api/favoritos/${id}`, {
@@ -214,107 +243,60 @@ function VerHospedaje() {
         await axios.post(
           `${API}/api/favoritos`,
           { hospedaje_id: id },
-          { headers: { Authorization: `Bearer ${token}` } },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
         );
         setIsFavorite(true);
       }
     } catch (err) {
       console.error("Error al manejar favorito:", err);
-      alert("Error al actualizar favoritos.");
     }
   };
 
-  const fetchHospedaje = async () => {
-    const token = localStorage.getItem("token");
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await axios.get(`${API}/api/hospedajes/${id}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-
-      setHospedaje(res.data);
-      setOpinions(res.data.comentarios || []);
-      setPosition(res.data.coordenadas.split(",").map(Number));
-      setImagenes(res.data.todas_las_imagenes);
-
-      setLoading(false);
-    } catch (err) {
-      setError(
-        `No se pudo cargar el hospedaje. ${err.response?.data?.message || ""}`,
-      );
-      setLoading(false);
-    }
-  };
-
-  const checkFavorite = async () => {
-    const token = localStorage.getItem("token");
-    if (token) {
+  const deleteComment = useCallback(
+    async (commentId) => {
+      const token = localStorage.getItem("token");
+      if (!token) return navigate("/login");
       try {
-        const response = await axios.get(`${API}/api/favoritos/check/${id}`, {
+        await axios.delete(`${API}/api/comentarios/${commentId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setIsFavorite(response.data.isFavorite);
+        setOpinions((prev) => prev.filter((op) => op.id !== commentId));
+        setMenuOpen(null);
+        Swal.fire({ title: "Opinión eliminada con éxito", icon: "success" });
       } catch (err) {
-        console.error("Error al verificar favorito:", err);
+        alert("Error al eliminar el comentario.");
       }
-    }
-  };
+    },
+    [navigate],
+  );
 
-  const deleteComment = async (commentId) => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      await axios.delete(`${API}/api/comentarios/${commentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setOpinions(opinions.filter((op) => op.id !== commentId));
-      setMenuOpen(null);
-      Swal.fire({
-        title: "Opinión eliminada con éxito",
-        icon: "success",
-      });
-    } catch (err) {
-      console.error("Error al eliminar comentario:", err);
-      alert("Error al eliminar el comentario.");
-      setMenuOpen(null);
-    }
-  };
-
-  const reportComment = async (commentId) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      await axios.post(
-        `${API}/api/comentarios/${commentId}/report`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      alert("Opinión denunciada con éxito.");
-      setMenuOpen(null);
-    } catch (err) {
-      console.error("Error al denunciar comentario:", err);
-      alert("Error al denunciar la opinión.");
-    }
-  };
+  const reportComment = useCallback(
+    async (commentId) => {
+      const token = localStorage.getItem("token");
+      if (!token) return navigate("/login");
+      try {
+        await axios.post(
+          `${API}/api/comentarios/${commentId}/report`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        alert("Opinión denunciada con éxito.");
+        setMenuOpen(null);
+      } catch (err) {
+        alert("Error al denunciar la opinión.");
+      }
+    },
+    [navigate],
+  );
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const loadData = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        await fetchCurrentUser(token);
-      }
+      if (token) await fetchCurrentUser(token);
       await fetchHospedaje();
       await checkFavorite();
     };
@@ -323,17 +305,22 @@ function VerHospedaje() {
     const handleClickOutside = () => setMenuOpen(null);
     window.addEventListener("click", handleClickOutside);
     return () => window.removeEventListener("click", handleClickOutside);
-  }, [id]);
+  }, [id, fetchCurrentUser, fetchHospedaje, checkFavorite]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    if (file && file.type.startsWith("image/")) {
+    if (file?.type.startsWith("image/")) {
       setSelectedImage(file);
     } else {
       alert("Por favor, selecciona un archivo de imagen válido.");
-      setSelectedImage(null);
     }
   };
+
+  useEffect(() => {
+    if (!selectedImage) return;
+    const objectUrl = URL.createObjectURL(selectedImage);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedImage]);
 
   const getDayAndMonth = (dateString) => {
     const date = new Date(dateString);
@@ -342,9 +329,7 @@ function VerHospedaje() {
       .toLocaleDateString("es-ES", options)
       .replace(/de /g, "")
       .toLowerCase();
-    return UpperDate.length > 0
-      ? UpperDate.charAt(0).toUpperCase() + UpperDate.slice(1)
-      : UpperDate;
+    return UpperDate.charAt(0).toUpperCase() + UpperDate.slice(1);
   };
 
   if (loading) {
@@ -388,7 +373,6 @@ function VerHospedaje() {
                 border: "none",
                 borderRadius: "8px",
                 cursor: "pointer",
-                fontSize: "1rem",
               }}
             >
               Volver a hospedajes
@@ -410,9 +394,7 @@ function VerHospedaje() {
             <h1>{hospedaje?.nombre || "Hospedaje"}</h1>
             <div className={styles.actionButtons}>
               <button
-                className={`${styles.btnFilled} ${
-                  isFavorite ? styles.active : ""
-                }`}
+                className={`${styles.btnFilled} ${isFavorite ? styles.active : ""}`}
                 onClick={handleFavoriteToggle}
               >
                 {isFavorite ? <FaStar /> : <FaRegStar />} Favoritas
@@ -426,7 +408,6 @@ function VerHospedaje() {
                 src={imagenes[0] || noImagen}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
-                  e.target.onerror = null;
                   e.target.src = noImagen;
                 }}
               />
@@ -436,7 +417,6 @@ function VerHospedaje() {
                 src={imagenes[1] || noImagen}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
-                  e.target.onerror = null;
                   e.target.src = defaultImageUrls[1];
                 }}
               />
@@ -444,7 +424,6 @@ function VerHospedaje() {
                 src={imagenes[2] || noImagen}
                 alt={hospedaje?.nombre}
                 onError={(e) => {
-                  e.target.onerror = null;
                   e.target.src = defaultImageUrls[2];
                 }}
               />
@@ -455,9 +434,7 @@ function VerHospedaje() {
             <div
               className={styles.sliderTrack}
               style={{
-                transform: `translateX(-${
-                  currentSlide * (100 / totalSlides)
-                }%)`,
+                transform: `translateX(-${currentSlide * (100 / totalSlides)}%)`,
               }}
             >
               {imageSources.map((imgSrc, index) => (
@@ -466,7 +443,6 @@ function VerHospedaje() {
                     src={imgSrc}
                     alt={`${hospedaje?.nombre} - ${index + 1}`}
                     onError={(e) => {
-                      e.target.onerror = null;
                       e.target.src =
                         defaultImageUrls[index % defaultImageUrls.length];
                     }}
@@ -486,14 +462,11 @@ function VerHospedaje() {
             >
               <FaChevronRight size={24} />
             </button>
-
             <div className={styles.sliderDots}>
               {imageSources.map((_, index) => (
                 <span
                   key={index}
-                  className={`${styles.dot} ${
-                    index === currentSlide ? styles.activeDot : ""
-                  }`}
+                  className={`${styles.dot} ${index === currentSlide ? styles.activeDot : ""}`}
                   onClick={() => setCurrentSlide(index)}
                 />
               ))}
@@ -502,9 +475,7 @@ function VerHospedaje() {
 
           <div className={styles.mobileActionButtons}>
             <button
-              className={`${styles.btnFilled} ${
-                isFavorite ? styles.active : ""
-              }`}
+              className={`${styles.btnFilled} ${isFavorite ? styles.active : ""}`}
               onClick={handleFavoriteToggle}
             >
               {isFavorite ? <FaStar /> : <FaRegStar />} Favoritas
@@ -516,7 +487,6 @@ function VerHospedaje() {
               <h3>Acerca de</h3>
               <p>{hospedaje?.descripcion || "Descripción no disponible"}</p>
             </div>
-
             <div className={styles.location}>
               <FaMapMarkerAlt className={styles.locationIcon} />
               <div className={styles.locationText}>
@@ -528,8 +498,7 @@ function VerHospedaje() {
 
           <section className={styles.reviewSection}>
             <Mapa positions={position} />
-
-            <div className="w-full sm:w-full  md:w-[35%]  rounded-2xl bg-white p-8 ">
+            <div className="w-full sm:w-full md:w-[35%] rounded-2xl bg-white p-8 ">
               <h2>¡Cuéntanos cómo fue tu experiencia!</h2>
               <div className={styles.reviewFormContainer}>
                 <div className={styles.reviewForm}>
@@ -567,7 +536,6 @@ function VerHospedaje() {
                   </div>
                 </div>
               </div>
-
               {selectedImage && (
                 <div className={styles.imagePreview}>
                   <p>Imagen seleccionada: {selectedImage.name}</p>
@@ -577,7 +545,6 @@ function VerHospedaje() {
                   />
                 </div>
               )}
-
               <div className={styles.ratingAndButton}>
                 <div className={styles.ratingGroup}>
                   <h3>¿Cómo calificarías tu experiencia?</h3>
@@ -616,6 +583,7 @@ function VerHospedaje() {
               </button>
             </div>
           </section>
+
           <section className={styles.opinionsSection}>
             <h2>Opiniones</h2>
             {opinions.length === 0 ? (
@@ -648,13 +616,10 @@ function VerHospedaje() {
                         </div>
                       </div>
                     </div>
-
                     <p className={styles.opinionCategoryDate}>
                       {getDayAndMonth(op.created_at)} • {op.category}
                     </p>
-
                     <p className={styles.opinionText}>{op.contenido}</p>
-
                     {op.image_path && (
                       <img
                         src={op.image_url || `${API}/storage/${op.image_path}`}
@@ -663,7 +628,6 @@ function VerHospedaje() {
                       />
                     )}
                   </div>
-
                   <CommentActionsBlock
                     commentId={op.id}
                     isOwner={userId === op.usuario_id}
@@ -682,4 +646,5 @@ function VerHospedaje() {
     </>
   );
 }
+
 export default VerHospedaje;

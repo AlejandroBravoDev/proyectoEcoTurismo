@@ -1,16 +1,35 @@
 import { useState, useEffect } from "react";
-import usuarioDemo from "../../assets/usuarioDemo.png";
-import { Link } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { HelpCircle, Phone, Info, LayoutGrid, LogIn } from "lucide-react";
+import {
+  HelpCircle,
+  Phone,
+  Info,
+  LayoutGrid,
+  LogIn,
+  Settings,
+  LayoutDashboard,
+  Users,
+} from "lucide-react";
+import logo from "../../assets/logo.png";
+import usuarioDemo from "../../assets/usuarioDemo.png";
 
 const LARAVEL_BASE_URL = "http://localhost:8000";
 
 function Header() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState(null);
-  const [user, setUser] = useState("");
+
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("usuario_cache");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  const [avatarUrl, setAvatarUrl] = useState(() => {
+    const savedUser = localStorage.getItem("usuario_cache");
+    return savedUser ? JSON.parse(savedUser).avatar_url : usuarioDemo;
+  });
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -18,25 +37,49 @@ function Header() {
   };
 
   useEffect(() => {
+    setMenuOpen(false);
+    document.body.style.overflow = "auto";
+  }, [location.pathname]);
+
+  useEffect(() => {
     const fetchAvatar = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
+        setUser(null);
         setAvatarUrl(usuarioDemo);
+        localStorage.removeItem("usuario_cache");
         return;
       }
+
       try {
         const res = await axios.get(`${LARAVEL_BASE_URL}/api/perfil`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUser(res.data.usuario.nombre_completo);
-        setAvatarUrl(res.data.usuario.avatar_url || usuarioDemo);
+
+        const userData = res.data.usuario;
+        setUser(userData);
+        setAvatarUrl(userData.avatar_url || usuarioDemo);
+        localStorage.setItem("usuario_cache", JSON.stringify(userData));
       } catch (err) {
-        setAvatarUrl(usuarioDemo);
-        if (err.response?.status === 401) localStorage.removeItem("token");
+        if (err.response?.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("usuario_cache");
+          setUser(null);
+          setAvatarUrl(usuarioDemo);
+        }
       }
     };
+
     fetchAvatar();
-  }, []);
+  }, [location.pathname]);
+
+  const handleAdminChange = (e) => {
+    const value = e.target.value;
+    if (value) {
+      navigate(value);
+      e.target.value = "";
+    }
+  };
 
   const navItems = [
     { name: "Lugares", path: "/lugares" },
@@ -66,12 +109,32 @@ function Header() {
             <img src={logo} className="w-10 md:w-11" alt="Logo" />
             <h1 className="font-black text-xl md:text-2xl tracking-tighter text-slate-800">
               <span className="text-[#20A217]">ECO</span>TURISMO
-              <span className="font-light text-slate-400">RISARALDA</span>
+              <span className="font-light text-slate-400 ml-1">RISARALDA</span>
             </h1>
           </Link>
         </div>
 
-        <nav className="hidden lg:flex items-center gap-10">
+        <nav className="hidden lg:flex items-center gap-8">
+          {user?.rol === "admin" && (
+            <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-2 rounded-xl hover:bg-slate-200 transition-all group">
+              <Settings
+                size={16}
+                className="text-[#20A217] group-hover:rotate-90 transition-transform duration-500"
+              />
+              <select
+                onChange={handleAdminChange}
+                defaultValue=""
+                className="bg-transparent text-[11px] font-bold text-slate-700 uppercase tracking-widest outline-none cursor-pointer border-none p-0 focus:ring-0"
+              >
+                <option value="" disabled>
+                  Gestionar
+                </option>
+                <option value="/admin/panel">Panel General</option>
+                <option value="/admin/usuarios">Gestionar Usuarios</option>
+              </select>
+            </div>
+          )}
+
           <ul className="flex items-center gap-8 list-none m-0 p-0">
             {navItems.map((item) => (
               <li key={item.name}>
@@ -84,7 +147,9 @@ function Header() {
               </li>
             ))}
           </ul>
+
           <div className="h-6 w-[1px] bg-slate-200 mx-2"></div>
+
           {!user ? (
             <Link to="/registro">
               <button className="px-6 py-2 bg-[#20A217] text-white rounded-full font-bold hover:bg-[#1a8212] transition-all shadow-md text-sm uppercase tracking-widest">
@@ -102,7 +167,7 @@ function Header() {
                 alt="Perfil"
               />
               <span className="text-slate-800 font-bold text-xs uppercase tracking-tight">
-                {user.split(" ")[0]}
+                {user.nombre_completo?.split(" ")[0]}
               </span>
             </Link>
           )}
@@ -123,6 +188,7 @@ function Header() {
           ></span>
         </button>
       </header>
+
       <div className="hidden lg:flex w-full bg-[#f8fcf8] border-b border-gray-100 py-2.5 justify-center">
         <div className="flex gap-10">
           {subNavItems.map((item) => (
@@ -139,6 +205,7 @@ function Header() {
           ))}
         </div>
       </div>
+
       <div
         className={`fixed inset-0 z-[100000] lg:hidden transition-all duration-500 ${menuOpen ? "visible" : "invisible"}`}
       >
@@ -146,24 +213,23 @@ function Header() {
           className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-500 ${menuOpen ? "opacity-100" : "opacity-0"}`}
           onClick={toggleMenu}
         ></div>
-
         <aside
-          className={`absolute right-0 top-0 h-full w-[80%] max-w-[350px] bg-white transition-transform duration-500 ease-out flex flex-col ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`absolute right-0 top-0 h-full w-[85%] max-w-[350px] bg-white transition-transform duration-500 ease-out flex flex-col ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
         >
-          <div className="p-10 border-b border-slate-50 flex items-center bg-slate-50/50">
+          <div className="p-8 border-b border-slate-50 flex items-center bg-slate-50/50">
             {user ? (
               <div className="flex items-center gap-5">
                 <img
                   src={avatarUrl || usuarioDemo}
-                  className="w-16 h-16 rounded-full border-2 border-[#20A217] shadow-md object-cover"
+                  className="w-14 h-14 rounded-full border-2 border-[#20A217] shadow-md object-cover"
                   alt="Perfil"
                 />
                 <div>
                   <p className="text-[10px] font-bold text-[#20A217] uppercase tracking-widest mb-1">
-                    Bienvenido
+                    {user.rol === "admin" ? "Administrador" : "Bienvenido"}
                   </p>
                   <p className="text-xl font-black text-slate-800 leading-tight">
-                    {user.split(" ")[0]}
+                    {user.nombre_completo?.split(" ")[0]}
                   </p>
                 </div>
               </div>
@@ -178,8 +244,30 @@ function Header() {
               </div>
             )}
           </div>
-
-          <div className="flex-grow overflow-y-auto py-10 px-10">
+          <div className="flex-grow overflow-y-auto p-8">
+            {user?.rol === "admin" && (
+              <div className="mb-10">
+                <p className="text-[11px] font-bold text-amber-500 uppercase tracking-[3px] mb-6">
+                  Administración
+                </p>
+                <div className="space-y-4">
+                  <Link
+                    to="/admin/panel"
+                    className="flex items-center gap-4 text-slate-700 font-bold no-underline"
+                  >
+                    <LayoutDashboard size={20} className="text-amber-500" />{" "}
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/admin/usuarios"
+                    className="flex items-center gap-4 text-slate-700 font-bold no-underline"
+                  >
+                    <Users size={20} className="text-amber-500" /> Usuarios
+                  </Link>
+                </div>
+                <div className="h-[1px] bg-slate-100 w-full mt-8"></div>
+              </div>
+            )}
             <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[3px] mb-8">
               Explorar
             </p>
@@ -188,7 +276,6 @@ function Header() {
                 <li key={item.name}>
                   <Link
                     to={item.path}
-                    onClick={toggleMenu}
                     className="text-3xl font-black text-slate-800 no-underline block hover:text-[#20A217] transition-colors"
                   >
                     {item.name}
@@ -196,48 +283,15 @@ function Header() {
                 </li>
               ))}
             </ul>
-            <div className="mt-12 pt-12 border-t border-slate-50">
-              <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[3px] mb-8">
-                Ayuda y Contacto
-              </p>
-              <ul className="list-none p-0 m-0 space-y-8">
-                {subNavItems.map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      to={item.path}
-                      onClick={toggleMenu}
-                      className="flex items-center gap-5 text-slate-600 font-bold text-base no-underline group"
-                    >
-                      <span className="text-[#20A217] opacity-60 group-hover:opacity-100 transition-opacity">
-                        {item.icon}
-                      </span>
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
-
-          <div className="p-10">
-            {" "}
-            {!user ? (
-              <Link
-                to="/registro"
-                onClick={toggleMenu}
-                className="no-underline"
+          <div className="p-8">
+            <Link to={user ? "/perfil" : "/registro"} className="no-underline">
+              <button
+                className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 ${user ? "bg-slate-100 text-slate-800" : "bg-[#20A217] text-white"}`}
               >
-                <button className="w-full py-5 bg-[#20A217] text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-green-100 active:scale-95 transition-all">
-                  Crear Cuenta
-                </button>
-              </Link>
-            ) : (
-              <Link to="/perfil" onClick={toggleMenu} className="no-underline">
-                <button className="w-full py-5 border-2 border-slate-100 text-slate-800 rounded-2xl font-bold active:scale-95 transition-all uppercase tracking-widest text-sm">
-                  Mi Perfil
-                </button>
-              </Link>
-            )}
+                {user ? "Mi Perfil" : "Crear Cuenta"}
+              </button>
+            </Link>
           </div>
         </aside>
       </div>
