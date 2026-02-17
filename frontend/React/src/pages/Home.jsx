@@ -203,27 +203,27 @@ function App() {
                 <motion.div
                   key={dest.id}
                   variants={itemVariants}
-                  className="group bg-slate-950 rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl transition-all w-[90%] max-w-[360px] text-left"
+                  className="group rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl transition-all w-[90%] max-w-[360px] text-left"
                 >
-                  <div className="relative h-72 overflow-hidden">
+                  <div className="relative h-64 overflow-hidden p-4">
                     <img
                       src={dest.img}
                       alt={dest.title}
-                      className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700"
+                      className="w-full h-full object-cover rounded-[24px] group-hover:scale-110 transition-transform duration-700"
                       loading="lazy"
                     />
-                    <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/70 backdrop-blur px-3 py-1 rounded-full flex items-center gap-1 scale-90 group-hover:scale-100 transition-transform">
+                    <div className="absolute top-8 right-8 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-xl flex items-center gap-1 shadow-sm border border-white">
                       <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                      <span className="text-sm font-bold text-slate-900 dark:text-white">
+                      <span className="text-sm font-bold text-slate-900">
                         {dest.rating}
                       </span>
                     </div>
-                    <div className="absolute bottom-4 left-4 bg-[#20A217] text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 animate-bounce-slow">
+                    <div className="absolute bottom-8 left-8 bg-[#20A217] text-white text-[10px] font-bold px-4 py-2 rounded-full flex items-center gap-1 uppercase tracking-widest shadow-lg">
                       <Leaf className="w-3 h-3" /> {dest.category}
                     </div>
                   </div>
-                  <div className="p-4 bg-white">
-                    <h3 className="text-xl font-bold mb-1 text-black">
+                  <div className="p-6 pt-0">
+                    <h3 className="text-xl font-extrabold mb-1 text-slate-800 truncate uppercase tracking-tight">
                       {dest.title}
                     </h3>
                     <p className="text-black text-sm flex items-center gap-1 pb-3">

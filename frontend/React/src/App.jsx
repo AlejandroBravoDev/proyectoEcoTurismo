@@ -21,15 +21,13 @@ import ResetPassword from "./pages/ResetPassword";
 import QueOfrecemosPage from "./pages/QueOfrecemosPage.jsx";
 import FaqEcoturismoPage from "./pages/preguntasFrecuentes.jsx";
 import HospedajesPage from "./pages/hospedajes.jsx";
-
-/* 🔥 NUEVAS IMPORTACIONES */
 import Contacto from "./pages/Contacto.jsx";
 import Politicas from "./pages/Politicas.jsx";
 
 function Rutas() {
   return (
     <Routes>
-      {/* RUTAS PÚBLICAS */}
+      {/* Rutas de todo lo que tiene que ver con el inicio del usuario  */}
       <Route path="/" element={<Home />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
@@ -37,31 +35,30 @@ function Rutas() {
       <Route path="/reset-password" element={<ResetPassword />} />
 
 
-      {/* RUTAS DE CONTENIDO */}
+      {/* Rutas donde el usuario ve lugares y más info de lugares */}
       <Route path="/lugares" element={<Lugares />} />
       <Route path="/lugares/:id" element={<VerLugares />} />
       <Route path="/hospedajes" element={<HospedajesPage />} />
       <Route path="/hospedajes/:id" element={<VerHospedajes />} />
 
-      {/* RUTAS DE INFORMACIÓN */}
+      {/* rutas de info */}
       <Route path="/ofrecemos" element={<QueOfrecemosPage />} />
       <Route path="/preguntasFrecuentes" element={<FaqEcoturismoPage />} />
       <Route path="/perfil" element={<PerfilUser />} />
 
       {/* RUTAS DE ADMINISTRACIÓN */}
-      {/* 1. Panel General */}
+      {/* Panel de administración */}
       <Route path="/admin/panel" element={<Admin />} />
 
-      {/* 2. Gestión de Usuarios */}
+      {/* Gestión de Usuarios */}
       <Route path="/admin/usuarios" element={<AdminUsers />} />
       <Route path="/admin/usuarios/:id" element={<EditarUsuario />} />
 
-      {/* 3. Gestión de Lugares y Hospedajes (Edición/Listado) */}
-      {/* He cambiado esto para que apunten al componente Editar o al que maneje tus tablas */}
+      {/* Gestión de Lugares y Hospedajes */}
       <Route path="/admin/lugares" element={<Admin />} />
       <Route path="/admin/hospedajes" element={<Admin />} />
 
-      {/* 4. Creación y Edición específica */}
+      {/* Creación y Edición específica */}
       <Route path="/admin/crear/:tipo" element={<AdminCrearPage />} />
       <Route path="/admin/editar/:tipo/:id" element={<Editar />} />
 
@@ -70,7 +67,6 @@ function Rutas() {
 
       <Route path="/preguntasFrecuentes" element={<FaqEcoturismoPage />} />
 
-      {/* 🔥 NUEVAS RUTAS */}
       <Route path="/contacto" element={<Contacto />} />
       <Route path="/politicas" element={<Politicas />} />
 
