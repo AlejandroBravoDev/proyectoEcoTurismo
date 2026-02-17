@@ -22,6 +22,10 @@ import QueOfrecemosPage from "./pages/QueOfrecemosPage.jsx";
 import FaqEcoturismoPage from "./pages/preguntasFrecuentes.jsx";
 import HospedajesPage from "./pages/hospedajes.jsx";
 
+/* 🔥 NUEVAS IMPORTACIONES */
+import Contacto from "./pages/Contacto.jsx";
+import Politicas from "./pages/Politicas.jsx";
+
 function Rutas() {
   return (
     <Routes>
@@ -31,6 +35,7 @@ function Rutas() {
       <Route path="/login" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+
 
       {/* RUTAS DE CONTENIDO */}
       <Route path="/lugares" element={<Lugares />} />
@@ -62,6 +67,13 @@ function Rutas() {
 
       {/* Compatibilidad con tu ruta anterior si se usa en otros botones */}
       <Route path="/pages/:tipo/:id" element={<Editar />} />
+
+      <Route path="/preguntasFrecuentes" element={<FaqEcoturismoPage />} />
+
+      {/* 🔥 NUEVAS RUTAS */}
+      <Route path="/contacto" element={<Contacto />} />
+      <Route path="/politicas" element={<Politicas />} />
+
     </Routes>
   );
 }
