@@ -98,7 +98,6 @@ function Header() {
       icon: <HelpCircle size={18} />,
     },
     { name: "Contacto", path: "/contacto", icon: <Phone size={18} /> },
-    { name: "Sobre nosotros", path: "/nosotros", icon: <Info size={18} /> },
   ];
 
   return (

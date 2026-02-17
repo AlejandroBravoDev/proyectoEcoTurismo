@@ -17,7 +17,7 @@ function AdminEditarPage() {
   return (
     <>
       <Header />
-      <Editar />
+      <Editar className="pt-20" />
       <Footer />
     </>
   );

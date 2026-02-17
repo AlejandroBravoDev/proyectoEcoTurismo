@@ -330,7 +330,9 @@ function VerLugares() {
       <Header />
       <main className={styles.mainContent}>
         <section className={styles.titleSection}>
-          <h1 className="font-bold text-[#20A217]">{lugar?.nombre || "Explora este destino"}</h1>
+          <h1 className="font-bold text-[#20A217]">
+            {lugar?.nombre || "Explora este destino"}
+          </h1>
           <div className={styles.actionButtons}>
             <button
               className={`${styles.btnFilled} ${isFavorite ? styles.active : ""}`}

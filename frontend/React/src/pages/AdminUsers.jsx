@@ -68,7 +68,7 @@ const AdminUsers = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center w-full">
       <Header />
-      <main className="w-full flex flex-col items-center flex-grow">
+      <main className="w-full flex flex-col items-center flex-grow pt-20">
         <div
           className="w-full h-[300px] bg-cover bg-center relative flex items-center justify-center"
           style={{

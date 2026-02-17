@@ -1,6 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShieldCheck, Lock, FileText, Eye, Database, RefreshCcw } from "lucide-react";
+import {
+  ShieldCheck,
+  Lock,
+  FileText,
+  Eye,
+  Database,
+  RefreshCcw,
+} from "lucide-react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 
@@ -8,16 +15,16 @@ function Politicas() {
   return (
     <>
       <Header />
-      
-      <div className="min-h-screen bg-gray-100 py-20 px-6 flex items-center justify-center ">
+
+      <div className="min-h-screen bg-gray-100 py-20 px-6 flex items-center justify-center pt-20">
         <div className="max-w-6xl mx-auto">
-            <br></br>
+          <br></br>
           <h1 className="text-4xl font-bold text-center mb-16">
             Política de Privacidad
-          </h1><br></br>
-            <br></br>
+          </h1>
+          <br></br>
+          <br></br>
           <div className="grid md:grid-cols-2 gap-10 mx-auto w-6xl">
-
             {/* Card 1 */}
             <div className="bg-white p-8 rounded-3xl shadow-lg transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl">
               <FileText className="text-[#20A217] mb-6" size={35} />
@@ -25,8 +32,8 @@ function Politicas() {
                 1. Información que recopilamos
               </h2>
               <p className="text-gray-600 leading-relaxed">
-                Recopilamos información básica como nombre, correo electrónico y datos
-                necesarios para el uso de la plataforma.
+                Recopilamos información básica como nombre, correo electrónico y
+                datos necesarios para el uso de la plataforma.
               </p>
             </div>
 
@@ -61,8 +68,8 @@ function Politicas() {
                 4. Compartir información
               </h2>
               <p className="text-gray-600 leading-relaxed">
-                No compartimos información personal con terceros,
-                salvo que sea requerido por ley.
+                No compartimos información personal con terceros, salvo que sea
+                requerido por ley.
               </p>
             </div>
 
@@ -73,8 +80,8 @@ function Politicas() {
                 5. Derechos del usuario
               </h2>
               <p className="text-gray-600 leading-relaxed">
-                Los usuarios pueden solicitar la modificación o eliminación
-                de sus datos personales en cualquier momento.
+                Los usuarios pueden solicitar la modificación o eliminación de
+                sus datos personales en cualquier momento.
               </p>
             </div>
 
@@ -85,13 +92,11 @@ function Politicas() {
                 6. Cambios en la política
               </h2>
               <p className="text-gray-600 leading-relaxed">
-                Nos reservamos el derecho de actualizar esta política.
-                Cualquier modificación será publicada en esta sección.
+                Nos reservamos el derecho de actualizar esta política. Cualquier
+                modificación será publicada en esta sección.
               </p>
             </div>
-
           </div>
-
         </div>
       </div>
 

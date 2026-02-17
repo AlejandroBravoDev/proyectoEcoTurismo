@@ -14,7 +14,7 @@ function Lugares() {
   return (
     <>
       <Header />
-      <div>
+      <div className="pt-20">
         <PanelAdmin />
       </div>
 
