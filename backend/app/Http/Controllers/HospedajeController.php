@@ -166,6 +166,56 @@ class HospedajeController extends Controller
         }
     }
 
+    public function update(Request $request, $id){
+        try {
+            $hospedaje = Hospedaje::findOrFail($id);
+
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'required|string',
+                'imagenes_existentes' => 'nullable|string',
+                'imagenes_nuevas.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            ]);
+
+            $imagenesFinales = [];
+
+            if ($request->filled('imagenes_existentes')) {
+                $imagenesFinales = json_decode($request->imagenes_existentes, true) ?? [];
+            }
+
+            if ($request->hasFile('imagenes_nuevas')) {
+                foreach ($request->file('imagenes_nuevas') as $imagen) {
+                    $path = $imagen->store('hospedajes', 's3');
+                    $imagenesFinales[] = $path;
+                }
+            }
+            $imagenesFinales = array_slice($imagenesFinales, 0, 3);
+            $hospedaje->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'imagenes' => $imagenesFinales,
+            ]);
+
+            return response()->json([
+                'message' => 'Hospedaje actualizado correctamente',
+                'imagenes' => collect($imagenesFinales)->map(fn ($img) =>
+                    Storage::disk('s3')->url($img)
+                ),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error en update Hospedaje', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'message' => 'Error al actualizar el hospedaje',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
 {
     try {
