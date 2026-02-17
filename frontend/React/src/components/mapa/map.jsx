@@ -6,7 +6,7 @@ import styles from "../verLugares/verLugares.module.css"
 import { Container } from "postcss";
 
 function Mapa({positions}) {
-  console.log(positions);
+
   return (
     <>
       <MapContainer center={positions} zoom={14} scrollWheelZoom={false}  className={styles.leaflet_container}>

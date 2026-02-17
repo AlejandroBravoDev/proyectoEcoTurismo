@@ -94,10 +94,7 @@ const Cards = React.memo(
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (
-                              window.confirm("¿Seguro que deseas eliminarlo?")
-                            )
-                              onDelete(h.id);
+                            onDelete(h.id);
                           }}
                           className="text-red-500 hover:text-red-700 text-sm font-bold transition-colors"
                         >

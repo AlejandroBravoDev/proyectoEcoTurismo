@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import defaultAvatar from "../assets/img4.jpg";
+import noImage from "../assets/noImage.jpg";
 
 const AdminUsers = () => {
   const navigate = useNavigate();
@@ -114,11 +115,11 @@ const AdminUsers = () => {
                   >
                     <div className="h-56 overflow-hidden relative rounded-[2rem] group-hover:rounded-none transition-all duration-500">
                       <img
-                        src={user.avatar_url || defaultAvatar}
+                        src={user.avatar_url || noImage}
                         loading="eager"
                         className="w-full h-full object-cover brightness-[0.9] group-hover:brightness-100 group-hover:scale-110 transition-transform duration-700"
                         alt={user.nombre_completo}
-                        onError={(e) => (e.target.src = defaultAvatar)}
+                        onError={(e) => (e.target.src = noImage)}
                       />
                     </div>
                     <div className="p-6 flex flex-col flex-grow">
@@ -136,7 +137,7 @@ const AdminUsers = () => {
                         </span>
                         <button
                           onClick={() => navigate(`/admin/usuarios/${user.id}`)}
-                          className="bg-[#20A217] text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#1a8212] active:scale-95 transition-all shadow-md"
+                          className="bg-[#20A217] text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#1a8212] active:scale-95 transition-all shadow-md cursor-pointer"
                         >
                           GESTIONAR
                         </button>

@@ -8,13 +8,13 @@
 
 .pageContainer {
   padding: 0;
-  background-color: var(--light-gray);
+  background-color: #F9F9F9;
 }
 
 .mainContent {
   margin: auto;
   overflow-x: hidden;
-  padding: 7em 7em 0 7em;
+  padding: 10em 7em 0 7em;
 }
 
 .titleSection {

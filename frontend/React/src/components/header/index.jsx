@@ -246,7 +246,7 @@ function Header() {
           <div className="flex-grow overflow-y-auto p-8">
             {user?.rol === "admin" && (
               <div className="mb-10">
-                <p className="text-[11px] font-bold text-amber-500 uppercase tracking-[3px] mb-6">
+                <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[3px] mb-6">
                   Administración
                 </p>
                 <div className="space-y-4">
@@ -254,20 +254,20 @@ function Header() {
                     to="/admin/panel"
                     className="flex items-center gap-4 text-slate-700 font-bold no-underline"
                   >
-                    <LayoutDashboard size={20} className="text-amber-500" />{" "}
+                    <LayoutDashboard size={20} className="text-slate-300" />{" "}
                     Dashboard
                   </Link>
                   <Link
                     to="/admin/usuarios"
                     className="flex items-center gap-4 text-slate-700 font-bold no-underline"
                   >
-                    <Users size={20} className="text-amber-500" /> Usuarios
+                    <Users size={20} className="text-slate-300" /> Usuarios
                   </Link>
                 </div>
                 <div className="h-[1px] bg-slate-100 w-full mt-8"></div>
               </div>
             )}
-            <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[3px] mb-8">
+            <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[3px] mb-8 pt-2">
               Explorar
             </p>
             <ul className="list-none p-0 m-0 space-y-7">
@@ -275,7 +275,7 @@ function Header() {
                 <li key={item.name}>
                   <Link
                     to={item.path}
-                    className="text-3xl font-black text-slate-800 no-underline block hover:text-[#20A217] transition-colors"
+                    className="text-1xl font-black text-slate-800 no-underline block hover:text-[#20A217] transition-colors"
                   >
                     {item.name}
                   </Link>

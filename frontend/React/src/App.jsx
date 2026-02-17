@@ -66,8 +66,9 @@ function Rutas() {
 function App() {
   return (
     <BrowserRouter>
+
       <div className="app">
-        <main>
+        <main className="bg-[#f9f9f9]">
           <Rutas />
         </main>
       </div>
