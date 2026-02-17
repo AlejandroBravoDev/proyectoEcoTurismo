@@ -18,7 +18,7 @@ function AdminCrearPage() {
   return (
     <>
       <Header />
-      <Crear tipo={useParams().tipo} />
+      <Crear tipo={useParams().tipo} className="pt-20" />
       <Footer />
     </>
   );

@@ -36,7 +36,7 @@ function Contacto() {
     <div className="min-h-screen bg-black flex flex-col font-sans overflow-x-hidden">
       <Header />
 
-      <main className="flex-grow relative">
+      <main className="flex-grow relative pt-20">
         <div className="absolute inset-0 h-[70vh] lg:h-screen w-full overflow-hidden">
           <motion.img
             initial={{ scale: 1.2 }}

@@ -7,21 +7,12 @@ function Footer() {
       <div className="w-full flex justify-center">
         <div className="w-full max-w-7xl px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-left pb-10">
-            
             {/* EMPRESA */}
             <div className="flex flex-col gap-6">
               <h4 className="text-xl font-bold tracking-wider">
                 <span className="text-[#20A217]">ECO</span>TURISMO
               </h4>
               <ul className="flex flex-col gap-3">
-                <li>
-                  <Link
-                    to="/ofrecemos"
-                    className="text-black hover:text-[#20A217] transition-colors"
-                  >
-                    Nosotros
-                  </Link>
-                </li>
                 <li>
                   <Link
                     to="/ofrecemos"
@@ -131,7 +122,6 @@ function Footer() {
                 </a>
               </div>
             </div>
-
           </div>
 
           <div className="mt-16 pt-8 border-t border-white/5 text-center text-slate-500 text-sm w-full">

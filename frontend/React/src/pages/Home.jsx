@@ -104,7 +104,7 @@ function App() {
       <Header />
       <ScrollToTop />
 
-      <main className="overflow-hidden">
+      <main className="overflow-hidden pt-20">
         <section className="relative h-[85vh] flex items-center overflow-hidden">
           <motion.div
             initial={{ scale: 1.2, opacity: 0 }}

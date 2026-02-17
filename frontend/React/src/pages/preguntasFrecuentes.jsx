@@ -6,7 +6,7 @@ function preguntasFrecuentesPage() {
   return (
     <>
       <Header />
-      <FaqEcoturismo />
+      <FaqEcoturismo className="pt-20" />
       <Footer />
     </>
   );

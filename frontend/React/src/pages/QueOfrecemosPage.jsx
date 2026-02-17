@@ -37,7 +37,7 @@ function QueOfrecemosPage() {
     <>
       <ScrollToTop />
       <Header />
-      <main className="min-h-screen bg-white overflow-hidden">
+      <main className="min-h-screen bg-white overflow-hidden pt-20">
         <section className="relative h-[50vh] md:h-[60vh] flex items-center justify-center text-white overflow-hidden">
           <div className="absolute inset-0 z-0">
             <img
