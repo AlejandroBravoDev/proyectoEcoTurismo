@@ -6,6 +6,7 @@ import styles from '../components/PerfilUser/PerfilUser.module.css';
 import defaultAvatar from '../assets/img4.jpg';
 // Importa una imagen de banner por defecto si tu API no la proporciona
 import defaultBanner from '../assets/fondo-hospedajes.jpeg'; 
+import Swal from 'sweetalert2';
 
 const EditarUsuario = () => {
     const { id } = useParams();
@@ -114,7 +115,10 @@ const EditarUsuario = () => {
                 for (const key in errorData.errors) {
                     errorMsg += `- ${errorData.errors[key].join(', ')}\n`;
                 }
-                alert(errorMsg);
+                Swal.fire({
+                    icon: "error",
+                    text: errorMsg
+                })
             } else {
                 // Otro error HTTP (401, 403, 500)
                 alert(`Error al actualizar usuario (Código ${response.status}): ${errorData.message || 'Error desconocido'}`);
@@ -126,7 +130,10 @@ const EditarUsuario = () => {
         const data = await response.json();
 
         if (data.success) {
-            alert('Usuario actualizado correctamente');
+            Swal.fire({
+                text: "Usuario actualizado correctamente",
+                icon: "success"
+            });
             setEditing(false);
             fetchUser();
         } else {
@@ -156,8 +163,11 @@ const EditarUsuario = () => {
             const data = await response.json();
 
             if (data.success) {
-                alert('Usuario eliminado correctamente');
-                navigate('/adminUsuarios');
+                Swal.fire({
+                    icon: "success",
+                    text: "Usuario Eliminado"
+                });
+                navigate('/admin/usuarios');
             } else {
                 alert('Error al eliminar usuario');
             }

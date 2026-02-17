@@ -166,37 +166,127 @@ class HospedajeController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
+    public function update(Request $request, $id){
         try {
+            $hospedaje = Hospedaje::findOrFail($id);
+
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255',
-                'ubicacion' => 'nullable|string',
-                'descripcion' => 'nullable|string',
-                'municipio_id' => 'required|integer',
-                'tipo' => 'nullable|string',
-                'contacto' => 'nullable|string',
-                'servicios' => 'nullable|array',
-                'imagenes' => 'nullable|array', // rutas relativas
+                'descripcion' => 'required|string',
+                'imagenes_existentes' => 'nullable|string',
+                'imagenes_nuevas.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             ]);
 
-            $hospedaje = Hospedaje::create($validated);
+            $imagenesFinales = [];
+
+            if ($request->filled('imagenes_existentes')) {
+                $imagenesFinales = json_decode($request->imagenes_existentes, true) ?? [];
+            }
+
+            if ($request->hasFile('imagenes_nuevas')) {
+                foreach ($request->file('imagenes_nuevas') as $imagen) {
+                    $path = $imagen->store('hospedajes', 's3');
+                    $imagenesFinales[] = $path;
+                }
+            }
+            $imagenesFinales = array_slice($imagenesFinales, 0, 3);
+            $hospedaje->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'imagenes' => $imagenesFinales,
+            ]);
 
             return response()->json([
-                'message' => 'Hospedaje creado con éxito',
-                'data' => $hospedaje
-            ], 201);
+                'message' => 'Hospedaje actualizado correctamente',
+                'imagenes' => collect($imagenesFinales)->map(fn ($img) =>
+                    Storage::disk('s3')->url($img)
+                ),
+            ], 200);
 
         } catch (\Exception $e) {
-            Log::error('Error creando hospedaje: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+            Log::error('Error en update Hospedaje', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
-                'error' => 'Error al crear el hospedaje'
+                'message' => 'Error al actualizar el hospedaje',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
+    public function store(Request $request)
+{
+    try {
+        Log::info('Datos recibidos en Hospedaje@store', $request->all());
+
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'municipio_id' => 'required|exists:municipios,id',
+            'ubicacion' => 'nullable|string',
+            'coordenadas' => 'nullable|string',
+            'imagenes' => 'required|array|max:3',
+            'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096',
+        ]);
+
+        $disk = 's3';
+        $imagenesGuardadas = [];
+
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('hospedajes', $disk);
+                $imagenesGuardadas[] = $path;
+
+                Log::info('Imagen hospedaje guardada en S3: ' . $path);
+            }
+        }
+
+        $hospedaje = Hospedaje::create([
+            'nombre' => $validated['nombre'],
+            'descripcion' => $validated['descripcion'],
+            'municipio_id' => $validated['municipio_id'],
+            'ubicacion' => $validated['ubicacion'] ?? null,
+            'coordenadas' => $validated['coordenadas'] ?? null,
+            'imagenes' => $imagenesGuardadas,
+        ]);
+
+        Log::info('Hospedaje creado con ID: ' . $hospedaje->id);
+
+        return response()->json([
+            'message' => 'Hospedaje creado correctamente',
+            'data' => [
+                'id' => $hospedaje->id,
+                'nombre' => $hospedaje->nombre,
+                'descripcion' => $hospedaje->descripcion,
+                'imagen_principal_url' => $this->getImagenPrincipalUrl($imagenesGuardadas),
+            ]
+        ], 201);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+
+        Log::error('Error de validación en Hospedaje@store', $e->errors());
+
+        return response()->json([
+            'message' => 'Error de validación',
+            'errors' => $e->errors()
+        ], 422);
+
+    } catch (\Exception $e) {
+
+        Log::error('Error en HospedajeController@store', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'message' => 'Error al crear el hospedaje',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
     public function destroy($id)
     {

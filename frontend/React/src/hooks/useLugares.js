@@ -5,6 +5,7 @@ import {
   deleteLugar,
 } from "../services/lugaresServices";
 import { mapLugar } from "../utils/lugaresMapper";
+import Swal from "sweetalert2";
 
 export default function useLugares() {
   const [lugares, setLugares] = useState([]);

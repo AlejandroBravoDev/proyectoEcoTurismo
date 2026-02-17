@@ -12,7 +12,7 @@ function PerfilUser() {
       <ScrollToTop />
       <Header />
 
-      <PerfilUsuario />
+      <PerfilUsuario className="pt-20" />
       <Footer />
     </div>
   );

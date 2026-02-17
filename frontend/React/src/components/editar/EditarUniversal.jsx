@@ -1,112 +1,118 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import "../panelAdmin/tailwind.css";
 import Swal from "sweetalert2";
 import { useDropzone } from "react-dropzone";
 
 function Editar() {
-  //se extraen los datos de la url
   const { tipo, id } = useParams();
-
-  //se definen las variables donde van los datos
-  const [data, setData] = useState(null);
-
-  //se definen las variables que van a hacer la carga
-  const [loading, setLoading] = useState(true);
-
-  //states para que los campos sean editables
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
-
-  //states para el manejo de imagenes al editar los lugares
   const [imagenesExistentes, setImagenesExistentes] = useState([]);
   const [imagenesNuevas, setImagenesNuevas] = useState([]);
-
-  //defino los endpoints que se van a usar en cualquier caso
-  const endpoints = {
-    lugares: `http://localhost:8000/api/lugares/${id}`,
-    hospedajes: `http://localhost:8000/api/hospedajes/${id}`,
-    usuario: `http://localhost:8000/api/usuario/${id}`,
-  };
-
-  
+  const [ubicacion, setUbicacion] = useState("");
+  const [coordenadas, setCoordenadas] = useState("");
+  const endpoints = useMemo(
+    () => ({
+      lugares: `http://localhost:8000/api/lugares/${id}`,
+      hospedajes: `http://localhost:8000/api/hospedajes/${id}`,
+      usuario: `http://localhost:8000/api/usuario/${id}`,
+    }),
+    [id],
+  );
+  const navigate = useNavigate();
   const endpoint = endpoints[tipo];
 
-  //useEffect para traer los datos de la DB con axios
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-       
-        const response = await axios.get(endpoint);
-        setData(response.data);
-
-        // inicializamos los estados editables
-        setNombre(response.data.nombre || "");
-        setDescripcion(response.data.descripcion || "");
-        setImagenesExistentes(response.data.todas_las_imagenes || []);
-        setImagenesNuevas([]);
-      } catch (error) {
-        console.error("Error al cargar los datos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+  const fetchData = useCallback(async () => {
+    if (!endpoint) return;
+    try {
+      const { data } = await axios.get(endpoint);
+      setNombre(data.nombre || "");
+      setDescripcion(data.descripcion || "");
+      setImagenesExistentes(data.todas_las_imagenes || []);
+      setCoordenadas(data.coordenadas);
+      setUbicacion(data.ubicacion);
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+    }
   }, [endpoint]);
 
-  //manejo y edición de imagenes del lugar
-  const onDrop = (acceptedFiles) => {
-    const total =
-      acceptedFiles.length + imagenesExistentes.length + imagenesNuevas.length;
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-    if (total > 3) {
-      Swal.fire("Máximo 3 imágenes");
-      return;
-    }
+  useEffect(() => {
+    return () => {
+      imagenesNuevas.forEach((file) => {
+        if (file.preview) URL.revokeObjectURL(file.preview);
+      });
+    };
+  }, [imagenesNuevas]);
 
-    setImagenesNuevas((prev) => [...prev, ...acceptedFiles]);
-  };
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      if (
+        acceptedFiles.length +
+          imagenesExistentes.length +
+          imagenesNuevas.length >
+        3
+      ) {
+        Swal.fire({ title: "Máximo 3 imágenes", icon: "warning" });
+        return;
+      }
+
+      const mappedFiles = acceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        }),
+      );
+
+      setImagenesNuevas((prev) => [...prev, ...mappedFiles]);
+    },
+    [imagenesExistentes.length, imagenesNuevas.length],
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: { "image/*": [] },
     onDrop,
   });
 
-  const eliminarExistente = (index) => {
+  const eliminarExistente = useCallback((index) => {
     setImagenesExistentes((prev) => prev.filter((_, i) => i !== index));
-  };
+  }, []);
 
-  const eliminarNueva = (index) => {
-    setImagenesNuevas((prev) => prev.filter((_, i) => i !== index));
-  };
+  const eliminarNueva = useCallback((index) => {
+    setImagenesNuevas((prev) => {
+      const fileToRemove = prev[index];
+      if (fileToRemove?.preview) URL.revokeObjectURL(fileToRemove.preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
 
-  //useEffect para acutalizar los datos editados
   const handleUpdate = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
 
     try {
       const formData = new FormData();
-
       formData.append("nombre", nombre);
       formData.append("descripcion", descripcion);
-
-      // imágenes que quedan
       formData.append(
         "imagenes_existentes",
         JSON.stringify(imagenesExistentes),
       );
+      formData.append("ubicacion", ubicacion);
+      formData.append("coordenadas", coordenadas);
 
-      // nuevas imágenes
-      imagenesNuevas.forEach((img) => {
-        formData.append("imagenes_nuevas[]", img);
-      });
-
+      imagenesNuevas.forEach((img) =>
+        formData.append("imagenes_nuevas[]", img),
+      );
       formData.append("_method", "PUT");
+
       await axios.post(endpoint, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -114,83 +120,131 @@ function Editar() {
       Swal.fire({
         title: "Cambios guardados",
         icon: "success",
-        confirmButtonColor: "green",
+        confirmButtonColor: "#4b8236",
       });
+      navigate(-1);
     } catch (err) {
-      console.error(err);
-      Swal.fire("Error al actualizar");
+      Swal.fire({ title: "Error al actualizar", icon: "error" });
     }
   };
 
-  if (loading) return <p>Cargando...</p>;
-  if (!data) return <p>Error</p>;
-
-  const imagenPrincipal =
-    imagenesExistentes[0] ||
-    (imagenesNuevas[0] && URL.createObjectURL(imagenesNuevas[0])) ||
-    "";
+  const imagenPrincipal = useMemo(() => {
+    if (imagenesExistentes.length > 0) return imagenesExistentes[0];
+    if (imagenesNuevas.length > 0) return imagenesNuevas[0].preview;
+    return "";
+  }, [imagenesExistentes, imagenesNuevas]);
 
   return (
-    <>
-      <div className="w-full h-full flex flex-row items-center justify-evenly py-40 bg-rgba(0,0,0,0.05) ">
-        <form
-          onSubmit={handleUpdate}
-          className="rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.05)] w-4xl h-170 bg-gray-150 p-8 flex flex-col gap-5 bg-white"
-        >
-          <h1 className="text-2xl font-bold text-[#60a244]">
-            Editando {data.nombre}
-          </h1>
-          {/*Div que va a contener los campos para que el flex-wraped no se haga con el botón y quede bien bonito */}
-          <div className="w-full h-110 flex flex-col flex-wrap gap-6">
-            <label htmlFor="nombre" className="font-semibold text-[#60a244]">
-              nombre
+    <div className="w-full h-full flex flex-col lg:flex-row items-center justify-evenly py-10 lg:py-20 bg-gray-50 gap-10 px-4">
+      <form
+        onSubmit={handleUpdate}
+        className="rounded-xl shadow-lg w-full max-w-4xl bg-white p-6 lg:p-8 flex flex-col gap-12"
+      >
+        <h1 className="text-2xl font-bold text-[#20A217]">
+          {nombre ? `Editando: ${nombre}` : "Cargando datos..."}
+        </h1>
+
+        <div className="w-full flex flex-col gap-6 xl:max-h-120 xl:flex-wrap">
+          <div className="flex flex-col gap-2 ">
+            <label htmlFor="nombre" className="font-semibold text-[#20A217]">
+              Nombre
             </label>
             <input
+              id="nombre"
               type="text"
-              maxlength="45"
-              name="nombre"
-              className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-[55%]"
+              maxLength="45"
+              className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-full lg:w-[90%] outline-none focus:ring-2 focus:ring-[#20A217]/20"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
+              placeholder="..."
             />
-            <label htmlFor="nombre" className=" font-semibold text-[#60a244]">
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="descripcion"
+              className="font-semibold text-[#20A217]"
+            >
               Descripción
             </label>
             <textarea
-              maxlength="250"
-              type="text"
-              name="nombre"
-              className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-[55%] h-40  "
+              id="descripcion"
+              maxLength="250"
+              className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-full lg:w-[90%] h-32 resize-none outline-none focus:ring-2 focus:ring-[#20A217]/20"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
+              placeholder="..."
             />
-            {/* IMÁGENES */}
-            <label className="font-semibold text-[#60a244]">Imágenes</label>
+          </div>
 
-            <div className="flex gap-4 flex-wrap">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="ubicacion" className="font-semibold text-[#20A217]">
+              Ubicación
+            </label>
+            <textarea
+              id="ubicacion"
+              maxLength="250"
+              className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-full lg:w-[90%] h-16 resize-none outline-none focus:ring-2 focus:ring-[#20A217]/20"
+              value={ubicacion}
+              onChange={(e) => setUbicacion(e.target.value)}
+              placeholder="..."
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="coordenadas"
+              className="font-semibold text-[#20A217]"
+            >
+              Coordenadas
+            </label>
+            <textarea
+              id="coordenadas"
+              maxLength="250"
+              className="p-3 rounded-lg bg-gray-50 border border-gray-300 w-full lg:w-[90%] h-13 resize-none outline-none focus:ring-2 focus:ring-[#20A217]/20"
+              value={coordenadas}
+              onChange={(e) => setCoordenadas(e.target.value)}
+              placeholder="..."
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-[#20A217]">
+              Imágenes (Máx. 3)
+            </label>
+            <div className="flex gap-4 flex-wrap mb-2">
               {imagenesExistentes.map((img, index) => (
-                <div key={`old-${index}`} className="relative">
-                  <img src={img} className="w-24 h-24 object-cover rounded" />
+                <div
+                  key={`old-${index}`}
+                  className="relative group animate-fade-in"
+                >
+                  <img
+                    src={img}
+                    className="w-20 h-20 object-cover rounded-lg border shadow-sm"
+                    alt=""
+                  />
                   <button
                     type="button"
                     onClick={() => eliminarExistente(index)}
-                    className="absolute -top-2 -right-2 bg-red-600 text-white w-5 h-5 rounded-full text-xs"
+                    className="absolute -top-2 -right-2 bg-red-600 text-white w-5 h-5 rounded-full text-xs flex items-center justify-center"
                   >
                     ×
                   </button>
                 </div>
               ))}
-
               {imagenesNuevas.map((file, index) => (
-                <div key={`new-${index}`} className="relative">
+                <div
+                  key={`new-${index}`}
+                  className="relative group animate-fade-in"
+                >
                   <img
-                    src={URL.createObjectURL(file)}
-                    className="w-24 h-24 object-cover rounded"
+                    src={file.preview}
+                    className="w-20 h-20 object-cover rounded-lg border shadow-sm"
+                    alt=""
                   />
                   <button
                     type="button"
                     onClick={() => eliminarNueva(index)}
-                    className="absolute -top-2 -right-2 bg-red-600 text-white w-5 h-5 rounded-full text-xs"
+                    className="absolute -top-2 -right-2 bg-red-600 text-white w-5 h-5 rounded-full text-xs flex items-center justify-center"
                   >
                     ×
                   </button>
@@ -201,46 +255,57 @@ function Editar() {
             {imagenesExistentes.length + imagenesNuevas.length < 3 && (
               <div
                 {...getRootProps()}
-                className="border-2 border-dashed p-6 rounded cursor-pointer w-[40%]"
+                className="border-2 border-dashed border-gray-200 p-4 rounded-xl cursor-pointer hover:border-[#20A217] transition-all w-full lg:w-[40%] text-center bg-gray-50"
               >
                 <input {...getInputProps()} />
-                <p>
-                  Puedes subir{" "}
+                <p className="text-xs text-gray-500">
+                  Subir imagen (
                   {3 - (imagenesExistentes.length + imagenesNuevas.length)}{" "}
-                  imagen(es)
+                  restantes)
                 </p>
               </div>
             )}
           </div>
-          <button
-            type="submit"
-            className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6"
-          >
-            Completar edición
-          </button>
-        </form>
-        {/*resultado de la edición*/}
-        <div className="w-2lg shadow-[0_0_20px_rgba(0,0,0,0.05)] h-160 rounded-xl p-8 bg-white flex flex-col text-start items-center justify-center">
-          {/* tarjeta en la que se va a ver lo editado */}
-          <div className="w-80 bg-[#f9f9f9] rounded-2xl flex flex-col items-center py-5 gap-4 break-words overflow-hidden flex-wrap">
-            <img
-              src={imagenPrincipal}
-              className="w-full h-52 object-cover rounded"
-            />
+        </div>
 
-            <h1 className="text-2xl font-bold ">{nombre}</h1>
+        <button
+          type="submit"
+          className="bg-[#20A217] hover:bg-[#1f9217] text-white rounded-xl font-bold py-3 px-8 self-start transition-colors shadow-md active:scale-95 w-full"
+        >
+          Guardar Cambios
+        </button>
+      </form>
 
-            <p className="text-[.9rem] text-[#555] w-5/6 text-center">
-              {descripcion}
+      <div className="w-full max-w-sm sticky top-10">
+        <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100 transition-all duration-300">
+          <div className="h-48 bg-gray-100 flex items-center justify-center">
+            {imagenPrincipal ? (
+              <img
+                src={imagenPrincipal}
+                className="w-full h-full object-cover"
+                alt="Preview"
+              />
+            ) : (
+              <div className="animate-pulse flex flex-col items-center">
+                <div className="w-12 h-12 bg-gray-200 rounded-full mb-2"></div>
+                <span className="text-xs text-gray-400 font-medium">
+                  Sin imagen
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="p-6">
+            <h2 className="text-xl font-bold text-gray-800 truncate mb-2">
+              {nombre || "Nombre del lugar"}
+            </h2>
+            <p className="text-sm text-gray h-16 overflow-hidden line-clamp-3 leading-relaxed">
+              {ubicacion || "Esperando descripción..."}
             </p>
-
-            <button className="bg-[#4b8236] text-white border-0 rounded-xl font-bold py-3 px-6">
-              Ver Detalles
-            </button>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
+
 export default Editar;

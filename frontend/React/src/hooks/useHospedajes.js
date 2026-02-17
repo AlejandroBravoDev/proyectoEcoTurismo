@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const API_URL = "http://localhost:8000/api";
 
@@ -76,7 +77,10 @@ function useHospedajes() {
       setHospedajes(hospedajes.filter((h) => h.id !== hospedajeAEliminar));
       setShowModal(false);
       setHospedajeAEliminar(null);
-      alert("Hospedaje eliminado exitosamente.");
+      Swal.fire({
+        icon: "success",
+        text: "Hospedaje eliminado correcatamente"
+      })
     } catch (err) {
       console.error("Error al eliminar hospedaje:", err);
       alert("Error al eliminar el hospedaje.");
