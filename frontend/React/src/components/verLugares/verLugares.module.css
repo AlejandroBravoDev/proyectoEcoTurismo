@@ -1,8 +1,8 @@
 :root {
-  --main-green: #4b8236;
+  --main-green: #20A217;
   --light-gray: #f9f9f9;
   --text-color: #333;
-  --rating-color: #4b8236;
+  --rating-color: #20A217;
   --gray-text: #666;
 }
 
@@ -161,8 +161,8 @@
 
 .btnFilled:hover {
   background-color: var(--light-gray);
-  color: #4b8236;
-  border: solid 1px #4b8236;
+  color: #20A217;
+  border: solid 1px #20A217;
 }
 
 .gallery {

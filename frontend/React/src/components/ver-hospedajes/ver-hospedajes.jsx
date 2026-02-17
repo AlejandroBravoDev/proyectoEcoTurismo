@@ -604,12 +604,12 @@ function VerHospedaje() {
                         <h4>{op.user?.name || "Usuario Anónimo"}</h4>
                         <div className={styles.opinionRating}>
                           {[...Array(op.rating)].map((_, idx) => (
-                            <FaStar key={idx} color="#4b8236" size={14} />
+                            <FaStar key={idx} color="#ffde21" size={14} />
                           ))}
                           {[...Array(5 - op.rating)].map((_, idx) => (
                             <FaRegStar
                               key={idx + op.rating}
-                              color="#999"
+                              color="#ffde21"
                               size={14}
                             />
                           ))}

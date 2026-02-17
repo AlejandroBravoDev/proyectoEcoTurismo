@@ -117,6 +117,8 @@ class LugaresController extends Controller
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'descripcion' => 'required|string',
+                'ubicacion' => 'required|string',
+                'coordenadas' => 'required|string',
                 'imagenes_existentes' => 'nullable|string',
                 'imagenes_nuevas.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             ]);
@@ -138,6 +140,8 @@ class LugaresController extends Controller
                 'nombre' => $request->nombre,
                 'descripcion' => $request->descripcion,
                 'imagenes' => $imagenesFinales,
+                'ubicacion' => $request->ubicacion,
+                'coordenadas' => $request->coordenadas,
             ]);
 
             return response()->json([

@@ -330,7 +330,7 @@ function VerLugares() {
       <Header />
       <main className={styles.mainContent}>
         <section className={styles.titleSection}>
-          <h1>{lugar?.nombre || "Explora este destino"}</h1>
+          <h1 className="font-bold text-[#20A217]">{lugar?.nombre || "Explora este destino"}</h1>
           <div className={styles.actionButtons}>
             <button
               className={`${styles.btnFilled} ${isFavorite ? styles.active : ""}`}
@@ -529,9 +529,9 @@ function VerLugares() {
                       <div className={styles.opinionRating}>
                         {[...Array(5)].map((_, idx) =>
                           idx < op.rating ? (
-                            <FaStar key={idx} color="#4b8236" size={14} />
+                            <FaStar key={idx} color="#ffde21" size={14} />
                           ) : (
-                            <FaRegStar key={idx} color="#999" size={14} />
+                            <FaRegStar key={idx} color="#ffde21" size={14} />
                           ),
                         )}
                       </div>
