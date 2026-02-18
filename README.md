@@ -131,8 +131,7 @@ Las funcionalidades de la interfaz del administrador son:
 
 El menú del visitante está disponible para los usuarios que acceden a la plataforma sin registrarse o iniciar sesión. Desde este menú se puede:
 - Acceder a la interfaz principal del sistema.
-- Visualizar la sección de lugares ecoturísticos.
-- Visualizar la sección de hospedajes.
+- Registrarse e iniciar sesión
 - Navegar por la plataforma mediante el menú superior.
 
 ### 5.2 Menú usuario registrado
